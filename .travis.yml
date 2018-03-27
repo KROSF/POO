@@ -1,0 +1,6 @@
+language: cpp
+compiler:
+  - clang++
+before_script:
+    - cd P0/
+script: make test-auto && make test-P0-consola
