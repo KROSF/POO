@@ -28,7 +28,7 @@ public:
     Cadena& operator = (const char * cad);
     //operador de conversion
     operator const char * () const noexcept;
-    const char * c_str() const;
+    //const char * c_str() const;
 private:
     //Atributos de la clase Cadena
     char * s_;
