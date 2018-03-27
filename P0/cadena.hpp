@@ -1,6 +1,7 @@
 #ifndef CADENA_H
 #define CADENA_H
 #include <iostream>
+using namespace std;
 class Cadena {
 public:
     //Constructores
