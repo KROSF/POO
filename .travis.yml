@@ -1,9 +1,7 @@
 language: cpp
-matrix:
-  include:
-    - os: linux
-    - os: osx
-      osx_image: xcode8.3
+os:
+  - linux
+  - osx
 compiler:
   - clang
   - gcc
