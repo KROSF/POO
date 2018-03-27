@@ -1,0 +1,10 @@
+test-caso0-cadena-auto.o: En la función `test_fecha(_fctkern_t*)':
+/home/krosf/POO/Sanabria_Flores_CarlosRodrigo/P0/../Tests-auto/test-caso0-fecha-auto.cpp:31: definiciones múltiples de `test_fecha(_fctkern_t*)'
+test-caso0-fecha-auto.o:/home/krosf/POO/Sanabria_Flores_CarlosRodrigo/P0/../Tests-auto/test-caso0-fecha-auto.cpp:31: primero se definió aquí
+test-auto.o: En la función `test_fecha(_fctkern_t*)':
+/home/krosf/POO/Sanabria_Flores_CarlosRodrigo/P0/../Tests-auto/test-caso0-fecha-auto.cpp:31: definiciones múltiples de `test_fecha(_fctkern_t*)'
+test-caso0-fecha-auto.o:/home/krosf/POO/Sanabria_Flores_CarlosRodrigo/P0/../Tests-auto/test-caso0-fecha-auto.cpp:31: primero se definió aquí
+/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/../../../../lib/Scrt1.o: En la función `_start':
+(.text+0x20): referencia a `main' sin definir
+collect2: error: ld devolvió el estado de salida 1
+make: *** [Makefile:29: test-P0-auto] Error 1
