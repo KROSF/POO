@@ -4,6 +4,5 @@ os:
   - osx
 compiler:
   - clang
-  - gcc
 script:
   - bash build.sh
