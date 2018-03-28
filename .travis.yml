@@ -3,6 +3,9 @@ os:
   - linux
   - osx
 compiler:
+  - gcc
   - clang
+  
 script:
-  - bash build.sh
+  - cd P0/
+  - make test-auto
