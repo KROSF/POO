@@ -1,29 +1,29 @@
 CXX = clang++
 STD = c++11
 CXXFLAGS = -std=${STD} -g -pedantic -Wall
-CPPFLAGS = -DP0 -I../Tests-auto -I.
+CPPFLAGS = -DP1 -I../Tests-auto -I.
 VPATH = ../Tests-auto:.
-OBJS = test-P0-consola.o test-caso0-fecha-auto.o \
+OBJS = test-P1-consola.o test-caso0-fecha-auto.o \
 	test-caso0-cadena-auto.o test-auto.o fecha.o cadena.o cadena_check.o fecha_check.o
-EXE = test-P0-auto test-P0-consola cadena_check fecha_check
+EXE = test-P1-auto test-P1-consola cadena_check fecha_check
 
-all: test-P0-consola test-P0-auto
+all: test-P1-consola test-P1-auto
 
 test: test-consola test-auto
 
-test-consola: test-P0-consola
+test-consola: test-P1-consola
 	./$<
 
-test-auto: test-P0-auto
+test-auto: test-P1-auto
 	./$<
 
-test-P0-consola: test-P0-consola.o fecha.o cadena.o
+test-P1-consola: test-P1-consola.o fecha.o cadena.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-test-P0-consola.o: test-P0-consola.cpp fecha.hpp cadena.hpp
+test-P1-consola.o: test-P1-consola.cpp fecha.hpp cadena.hpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-test-P0-auto: test-caso0-fecha-auto.o test-caso0-cadena-auto.o test-auto.o cadena.o fecha.o
+test-P1-auto: test-caso0-fecha-auto.o test-caso0-cadena-auto.o test-auto.o cadena.o fecha.o
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS)  $^ -o $@
 
 test-caso0-fecha-auto.o test-caso0-cadena-auto.o test-auto.o: \
