@@ -13,7 +13,7 @@ Fecha::Fecha(int d, int m, int a) : _d(d),_m(m),_a(a) {
 }
 
 Fecha::Fecha(const char * fecha) : _d(22),_m(22),_a(22) {
-    if(sscanf(fecha,"%d/%d/%4d",&_d,&_m,&_a) != 3) throw Invalida("Error de conversión");
+    if(sscanf(fecha,"%d/%d/%d",&_d,&_m,&_a) != 3) throw Invalida("Error de conversión");
     if(_d==0||_m==0||_a==0) {
         Hrsys hrsys;
         if(_d==0) _d = hrsys.dia();

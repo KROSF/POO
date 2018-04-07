@@ -1,5 +1,5 @@
 /* $Id: test-caso0-fecha-auto.cpp 344 2016-04-29 20:20:13Z gerardo $
- * 
+ *
  * Pruebas unitarias automáticas para la clase Fecha (P0-P1)
  *
  * ©2014 Antonio G.ª Dguez.
@@ -31,15 +31,15 @@ namespace {
 FCTMF_FIXTURE_SUITE_BGN(test_fecha) {
   if (bPrimera) {
     bPrimera = false;
-    cerr << 
+    cerr <<
 #ifdef P0
-      "\n---------- PRÁCTICA 0: FECHA ----------\n" 
+      "\n---------- PRÁCTICA 0: FECHA ----------\n"
 #else
-      "\n---------- PRÁCTICA 1: FECHA ----------\n" 
+      "\n---------- PRÁCTICA 1: FECHA ----------\n"
 #endif
 	 << endl;
   }
-  
+
   FCT_SETUP_BGN() {
     // 1.º establecemos la zona horaria a UTC para evitar cosas raras
     setenv("TZ", "", 1);
