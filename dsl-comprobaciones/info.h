@@ -1,5 +1,7 @@
 #include <string>
+
 using namespace std;
+
 #ifndef INFO_H
 #define INFO_H
 
@@ -58,6 +60,10 @@ class Info{
 			parameters = p;
 		}
 
+		void setDefaultParams(vector<string> p){
+			defaultParams=p;
+		}
+
 		void setUsedParameters(vector<string> p){
 			usedParameters = p;
 		}
@@ -68,6 +74,10 @@ class Info{
 
 		void setUsedFunction(string usedF){
 			usedFunction = usedF;
+		}
+
+		void setUsedClass(string usedC){
+			usedClass = usedC;
 		}
 
 		void setFriendClass(string friendC){
@@ -86,6 +96,9 @@ class Info{
 			defaultArguments = dfargs;
 		}
 
+		void setMemberVariable(string variable){
+			memberVariable = variable;
+		}
 
 		/*
 		**
@@ -123,6 +136,7 @@ class Info{
 			return lenient;
 		}
 
+		
 		//Const or no const methods get methods
 		string getConstant(){
 			return constant;
@@ -137,6 +151,10 @@ class Info{
 			return parameters;
 		}
 
+		vector<string> getDefaultParams(){
+			return defaultParams;
+		}
+
 		vector<string> getUsedParameters(){
 			return usedParameters;
 		}		
@@ -147,6 +165,10 @@ class Info{
 
 		string getUsedFunction(){
 			return usedFunction;
+		}
+
+		string getUsedClass(){
+			return usedClass;
 		}
 
 		string getFriendClass(){
@@ -165,6 +187,10 @@ class Info{
 			return defaultArguments;
 		}
 
+		string getMemberVariable(){
+			return memberVariable;
+		}
+
 	private:
 		//General members
 		string name;
@@ -180,14 +206,18 @@ class Info{
 
 		//Searching methods.
 		vector<string> parameters;
+		vector<string> defaultParams;
 		vector<string> usedParameters;
 		vector<string> initializers;
 		string usedFunction;
 		string constant;
 		string usedConstant;
+		string usedClass;
 
 		string friendClass;
 		string level;
+
+		string memberVariable;
 
 		unsigned int numDefaultArguments;
 		vector<string> defaultArguments;

@@ -1,20 +1,9 @@
 #include "execute.h"
 
 
-execute::execute(): traversed{false} {}
-
 void execute::run(const MatchFinder::MatchResult &Result){
 	Context = Result.Context;
 	Rewrite.setSourceMgr(Context->getSourceManager(), Context->getLangOpts());
-
-	if(!traversed){
-		allClasses.clear();
-		clases.clear();
- 
-		HandleTranslationUnit(*Context);
-
-		traversed = true;
-	}
 
 	classWithName(Result);
 	classWithDefaultConstructor(Result);
@@ -29,6 +18,7 @@ void execute::run(const MatchFinder::MatchResult &Result){
 	classWithMember(Result);
 	classWithStaticVariable(Result);
 	releaseVariable(Result);
+	classWithAllPrivateMember(Result);
 	classWithVariableMembersAccessLevel(Result);
 	methodWithName(Result);
 	methodWithReferencedVariable(Result);
@@ -38,18 +28,19 @@ void execute::run(const MatchFinder::MatchResult &Result){
 	defaultArgumentsInMethod(Result);
 	deletedMethod(Result);
 	defaultedMethod(Result);
+	virtualMethod(Result);
 	classWithCopyAssignmentOperator(Result);
 	classWithMoveAssignmentOperator(Result);
 	functionWithReferencedFunction(Result);
+	methodWithReferencedFunction(Result);
+	functionWithReferencedMethod(Result);
 	functionWithName(Result);
-	includedHeader(Result);
+	invocationsFromHeader(Result);
 	classWithNotFriendMember(Result);
 	classWithFriendFunction(Result);
 	classWithFriendClass(Result);
+	methodWithDynamicCast(Result);
 }
-
-
-
 
 
 
@@ -67,12 +58,14 @@ void execute::postRun(){
 	hasDestructor();
 	hasDeleteMember();
 	howManyConstructors();
+	hasDynamicCast();
 	hasExplicitSpecifiedConstructor();
 	hasTakeException();
 	hasInitializer();
 	hasMember();
 	hasStaticVariable();
 	hasReleasedVariable();
+	hasAllPrivateMember();
 	hasVariableMembersAccessLevel();
 	hasMethodWithName();
 	hasMethodWithReferencedVariable();
@@ -82,66 +75,25 @@ void execute::postRun(){
 	hasDefaultArgumentsInMethod();
 	hasDeletedMethod();
 	hasDefaultedMethod();
+	hasVirtualMethod();
 	hasCopyAssignmentOperator();
 	hasMoveAssignmentOperator();
 	hasFunctionWithReferencedFunction();
+	hasMethodWithReferencedFunction();
+	hasFunctionWithReferencedMethod();
 	hasFunctionWithName();
-	hasIncludedHeader();
+	hasInvocationsFromHeader();
 	hasFileIncludedHeader();
 	hasNotFriendMember();
 	hasFriendFunction();
 	hasFriendClass();
 	hasGuardClauses();
-	
+
 	showMessages();
 
 	isCorrect();
 }
 
-
-void execute::HandleTranslationUnit(ASTContext &Context) {
-    TranslationUnitDecl *D = Context.getTranslationUnitDecl();
-    // Run Recursive AST Visitor
-    TraverseDecl(D);
-} 
-
-bool execute::VisitCXXRecordDecl(CXXRecordDecl *Declaration) {
-    if(traversed)
-        return true;
- 
-    CXXRecordDecl* Definition = 0;
-    FullSourceLoc FullLocation;
-    if(Declaration->hasDefinition()){
-    //Necessary to take the definition though the declaration is saved: this is done so that if a class is  
-    //in a system header, it is considered in this way
-        if(!Declaration->isThisDeclarationADefinition()){
-            Definition = Declaration->getDefinition();
-            FullLocation = Context->getFullLoc(Definition->getLocStart());
-        }
-        else{
-            FullLocation = Context->getFullLoc(Declaration->getLocStart());
-        }
- 
-        if (
-            FullLocation.isValid()  
-            && !Context->getSourceManager().isInSystemHeader(FullLocation)  
-        ){
-            bool found_inserted = false;
-            for(list<const CXXRecordDecl*>::const_iterator i = allClasses.begin(); i != allClasses.end(); i++){
-                const CXXRecordDecl *BaseClass = *i;
-                 if(check_same_decl_canonical(Declaration, BaseClass)){
-                    found_inserted = true;
-                    break;
-                }
-            }
-            if(!found_inserted){
-                allClasses.push_back(Declaration);
-				clases.push_back(Declaration->getNameAsString());
-			}
-        }
-    }
-    return true;
-}
 
 bool execute::check_same_decl_canonical(const Decl *c1, const Decl *c2){
     return c1 && c2 && c1->getCanonicalDecl() == c2->getCanonicalDecl();
@@ -153,7 +105,7 @@ bool execute::check_same_decl_canonical(const Decl *c1, const Decl *c2){
 **
 */
 bool execute::existClass(const CXXRecordDecl *foundClass){
-	
+
 	if (foundClass && foundClass->isThisDeclarationADefinition()){
 		FullSourceLoc FullLocation = Context->getFullLoc(foundClass->getLocStart());
 		if (FullLocation.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation)){
@@ -167,9 +119,9 @@ bool execute::existClass(const CXXRecordDecl *foundClass){
 }
 
 bool execute::existConstructor(const CXXConstructorDecl *foundConstructor){
-	
+
 	if (foundConstructor && foundConstructor->isThisDeclarationADefinition()){
-		
+
 		FullSourceLoc FullLocation = Context->getFullLoc(foundConstructor->getLocStart());
 		if (FullLocation.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation)){
 			return true;
@@ -211,7 +163,7 @@ bool execute::existMethod(const CXXMethodDecl *foundMethod){
 	if (foundMethod && foundMethod->isThisDeclarationADefinition()){
 		FullSourceLoc FullLocation = Context->getFullLoc(foundMethod->getLocStart());
 		if (FullLocation.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation)){
-			return true;		
+			return true;
 		}else{
 			return false;
 		}
@@ -224,7 +176,7 @@ bool execute::existFunction(const FunctionDecl *foundFunction){
 	if (foundFunction && foundFunction->isThisDeclarationADefinition()){
 		FullSourceLoc FullLocation = Context->getFullLoc(foundFunction->getLocStart());
 		if (FullLocation.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation)){
-			return true;					
+			return true;
 		}else{
 			return false;
 		}
@@ -237,7 +189,7 @@ bool execute::existMember(const FieldDecl *foundMember){
 	if (foundMember){
 		FullSourceLoc FullLocation = Context->getFullLoc(foundMember->getLocStart());
 		if (FullLocation.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation)){
-			return true;					
+			return true;
 		}else{
 			return false;
 		}
@@ -268,17 +220,28 @@ bool execute::existVariable(const VarDecl *foundVariable){
 **
 */
 
+std::pair<bool, int> isElementInVector(std::string s, const vector<string>& v){
+	std::pair<bool, int> res(false,0);
+	for(size_t i = 0; i < v.size() && !res.first; ++i){
+		res.first=s == v[i];
+		res.second=i;
+	}
+	return res;
+}
+
 bool execute::checkInitializersConstructor(const CXXConstructorDecl *foundConstructor, vector<string> parameters){
 	bool idem = true;
 	if (foundConstructor->getNumCtorInitializers() == parameters.size()){
 		unsigned int p = 0;
-		for (CXXConstructorDecl::init_const_iterator I = foundConstructor->init_begin(), E = foundConstructor->init_end(); I != E; ++I){
+		for (CXXConstructorDecl::init_const_iterator I = foundConstructor->init_begin(), E = foundConstructor->init_end(); I != E && idem; ++I){
 			 if((*I)->isWritten() && (*I)->isMemberInitializer()){
 
 				FieldDecl *FD = (*I)->getMember();
-				if(FD->getType().getCanonicalType().getAsString() != parameters[p]){ 
-			       		idem = false;
-		   		}
+				std::pair<bool,int> r=isElementInVector(FD->getType().getCanonicalType().getAsString(), parameters);
+				if(r.first){
+					parameters.erase(parameters.begin()+r.second);
+				}
+				idem = r.first;
 		   		p++;
 			}
 		}
@@ -291,12 +254,14 @@ bool execute::checkInitializersConstructor(const CXXConstructorDecl *foundConstr
 
 bool execute::checkParamsFunction(const FunctionDecl *foundFunction, vector<string> parameters){
 	bool idem = true;
+//	Names of declarations can be shown with llvm::outs
 //	llvm::outs() << foundFunction->getNameAsString() << ": ";
 	if (foundFunction->getNumParams() == parameters.size()){
 		for(unsigned int p = 0; p < foundFunction->getNumParams(); p++){
-
-//			llvm::outs()<< foundFunction->getParamDecl(p)->getType().getCanonicalType().getAsString() << " ";
-	   		if(foundFunction->getParamDecl(p)->getType().getCanonicalType().getAsString() != parameters[p]){ 
+			//llvm::outs() << foundFunction->getNameAsString() << ": ";
+			//llvm::outs()<< foundFunction->getParamDecl(p)->getType().getCanonicalType().getAsString() << "-";
+	   		//llvm::outs() << parameters[p];
+			if(foundFunction->getParamDecl(p)->getType().getCanonicalType().getAsString() != parameters[p]){
 	       			idem = false;
 	   		}
 
@@ -309,10 +274,10 @@ bool execute::checkParamsFunction(const FunctionDecl *foundFunction, vector<stri
 }
 
 bool execute::checkParams(const FunctionDecl* function, vector<string> params){
-	bool result = false;	
-	
+	bool result = false;
+
 	if (checkWithoutParams(params)){
-		result = true;					
+		result = true;
 	}else{
 		if (checkParamsFunction(function, params)){
 			result = true;
@@ -342,9 +307,27 @@ bool execute::markedConst(string c1, bool c2){
 	else{
 		if(constWord == c1 && c2){
 			return true;
-		}	
+		}
 		if(noConstWord == c1 && !c2){
-			return true;	
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool execute::markedDefault(string c1, bool c2){
+	string regExpr = "?";
+	string constWord = "default";
+	string noConstWord = "nodefault";
+	if(regExpr.compare(c1) == 0)
+		return true;
+	else{
+		if(constWord == c1 && c2){
+			return true;
+		}
+		if(noConstWord == c1 && !c2){
+			return true;
 		}
 	}
 
@@ -352,7 +335,7 @@ bool execute::markedConst(string c1, bool c2){
 }
 
 bool execute::checkDefArgs(const FunctionDecl* function, unsigned int numDefArgs, vector<string> defArgs){
-	
+
 	bool res = true;
 
 	if(function->getNumParams() >= numDefArgs){
@@ -363,16 +346,16 @@ bool execute::checkDefArgs(const FunctionDecl* function, unsigned int numDefArgs
 
 			if(function->getParamDecl(p)->hasDefaultArg()){
 				numDefArgs--;
-			
+
 				if(!checkWithoutParams(defArgs)){
 
-					string dfarg = Rewrite.getRewrittenText(function->getParamDecl(p)->getDefaultArg()->getSourceRange()); 
+					string dfarg = Rewrite.getRewrittenText(function->getParamDecl(p)->getDefaultArg()->getSourceRange());
 					if(dfarg != defArgs[indexDefArgs]){
 						res = false;
 						break;
 					}
 
-					indexDefArgs++;		
+					indexDefArgs++;
 				}
 			}
 		}
@@ -391,9 +374,9 @@ bool execute::checkRegularExpresion(string str1, string str2){
 
 	bool res = false;
 	try{
-		if((str1 == str2) || std::regex_match(str1, std::regex(str2))){ 
+		if((str1 == str2) || std::regex_match(str1, std::regex(str2))){
 			res = true;
-		}    
+		}
 	} catch (const std::regex_error& e) {}
 
 	return res;
@@ -485,7 +468,7 @@ bool execute::allFoundAndValid(A a){
 bool execute::allReleasedVariables(){
    	for (map<const VarDecl*, bool>::iterator it=variables_new.begin(); it!=variables_new.end(); it++){
         if( !(it->second) )
-	    	return false;    
+	    	return false;
     }
 	return true;
 }
@@ -498,17 +481,6 @@ void execute::hasClass(){
 }
 
 void execute::hasDefaultConstructor(){
-
-	for(auto it = clases.begin() ; it!=clases.end(); ++it){
-		for(std::pair<const string,Info>& obj : defaultConstructors){
-			if(std::regex_match(it->nom, std::regex(obj.first))){
-				if((!obj.second.getValid() && !it->isDefault) ||
-					(obj.second.getValid() && it->isDefault)){
-					obj.second.setFound(true);
-				}
-			}
-		}
-	}
 	if (!foundAll(defaultConstructors)){
 		getMessagesOfNotFound(defaultConstructors);
 		correct = false;
@@ -552,7 +524,7 @@ void execute::hasDeleteMember(){
 
 void execute::howManyConstructors(){
 	for (AI it = constructors.begin(); it!=constructors.end(); ++it){
-		
+
 		int numberOfConstructors = (it->second).getNumberOfConstructors();
 		int expectedConstructors = (it->second).getExpectedConstructors();
 		if (numberOfConstructors == expectedConstructors){
@@ -564,6 +536,13 @@ void execute::howManyConstructors(){
 	}
 	if (!foundAll(constructors)){
 		getMessagesOfNotFound(constructors);
+		correct = false;
+	}
+}
+
+void execute::hasDynamicCast(){
+	if(!foundAll(dynamicCast)){
+		getMessagesOfNotFound(dynamicCast);
 		correct = false;
 	}
 }
@@ -638,6 +617,13 @@ void execute::hasDefaultedMethod() {
 	}
 }
 
+void execute::hasVirtualMethod() {
+	if(!foundAll(virtualMethods)) {
+		getMessagesOfNotFound(virtualMethods);
+		correct = false;
+	}
+}
+
 void execute::hasMember(){
 	if (!foundAll(members)){
 		getMessagesOfNotFound(members);
@@ -658,6 +644,13 @@ void execute::hasReleasedVariable(){
 	}else{
 		//llvm::outs() << releasedVariableMessage << "\n";
 		messages.insert(releasedVariableMessage);
+		correct = false;
+	}
+}
+
+void execute::hasAllPrivateMember(){
+	if (!classWithAllPrivateMembers.empty() && foundAny(classWithAllPrivateMembers)){
+		getMessagesOfFound(classWithAllPrivateMembers);
 		correct = false;
 	}
 }
@@ -691,6 +684,20 @@ void execute::hasFunctionWithReferencedFunction(){
 	}
 }
 
+void execute::hasMethodWithReferencedFunction(){
+	if (!foundAll(methodsWithReferencedFunction)){
+		getMessagesOfNotFound(methodsWithReferencedFunction);
+		correct = false;
+	}
+}
+
+void execute::hasFunctionWithReferencedMethod(){
+	if (!foundAll(functionsWithReferencedMethod)){
+		getMessagesOfNotFound(functionsWithReferencedMethod);
+		correct = false;
+	}
+}
+
 void execute::hasFunctionWithName(){
 	if (!foundAll(functionsWithName)){
 		getMessagesOfNotFound(functionsWithName);
@@ -698,9 +705,9 @@ void execute::hasFunctionWithName(){
 	}
 }
 
-void execute::hasIncludedHeader(){
-	if (anyFoundAndInvalid(includedHeaders)){
-                getMessagesOfNotFound(includedHeaders);
+void execute::hasInvocationsFromHeader(){
+	if (anyFoundAndInvalid(invocationsFromHeaders)){
+                getMessagesOfNotFound(invocationsFromHeaders);
                 correct = false;
         }
 }
@@ -803,8 +810,7 @@ void execute::setClasses(string className, string message){
 }
 
 void execute::setDefaultConstructors(string className, bool exist, string notFoundMessage){
-	Info info(className, notFoundMessage, false);
-	info.setValid(exist);
+	Info info(className, notFoundMessage, false, exist);
 	defaultConstructors.insert(std::make_pair(className, info));
 }
 
@@ -831,7 +837,8 @@ void execute::setDestructors(string className, bool exist, string message){
 }
 
 void execute::setDeleteMembers(string className, string memberName, string message){
-	Info info(className, message, false);
+	Info info(memberName, message, false);
+	info.setClass(className);
 	deleteMembers.insert(std::make_pair(memberName, info));
 }
 
@@ -854,10 +861,11 @@ void execute::setTakeExceptions(string exceptionClass, string message){
 	takeExceptions.insert(std::make_pair(exceptionClass, info));
 }
 
-void execute::setMembers(string className, string memberName, string constant, string message){
+void execute::setMembers(string className, string memberName, string constant, bool exist, string message){
 	Info info(memberName, message, false);
 	info.setClass(className);
 	info.setConstant(constant);
+	info.setExist(exist);
 	members.insert(std::make_pair(memberName, info));
 }
 
@@ -872,8 +880,13 @@ void execute::setReleasedVariables(string message){
 	releasedVariableMessage = message;
 }
 
+void execute::setClassWithAllPrivateMembers(string className, string message){
+	Info info(className, message, false);
+	classWithAllPrivateMembers.insert(std::make_pair(className, info));
+}
+
 void execute::setMembersAccessLevel(string className, string memberName, string level, string message){
-	Info info(memberName, message, false); 
+	Info info(memberName, message, false);
 	info.setClass(className);
 	info.setLevel(level);
 	variableMembersAccessLevel.insert(std::make_pair(memberName, info));
@@ -887,21 +900,24 @@ void execute::setMethodsWithName(string methodName, string className, vector<str
 	methodsWithName.insert(std::make_pair(methodName, info));
 }
 
-void execute::setMethodsWithReferencedVariable(string methodName, string className, vector<string> params, string constant, string message){
+void execute::setMethodsWithReferencedVariable(string methodName, string className, vector<string> params, string constant, string variable, string message){
 	Info info(methodName, message, false);
 	info.setClass(className);
 	info.setParameters(params);
 	info.setConstant(constant);
+	info.setMemberVariable(variable);
 	methodsWithReferencedVariable.insert(std::make_pair(methodName, info));
 }
 
-void execute::setMethodsWithReferencedMethod(string mainMethodName, vector<string> mainMethodParams, string mainClassName, string mainConstant, string usedMethodName, vector<string> usedMethodParams, string usedConstant, string message){
+void execute::setMethodsWithReferencedMethod(string mainMethodName, vector<string> mainMethodParams, string mainClassName, string mainConstant, string usedMethodName, vector<string> usedMethodParams, string usedClassName, string usedConstant, string message){
 	Info info(mainMethodName, message, false);
 	info.setClass(mainClassName);
 	info.setParameters(mainMethodParams);
+        info.setConstant(mainConstant);
+	
+	info.setUsedClass(usedClassName);	
 	info.setUsedFunction(usedMethodName);
 	info.setUsedParameters(usedMethodParams);
-	info.setConstant(mainConstant);
 	info.setUsedConstant(usedConstant);
 	methodsWithReferencedMethod.insert(std::make_pair(mainMethodName, info));
 }
@@ -948,6 +964,14 @@ void execute::setDefaultedMethods(string methodName, string className, vector<st
 	defaultedMethods.insert(std::make_pair(methodName, info));
 }
 
+void execute::setVirtualMethods(string methodName, string className, vector<string> params, string constant, string message) {
+	Info info(methodName, message, false);
+	info.setClass(className);
+	info.setParameters(params);
+	info.setConstant(constant);
+	virtualMethods.insert(std::make_pair(methodName, info));
+}
+
 
 void execute::setCopyAssignmentOperators(string className, bool exist, string message){
 	Info info(className, message, false, exist);
@@ -967,16 +991,36 @@ void execute::setFunctionsWithReferencedFunction(string mainFunctionName, vector
 	functionsWithReferencedFunction.insert(std::make_pair(mainFunctionName, info));
 }
 
+void execute::setMethodsWithReferencedFunction(string mainMethodName, vector<string> mainMethodParams, string mainClassName, string mainConstant, string usedFuncionName, vector<string> usedFunctionParams, string message) {
+	Info info(mainMethodName, message, false);
+	info.setClass(mainClassName);
+	info.setParameters(mainMethodParams);
+	info.setUsedFunction(usedFuncionName);
+	info.setUsedParameters(usedFunctionParams);
+	info.setConstant(mainConstant);
+	methodsWithReferencedFunction.insert(std::make_pair(mainMethodName, info));
+}
+
+void execute::setFunctionsWithReferencedMethod(string mainFunctionName, vector<string> mainFunctionParams, string usedMethodName, vector<string> usedMethodParams, string usedConstant, string usedClass, string message) {
+	Info info(mainFunctionName, message, false);
+	info.setParameters(mainFunctionParams);
+	info.setUsedFunction(usedMethodName);
+	info.setUsedParameters(usedMethodParams);
+	info.setUsedConstant(usedConstant);
+	info.setUsedClass(usedClass);
+	functionsWithReferencedMethod.insert(std::make_pair(mainFunctionName, info));
+}
+
 void execute::setFunctionsWithName(string functionName, vector<string> params, string message){
 	Info info(functionName, message, false);
 	info.setParameters(params);
 	functionsWithName.insert(std::make_pair(functionName, info));
 }
 
-void execute::setIncludedHeaders(string functionName, string headerName, bool exist, string message){
+void execute::setInvocationsFromHeader(string functionName, string headerName, bool exist, string message){
 	Info info(headerName, message, false, exist);
 	info.setValid(false);
-	includedHeaders.insert(std::make_pair(functionName, info));
+	invocationsFromHeaders.insert(std::make_pair(functionName, info));
 }
 
 void execute::setFileIncludeHeader(vector<string> fileNames, string headerName, string message){
@@ -991,7 +1035,7 @@ void execute::setFileIncludeHeader(vector<string> fileNames, string headerName, 
 			std::regex comment_regex("(/\\*(.|\n|\r)*?\\*/)|//.*");
 			string str = std::regex_replace(code, comment_regex, "");
 
-			std::regex txt_regex("#include\\s*[<\"]\\s*"+headerName+"\\s*[>\"]"); 
+			std::regex txt_regex("#include\\s*[<\"]\\s*"+headerName+"\\s*[>\"]");
 			found |= std::regex_search(str, txt_regex);
 		}
 	}
@@ -1008,10 +1052,9 @@ void execute::setGuardClauses(string fileName, string message) {
 		codeFile.close();
 
 		regex comment_regex("(/\\*(.|\n|\r)*?\\*/)|//.*");
-		code = regex_replace(code, comment_regex, "");		//Necesario gcc-4.9 o posterior para buen uso de regex_replace 
+		code = regex_replace(code, comment_regex, "");		//Use gcc-4.9 or any later version for proper use of regex_replace
 
-		// Dividimos el código en tokens. Buscamos primero la palabra "#define" 
-		// luego miramos cual es la siguiente palabra y la guardamos. 
+		// The code is divided into tokens. 
 		std::regex ws_re("\\s+");
 		found = false;
 		bool fin = false;
@@ -1019,24 +1062,24 @@ void execute::setGuardClauses(string fileName, string message) {
 		std::sregex_token_iterator it(code.begin(), code.end(), ws_re, -1);
 		std::sregex_token_iterator end;
 
-		// Primero buscamos la palabra "#ifndef"
+		// First: search for "#ifndef"
 		while(it != end && !fin){
 			fin = *it == "#ifndef";
 			++it;
 		}
 
-		// Luego guardamos la siguiente palabra
+		// Second: save the next word
 		if(fin && it != end) token = *it;
-		
+
 		if(!token.empty()){
 			fin = false;
-			// Buscamos la palabra "#define"
+			// Third: search for "#define"
 			while(it != end && !fin){
 				fin = *it == "#define";
 				++it;
 			}
 
-			// Miramos si coincide la siguiente palabra con la guardada y en ese caso buscamos "#endif"
+			// Finally: Check if the next word coincides with the token previously saved. If so, search for "#endif"
 			if(it != end && *it == token)
 				while(it != end && !found){
 					found = *(it) == "#endif";
@@ -1075,7 +1118,17 @@ void execute::setIncorrectMessage(string message){
 	incorrectMessage = message;
 }
 
+void execute::setDynamicCast(string methodName, vector<string> parameters, string constant, string className, string originType, string dstType, string message) {
+	Info info(methodName, message, false);
+	info.setClass(className);
+	info.setParameters(parameters);
+	info.setConstant(constant);
+	// The attributes memberVariable and usedClass in the class Info are reused instead of defining new attributes
+   	info.setMemberVariable(originType);
+    	info.setUsedClass(dstType);
 
+	dynamicCast.insert(std::make_pair(methodName, info));
+}
 
 
 
@@ -1110,9 +1163,9 @@ void execute::classWithDefaultConstructor(const MatchFinder::MatchResult &Result
 	const CXXRecordDecl *foundClassWithDefaultConstructor = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithDefaultConstructor");
 	const CXXConstructorDecl *foundDefaultConstructor = Result.Nodes.getNodeAs<clang::CXXConstructorDecl>("defaultConstructor");
 	if (existClass(foundClassWithDefaultConstructor) && existConstructor(foundDefaultConstructor)){
-		for (auto c = clases.begin(); c!=clases.end(); ++c){
-			if(std::regex_match(foundClassWithDefaultConstructor->getNameAsString(), std::regex(c->nom))){
-				c->isDefault = true;
+		for (AI it=defaultConstructors.begin(); it!=defaultConstructors.end(); ++it){
+			if(std::regex_match(foundClassWithDefaultConstructor->getNameAsString(), std::regex(it->first))){
+				(it->second).setFound(true);
 			}
 		}
 	}
@@ -1143,12 +1196,12 @@ void execute::classWithMoveConstructor(const MatchFinder::MatchResult &Result){
 }
 
 void execute::classWithListInitializerConstructor(const MatchFinder::MatchResult &Result){
-	const CXXRecordDecl *foundClassWithListInitializerConstructor = 
+	const CXXRecordDecl *foundClassWithListInitializerConstructor =
 				Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithListInitializerConstructor");
-	const CXXConstructorDecl *foundListInitializerConstructor = 
+	const CXXConstructorDecl *foundListInitializerConstructor =
 				Result.Nodes.getNodeAs<clang::CXXConstructorDecl>("listInitializerConstructor");
 
-	if (existClass(foundClassWithListInitializerConstructor) && existConstructor(foundListInitializerConstructor) 
+	if (existClass(foundClassWithListInitializerConstructor) && existConstructor(foundListInitializerConstructor)
 		&& foundListInitializerConstructor->getNumCtorInitializers() != 0){
 
 		for (AI it=initializers.begin(); it!=initializers.end(); ++it){
@@ -1158,7 +1211,8 @@ void execute::classWithListInitializerConstructor(const MatchFinder::MatchResult
 					vector<string> inits = (it->second).getInitializers();
 					if (checkWithoutParams(inits)){
 						(it->second).setFound(true);
-					}else{
+					}
+					else {
 						if (checkInitializersConstructor(foundListInitializerConstructor, inits)){
 							(it->second).setFound(true);
 						}
@@ -1181,7 +1235,7 @@ void execute::classWithDestructor(const MatchFinder::MatchResult &Result){
 	}
 }
 
- void execute::deleteMember(const MatchFinder::MatchResult &Result){
+void execute::deleteMember(const MatchFinder::MatchResult &Result){
  	const CXXRecordDecl *foundClassWithDeleteMember = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithDeleteMember");
 	const CXXDeleteExpr *foundDeleteExpression = Result.Nodes.getNodeAs<clang::CXXDeleteExpr>("deleteExpression");
 	const FieldDecl *foundDeleteMember = Result.Nodes.getNodeAs<clang::FieldDecl>("deleteMember");
@@ -1190,10 +1244,11 @@ void execute::classWithDestructor(const MatchFinder::MatchResult &Result){
 		
 		if(foundDeleteExpression->isArrayForm()){
 			for(AI i = deleteMembers.begin(); i!= deleteMembers.end(); i++){
-				if (std::regex_match(foundDeleteMember->getNameAsString(), std::regex(i->first))){
+				if (std::regex_match(foundClassWithDeleteMember->getNameAsString(), std::regex((i->second).getClass())) &&
+					std::regex_match(foundDeleteMember->getNameAsString(), std::regex(i->first))){
 					(i->second).setFound(true);
 				}
-			}	
+			}
 		}
 	}
 }
@@ -1201,23 +1256,23 @@ void execute::classWithDestructor(const MatchFinder::MatchResult &Result){
 void execute::numberOfConstructor(const MatchFinder::MatchResult &Result){
 	const CXXRecordDecl *foundClassWithConstructor = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithConstructor");
 	const CXXConstructorDecl *foundConstructor = Result.Nodes.getNodeAs<clang::CXXConstructorDecl>("foundConstructor");
-	
+
 	if (existClass(foundClassWithConstructor) && existConstructor(foundConstructor)){
-		
+
 		for (AI it=constructors.begin(); it!=constructors.end(); ++it){
 			if(std::regex_match(foundClassWithConstructor->getNameAsString(), std::regex(it->first))){
 				unsigned int numberOfConstructors = (it->second).getNumberOfConstructors();
 				numberOfConstructors++;
-				(it->second).setNumberOfConstructors(numberOfConstructors);				
+				(it->second).setNumberOfConstructors(numberOfConstructors);
 			}
 		}
 	}
 }
 
 void execute::explicitSpecifiedConstructor(const MatchFinder::MatchResult &Result){
-	const CXXRecordDecl *foundClassWithExplicitSpecifiedConstructor = 
+	const CXXRecordDecl *foundClassWithExplicitSpecifiedConstructor =
 			Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithExplicitSpecifiedConstructor");
-	const CXXConstructorDecl *foundExplicitSpecifiedConstructor = 
+	const CXXConstructorDecl *foundExplicitSpecifiedConstructor =
 			Result.Nodes.getNodeAs<clang::CXXConstructorDecl>("explicitSpecifiedConstructor");
 
 	if (existClass(foundClassWithExplicitSpecifiedConstructor)){
@@ -1238,13 +1293,13 @@ void execute::takeException(const MatchFinder::MatchResult &Result){
 	if (const CXXThrowExpr *foundException = Result.Nodes.getNodeAs<clang::CXXThrowExpr>("exception")){
 		FullSourceLoc FullLocation1 = Context->getFullLoc(foundException->getLocStart());
       		const CXXRecordDecl *foundExceptionClass = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("exceptionClass");
-		if (FullLocation1.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation1)){	
+		if (FullLocation1.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation1)){
 			for(AI i = takeExceptions.begin(); i!= takeExceptions.end(); i++){
 				if (i->first == foundExceptionClass->getNameAsString()){
 					(i->second).setFound(true);
 					break;
 				}
-			}				
+			}
 		}
 	}
 }
@@ -1258,12 +1313,12 @@ void execute::classWithMember(const MatchFinder::MatchResult &Result){
 
 	if (existClass(foundClass) && existMember(foundMember)){
 		for (AI it=members.begin(); it!=members.end(); ++it){
-			if(std::regex_match(foundMember->getNameAsString(), std::regex(it->first)) && 
+			if(std::regex_match(foundMember->getNameAsString(), std::regex(it->first)) &&
 			   std::regex_match(foundClass->getNameAsString(), std::regex((it->second).getClass()))){
 
 				QualType ft =  foundMember->getType().getCanonicalType();
 			        if(ft->isPointerType()){
-					ft = ft->getPointeeType();					  
+					ft = ft->getPointeeType();
 			      	}
 
 				if (markedConst((it->second).getConstant(), ft.isConstQualified())){
@@ -1278,15 +1333,15 @@ void execute::classWithStaticVariable(const MatchFinder::MatchResult &Result){
 	const CXXRecordDecl *foundClass = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("foundClass");
 	const VarDecl *foundStaticVariable = Result.Nodes.getNodeAs<clang::VarDecl>("foundStaticVariable");
 	if (existClass(foundClass) && existVariable(foundStaticVariable)){
-		
+
 		for (AI it=staticVariables.begin(); it!=staticVariables.end(); ++it){
-			
-			if(std::regex_match(foundStaticVariable->getNameAsString(), std::regex(it->first)) && 
+
+			if(std::regex_match(foundStaticVariable->getNameAsString(), std::regex(it->first)) &&
 			   std::regex_match(foundClass->getNameAsString(), std::regex((it->second).getClass()))){
 
 			   	QualType ft =  foundStaticVariable->getType().getCanonicalType();
 			    	if(ft->isPointerType()){
-					ft = ft->getPointeeType();					  
+					ft = ft->getPointeeType();
 			    	}
 
 				if (markedConst((it->second).getConstant(), ft.isConstQualified()) &&
@@ -1299,19 +1354,19 @@ void execute::classWithStaticVariable(const MatchFinder::MatchResult &Result){
 }
 
 void execute::releaseVariable(const MatchFinder::MatchResult &Result){
-	
+
 	if (const VarDecl *FS = Result.Nodes.getNodeAs<clang::VarDecl>("variable_new")){
 
 		FullSourceLoc FullLocation = Context->getFullLoc(FS->getLocStart());
-      		
-		if (FullLocation.isValid() 
-			&& !Context->getSourceManager().isInSystemHeader(FullLocation) 
+
+		if (FullLocation.isValid()
+			&& !Context->getSourceManager().isInSystemHeader(FullLocation)
 		){
 			bool found = false;
-			for (map<const VarDecl*, bool>::iterator it=variables_new.begin(); it!=variables_new.end(); it++){	
-				if( it->first->getCanonicalDecl() == FS->getCanonicalDecl() ){	
+			for (map<const VarDecl*, bool>::iterator it=variables_new.begin(); it!=variables_new.end(); it++){
+				if( it->first->getCanonicalDecl() == FS->getCanonicalDecl() ){
 					found = true;
-					break;	
+					break;
 				}
 			}
 
@@ -1324,11 +1379,11 @@ void execute::releaseVariable(const MatchFinder::MatchResult &Result){
 	if (const VarDecl *FS = Result.Nodes.getNodeAs<clang::VarDecl>("variable_delete")){
 
 		FullSourceLoc FullLocation = Context->getFullLoc(FS->getLocStart());
-      		
-		if (FullLocation.isValid() 
-			&& !Context->getSourceManager().isInSystemHeader(FullLocation) 
+
+		if (FullLocation.isValid()
+			&& !Context->getSourceManager().isInSystemHeader(FullLocation)
 		){
-			for (map<const VarDecl*, bool>::iterator it=variables_new.begin(); it!=variables_new.end(); it++){	
+			for (map<const VarDecl*, bool>::iterator it=variables_new.begin(); it!=variables_new.end(); it++){
 				if( it->first->getCanonicalDecl() == FS->getCanonicalDecl() ){
 					it->second = true;
 				}
@@ -1337,35 +1392,46 @@ void execute::releaseVariable(const MatchFinder::MatchResult &Result){
 	}
 }
 
+void execute::classWithAllPrivateMember(const MatchFinder::MatchResult &Result){
+	const CXXRecordDecl *foundClassWithAllPrivateMember = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithAllPrivateMember");
+	if (existClass(foundClassWithAllPrivateMember)){
+		for (AI it=classWithAllPrivateMembers.begin(); it!=classWithAllPrivateMembers.end(); ++it){
+			if(std::regex_match(foundClassWithAllPrivateMember->getNameAsString(), std::regex(it->first))){
+				(it->second).setFound(true);
+			}
+		}
+	}
+}
+
 void execute::classWithVariableMembersAccessLevel(const MatchFinder::MatchResult &Result){
-        const CXXRecordDecl *foundClass = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("foundClassAccessLevel");
-        const FieldDecl *foundMember = Result.Nodes.getNodeAs<clang::FieldDecl>("foundMemberVariableAccessLevel");
+	const CXXRecordDecl *foundClass = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("foundClassAccessLevel");
+    const FieldDecl *foundMember = Result.Nodes.getNodeAs<clang::FieldDecl>("foundMemberVariableAccessLevel");
 
-        if (existClass(foundClass) && existMember(foundMember)){
-
-                for (AI it=variableMembersAccessLevel.begin(); it!=variableMembersAccessLevel.end(); ++it){
-                        if(std::regex_match(foundMember->getNameAsString(), std::regex(it->first)) &&
-                           std::regex_match(foundClass->getNameAsString(), std::regex((it->second).getClass()))){
+    if (existClass(foundClass) && existMember(foundMember)){
+		llvm::outs() << foundMember->getNameAsString() << "\n";
+        for (AI it=variableMembersAccessLevel.begin(); it!=variableMembersAccessLevel.end(); ++it){
+        	if(std::regex_match(foundMember->getNameAsString(), std::regex(it->first)) &&
+                std::regex_match(foundClass->getNameAsString(), std::regex((it->second).getClass()))){
 
 				bool accessCorrect = false;
-				switch(foundMember->getAccess()){	
-						case AS_public: 
-							accessCorrect = (it->second).getLevel() == "public";
-							break;
-						case AS_protected: 
-							accessCorrect = (it->second).getLevel() == "protected";
-							break;
-						case AS_none:
-						case AS_private: 
-							accessCorrect = (it->second).getLevel() == "private";
-							break;
+				switch(foundMember->getAccess()){
+					case AS_public:
+						accessCorrect = (it->second).getLevel() == "public";
+						break;
+					case AS_protected:
+						accessCorrect = (it->second).getLevel() == "protected";
+						break;
+					case AS_none:
+					case AS_private:
+						accessCorrect = (it->second).getLevel() == "private";
+						break;
 				}
 
 				if(accessCorrect)
-	                                (it->second).setFound(true);
-                        }
-                }
-        }
+					(it->second).setFound(true);
+			}
+		}
+    }
 }
 
 
@@ -1377,7 +1443,8 @@ void execute::methodWithName(const MatchFinder::MatchResult &Result){
 	const CXXMethodDecl *foundMethodWithName = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("methodWithName");
 	if (existClass(foundClassWithNameWithMethod) && existMethod(foundMethodWithName) == true){
 		for (AI it=methodsWithName.begin(); it!=methodsWithName.end(); ++it){
-			if(checkRegularExpresion(foundMethodWithName->getNameAsString(), it->first)){
+			if(checkRegularExpresion(foundMethodWithName->getNameAsString(), it->first) &&
+				checkRegularExpresion(foundClassWithNameWithMethod->getNameAsString(), (it->second).getClass())){
 				if(checkParams(foundMethodWithName,(it->second).getParameters())){
 					if (markedConst((it->second).getConstant(), foundMethodWithName->isConst())){
 						(it->second).setFound(true);
@@ -1395,30 +1462,33 @@ void execute::methodWithReferencedVariable(const MatchFinder::MatchResult &Resul
 		const FieldDecl *foundReferencedVariable = Result.Nodes.getNodeAs<clang::FieldDecl>("referencedVariable");
 		if (foundReferencedVariable){
 			for (AI it=methodsWithReferencedVariable.begin(); it!=methodsWithReferencedVariable.end(); ++it){
-				if(checkRegularExpresion(foundMethodWithReferencedVariable->getNameAsString(),it->first)){
-					if(checkParams(foundMethodWithReferencedVariable,(it->second).getParameters())){
-						if (markedConst((it->second).getConstant(), foundMethodWithReferencedVariable->isConst())){
-							(it->second).setFound(true);
+				if(checkRegularExpresion(foundClassWithMethodVariable->getNameAsString(), (it->second).getClass()) &&
+					checkRegularExpresion(foundReferencedVariable->getNameAsString(), (it->second).getMemberVariable())){
+					if(checkRegularExpresion(foundMethodWithReferencedVariable->getNameAsString(),it->first)){
+						if(checkParams(foundMethodWithReferencedVariable,(it->second).getParameters())){
+							if (markedConst((it->second).getConstant(), foundMethodWithReferencedVariable->isConst())){
+								(it->second).setFound(true);
+							}
 						}
 					}
 				}
 			}
 		}
-	}				
+	}
 }
 
 void execute::methodWithReferencedMethod(const MatchFinder::MatchResult &Result){
 	const CXXRecordDecl *foundClassWithReferencedMethod = 0;
 	const CXXMethodDecl *foundMainMethod = 0;
 
-	const CXXRecordDecl *foundClassOfReferencedMethod = 0; 
-	const CXXMethodDecl *foundUsedMethod = 0; 
+	const CXXRecordDecl *foundClassOfReferencedMethod = 0;
+	const CXXMethodDecl *foundUsedMethod = 0;
 
 	foundClassWithReferencedMethod = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithReferencedMethod");
 	foundMainMethod = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("mainMethod");
-	
+
 	if (existClass(foundClassWithReferencedMethod) && existMethod(foundMainMethod) == true){
-		
+
 		foundClassOfReferencedMethod = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classOfReferencedMethod");
 		foundUsedMethod = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("usedMethod");
 
@@ -1428,12 +1498,14 @@ void execute::methodWithReferencedMethod(const MatchFinder::MatchResult &Result)
 
 			for (AI it=methodsWithReferencedMethod.begin(); it!=methodsWithReferencedMethod.end(); ++it){
 
-				if(checkRegularExpresion(foundMainMethod->getNameAsString(), it->first)){
+				if(checkRegularExpresion(foundMainMethod->getNameAsString(), it->first) &&
+					checkRegularExpresion(foundClassWithReferencedMethod->getNameAsString(), (it->second).getClass())){
 					if(checkParams(foundMainMethod,(it->second).getParameters())){
 					    if (markedConst((it->second).getConstant(), foundMainMethod->isConst())){
-					
-						if(checkRegularExpresion(foundUsedMethod->getNameAsString(), (it->second).getUsedFunction()))
-						{	
+
+						if(checkRegularExpresion(foundUsedMethod->getNameAsString(), (it->second).getUsedFunction()) &&
+							checkRegularExpresion(foundClassOfReferencedMethod->getNameAsString(), (it->second).getUsedClass()))
+						{
 							if(checkParams(foundUsedMethod,(it->second).getUsedParameters())){
 								if (markedConst((it->second).getUsedConstant(), foundUsedMethod->isConst())){
 									(it->second).setFound(true);
@@ -1445,7 +1517,7 @@ void execute::methodWithReferencedMethod(const MatchFinder::MatchResult &Result)
 				}
 			}
 		}
-	}				
+	}
 }
 
 void execute::noExceptMethod(const MatchFinder::MatchResult &Result){
@@ -1453,11 +1525,9 @@ void execute::noExceptMethod(const MatchFinder::MatchResult &Result){
 	const CXXMethodDecl *foundNoExceptMethod = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("noExceptMethod");
 
 	if (existClass(foundClassWithNoExceptMethod) && existMethod(foundNoExceptMethod) == true){
-
 		for (AI it=noExceptMethods.begin(); it!=noExceptMethods.end(); ++it){
-
-			if(checkRegularExpresion(foundNoExceptMethod->getNameAsString(), it->first)){
-
+			if(checkRegularExpresion(foundNoExceptMethod->getNameAsString(), it->first) &&
+				checkRegularExpresion(foundClassWithNoExceptMethod->getNameAsString(), (it->second).getClass())){
 				if(checkParams(foundNoExceptMethod,(it->second).getParameters())){
 					if (markedConst((it->second).getConstant(), foundNoExceptMethod->isConst())){
 						const FunctionProtoType *FP = foundNoExceptMethod->getType()->castAs<FunctionProtoType>();
@@ -1478,12 +1548,13 @@ void execute::inlineMethod(const MatchFinder::MatchResult &Result){
 	const CXXMethodDecl *foundInlineMethod = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("inlineMethod");
 
 	if (existClass(foundClassWithInlineMethod) && existMethod(foundInlineMethod) == true){
-				
+
 		if(foundInlineMethod->isInlined()){
 
 			for (AI it=inlineMethods.begin(); it!=inlineMethods.end(); ++it){
-					
-				if(checkRegularExpresion(foundInlineMethod->getNameAsString(), it->first))
+
+				if(checkRegularExpresion(foundInlineMethod->getNameAsString(), it->first) &&
+					checkRegularExpresion(foundClassWithInlineMethod->getNameAsString(), (it->second).getClass()))
 				{
 					if(checkParams(foundInlineMethod,(it->second).getParameters())){
 						if (markedConst((it->second).getConstant(), foundInlineMethod->isConst())){
@@ -1502,10 +1573,11 @@ void execute::defaultArgumentsInMethod(const MatchFinder::MatchResult &Result){
 	const CXXMethodDecl *foundDefArgsInMethod = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("defaultArgumentsInMethod");
 
 	if (existClass(foundClassWithDefArgsInMethod) && existMethod(foundDefArgsInMethod) == true){
-				
+
 		for (AI it=defaultArgumentsInMethods.begin(); it!=defaultArgumentsInMethods.end(); ++it){
-					
-			if(checkRegularExpresion(foundDefArgsInMethod->getNameAsString(), it->first))
+
+			if(checkRegularExpresion(foundDefArgsInMethod->getNameAsString(), it->first) &&
+				checkRegularExpresion(foundClassWithDefArgsInMethod->getNameAsString(), (it->second).getClass()))
 			{
 				if(checkParams(foundDefArgsInMethod,(it->second).getParameters())){
 					if (markedConst((it->second).getConstant(), foundDefArgsInMethod->isConst())){
@@ -1523,16 +1595,17 @@ void execute::defaultArgumentsInMethod(const MatchFinder::MatchResult &Result){
 // ----------------------- METHODS DELETED ---------------------
 void execute::deletedMethod(const MatchFinder::MatchResult &Result) {
 
-	const CXXRecordDecl *foundClassWithDeletedMethod = 
+	const CXXRecordDecl *foundClassWithDeletedMethod =
 			Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithDeletedMethod");
-	const CXXMethodDecl *foundDeletedMethod = 
+	const CXXMethodDecl *foundDeletedMethod =
 			Result.Nodes.getNodeAs<clang::CXXMethodDecl>("deletedMethod");
 
 	if (existClass(foundClassWithDeletedMethod) && existMethod(foundDeletedMethod)) {
 
 		for (AI it = deletedMethods.begin(); it != deletedMethods.end(); ++it) {
 
-			if(checkRegularExpresion(foundDeletedMethod->getNameAsString(), it->first) && 
+			if(checkRegularExpresion(foundDeletedMethod->getNameAsString(), it->first) &&
+				checkRegularExpresion(foundClassWithDeletedMethod->getNameAsString(), (it->second).getClass()) &&
 			   checkParams(foundDeletedMethod, (it->second).getParameters()) &&
 			   markedConst((it->second).getConstant(), foundDeletedMethod->isConst())) {
 				(it->second).setFound(true);
@@ -1544,20 +1617,21 @@ void execute::deletedMethod(const MatchFinder::MatchResult &Result) {
 // ----------------------- METHODS DEFAULT ---------------------
 void execute::defaultedMethod(const MatchFinder::MatchResult &Result) {
 
-	const CXXRecordDecl *foundClassWithDefaultedMethod = 
+	const CXXRecordDecl *foundClassWithDefaultedMethod =
 			Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithDefaultedMethod");
-	const CXXMethodDecl *foundDefaultedMethod = 
+	const CXXMethodDecl *foundDefaultedMethod =
 			Result.Nodes.getNodeAs<clang::CXXMethodDecl>("defaultedMethod");
 
 	if (existClass(foundClassWithDefaultedMethod) && foundDefaultedMethod) {
 
 		FullSourceLoc FullLocation = Context->getFullLoc(foundDefaultedMethod->getLocStart());
-        
+
         if (FullLocation.isValid() && !Context->getSourceManager().isInSystemHeader(FullLocation)) {
 
 			for (AI it = defaultedMethods.begin(); it != defaultedMethods.end(); ++it) {
 
-				if(checkRegularExpresion(foundDefaultedMethod->getNameAsString(), it->first) && 
+				if(checkRegularExpresion(foundDefaultedMethod->getNameAsString(), it->first) &&
+					checkRegularExpresion(foundClassWithDefaultedMethod->getNameAsString(), (it->second).getClass()) &&
 				   checkParams(foundDefaultedMethod, (it->second).getParameters()) &&
 				   markedConst((it->second).getConstant(), foundDefaultedMethod->isConst())) {
 					(it->second).setFound(true);
@@ -1566,6 +1640,30 @@ void execute::defaultedMethod(const MatchFinder::MatchResult &Result) {
 		}
 	}
 }
+
+// ----------------------- METHODS VIRTUAL ---------------------
+void execute::virtualMethod(const MatchFinder::MatchResult &Result) {
+
+	const CXXRecordDecl *foundClassWithVirtualMethod =
+			Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithVirtualMethod");
+	const CXXMethodDecl *foundVirtualMethod =
+			Result.Nodes.getNodeAs<clang::CXXMethodDecl>("virtualMethod");
+
+	if (existClass(foundClassWithVirtualMethod) && existMethod(foundVirtualMethod)) {
+
+		for (AI it = virtualMethods.begin(); it != virtualMethods.end(); ++it) {
+
+			if(checkRegularExpresion(foundVirtualMethod->getNameAsString(), it->first) &&
+				checkRegularExpresion(foundClassWithVirtualMethod->getNameAsString(), (it->second).getClass()) &&
+			   checkParams(foundVirtualMethod, (it->second).getParameters()) &&
+			   markedConst((it->second).getConstant(), foundVirtualMethod->isConst())) {
+				(it->second).setFound(true);
+			}
+		}
+	}
+}
+
+
 
 // ----------------------- CHECK OPERATORS ---------------------
 void execute::classWithCopyAssignmentOperator(const MatchFinder::MatchResult &Result){
@@ -1600,14 +1698,75 @@ void execute::functionWithReferencedFunction(const MatchFinder::MatchResult &Res
 
 		for (AI it=functionsWithReferencedFunction.begin(); it!=functionsWithReferencedFunction.end(); ++it){
 			if(checkRegularExpresion(foundMainFunction->getNameAsString(), it->first)){
-				if (checkParams(foundMainFunction, (it->second).getParameters())){		
+				if (checkParams(foundMainFunction, (it->second).getParameters())){
 
 					if(checkRegularExpresion(foundUsedFunction->getNameAsString(), (it->second).getUsedFunction()))
-					{			
-						if(checkParams(foundUsedFunction,(it->second).getUsedParameters())){	
+					{
+						if(checkParams(foundUsedFunction,(it->second).getUsedParameters())){
 							(it->second).setFound(true);
 						}
-					}					
+					}
+				}
+			}
+		}
+	}
+}
+
+void execute::methodWithReferencedFunction(const MatchFinder::MatchResult &Result) {
+
+	const CXXRecordDecl *foundClassWithReferencedFunction = 0;
+	const CXXMethodDecl *foundMainMethod = 0;
+
+	const FunctionDecl *foundUsedFunction = Result.Nodes.getNodeAs<clang::FunctionDecl>("usedFunctionForMainMethod");
+
+	foundClassWithReferencedFunction = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("mainClassWithReferencedFunction");
+	foundMainMethod = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("mainMethodWithReferencedFunction");
+
+	if (existClass(foundClassWithReferencedFunction) && existMethod(foundMainMethod) == true){
+
+		if(existFunction(foundUsedFunction)) {
+
+			for (AI it=methodsWithReferencedFunction.begin(); it!=methodsWithReferencedFunction.end(); ++it){
+
+				if(checkRegularExpresion(foundMainMethod->getNameAsString(), it->first) &&
+					checkRegularExpresion(foundClassWithReferencedFunction->getNameAsString(), (it->second).getClass())){
+					if(checkParams(foundMainMethod,(it->second).getParameters())){
+					    if (markedConst((it->second).getConstant(), foundMainMethod->isConst())){
+
+						if(checkRegularExpresion(foundUsedFunction->getNameAsString(), (it->second).getUsedFunction()))
+						{
+							if(checkParams(foundUsedFunction,(it->second).getUsedParameters())){
+									(it->second).setFound(true);
+							}
+						}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void execute::functionWithReferencedMethod(const MatchFinder::MatchResult &Result) {
+	const FunctionDecl *foundMainFunction = Result.Nodes.getNodeAs<clang::FunctionDecl>("mainFunctionWithReferencedMethod");
+
+	const CXXRecordDecl *foundClassOfReferencedMethod = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classOfReferencedMethodByFunction");
+	const CXXMethodDecl *foundUsedMethod = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("usedMethodByFunction");
+
+	if (existFunction(foundMainFunction)) {
+
+
+
+		if (existClass(foundClassOfReferencedMethod) && foundUsedMethod != nullptr){
+			for (AI it=functionsWithReferencedMethod.begin(); it!=functionsWithReferencedMethod.end(); ++it){
+				if(checkRegularExpresion(foundMainFunction->getNameAsString(), it->first) &&
+					checkRegularExpresion(foundClassOfReferencedMethod->getNameAsString(), (it->second).getUsedClass())){
+					if(checkParams(foundUsedMethod,(it->second).getUsedParameters()) &&
+						checkParams(foundMainFunction,(it->second).getParameters())){
+						if (markedConst((it->second).getUsedConstant(), foundUsedMethod->isConst())){
+							(it->second).setFound(true);
+						}
+					}
 				}
 			}
 		}
@@ -1616,39 +1775,39 @@ void execute::functionWithReferencedFunction(const MatchFinder::MatchResult &Res
 
 void execute::functionWithName(const MatchFinder::MatchResult &Result){
 	const FunctionDecl *foundFunctionWithName = Result.Nodes.getNodeAs<clang::FunctionDecl>("functionWithName");
-	if (existFunction(foundFunctionWithName)){ 
+	if (existFunction(foundFunctionWithName)){
 
 	    for (AI it=functionsWithName.begin(); it!=functionsWithName.end(); ++it){
 
 		if(checkRegularExpresion(foundFunctionWithName->getNameAsString(),it->first)){
-//			llvm::outs() << foundFunctionWithName->getType().getCanonicalType().getAsString() << "\n";
+ 			//llvm::outs() << foundFunctionWithName->getType().getCanonicalType().getAsString() << "\n";
 
-				if (checkParams(foundFunctionWithName, (it->second).getParameters())){
+			if (checkParams(foundFunctionWithName, (it->second).getParameters())){
 					(it->second).setFound(true);
 			}
-		}	
+		}
 	   }
 	}
- }
+}
 
 
 // ----------------------- CHECK HEADERS ---------------------
 
 
-void execute::includedHeader(const MatchFinder::MatchResult &Result){
+void execute::invocationsFromHeader(const MatchFinder::MatchResult &Result){
 	if (const FunctionDecl *FS = Result.Nodes.getNodeAs<clang::FunctionDecl>("functionCalled")){
 		FullSourceLoc FullLocation1 = Context->getFullLoc(FS->getLocStart());
 		if (FullLocation1.isValid() ){
 			FullSourceLoc FullLocation2 = Context->getFullLoc(Context->getSourceManager().getIncludeLoc(FullLocation1.getFileID()));
-			std::pair<AI, AI> rango = includedHeaders.equal_range(FS->getNameAsString());
+			std::pair<AI, AI> rango = invocationsFromHeaders.equal_range(FS->getNameAsString());
 			for (AI i = rango.first; i != rango.second; ++i){
 				if(FullLocation2.isValid()){
 					(i->second).setFound(true);
 					 string headerName = (i->second).getName();
-                                        if( string(Context->getSourceManager().getFileEntryForID(FullLocation2.getFileID())->getName()).find(headerName) != std::string::npos){	
+                                        if( string(Context->getSourceManager().getFileEntryForID(FullLocation2.getFileID())->getName()).find(headerName) != std::string::npos){
 						(i->second).setValid(true);
 					}
-				}        
+				}
 			}
 		}
 	}
@@ -1724,7 +1883,7 @@ bool execute::friend_class(const CXXRecordDecl* c1, string c2) {
 		//			llvm::outs() << qt->getAsCXXRecordDecl()->getNameAsString();
 		//	}
 
-                        if((qt->getAsCXXRecordDecl() != NULL) && checkRegularExpresion(qt->getAsCXXRecordDecl()->getNameAsString(), c2)){      
+                        if((qt->getAsCXXRecordDecl() != NULL) && checkRegularExpresion(qt->getAsCXXRecordDecl()->getNameAsString(), c2)){
                                 return true;
                         }
                 }
@@ -1733,3 +1892,20 @@ bool execute::friend_class(const CXXRecordDecl* c1, string c2) {
         return false;
 }
 
+void execute::methodWithDynamicCast(const MatchFinder::MatchResult &Result){
+	const CXXRecordDecl *foundClassWithDynamicCast = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithDynamicCast");
+	const CXXMethodDecl *foundMethodWithDynamicCast = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("methodWithDynamicCast");
+	const CXXDynamicCastExpr *foundDynamicCast = Result.Nodes.getNodeAs<clang::CXXDynamicCastExpr>("dynamic_method");
+    const ImplicitCastExpr *dynamicType = Result.Nodes.getNodeAs<clang::ImplicitCastExpr>("dynamic_type");
+
+	if(existClass(foundClassWithDynamicCast) && existMethod(foundMethodWithDynamicCast) && foundDynamicCast!=nullptr && dynamicType!=nullptr){
+        for(AI it=dynamicCast.begin(); it!=dynamicCast.end(); ++it){
+			if(std::regex_match(foundClassWithDynamicCast->getNameAsString(), std::regex((it->second).getClass())) &&
+				std::regex_match(foundMethodWithDynamicCast->getNameAsString(), std::regex(it->first))){
+					if(foundDynamicCast->getType().getCanonicalType().getAsString() == (it->second).getUsedClass() &&
+                        dynamicType->getType().getCanonicalType().getAsString() == (it->second).getMemberVariable())
+					(it->second).setFound(true);
+			}
+		}
+	}
+}

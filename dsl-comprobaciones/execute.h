@@ -33,23 +33,15 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 
 // ----------------------- General ---------------------
 	public:
-		execute();
 		virtual void run(const MatchFinder::MatchResult &Result);
 		void postRun();
 		bool check_same_decl_canonical(const Decl *c1, const Decl *c2);
-		virtual void HandleTranslationUnit(ASTContext &Context);
-		bool VisitCXXRecordDecl(CXXRecordDecl *Declaration);
 
 	private:
 		ASTContext *Context;
 		Rewriter Rewrite;
 		typedef std::multimap<string, Info> A;
 		typedef A::iterator AI;
-		typedef std::map<const VarDecl*, bool> B;
-		typedef B::iterator BI;
-		std::list<const CXXRecordDecl*> allClasses;
-		bool traversed;
-		
 
 /*
 **
@@ -87,6 +79,7 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 		bool checkParamsFunction(const FunctionDecl *foundFunction, vector<string> parameters);
 		bool checkWithoutParams(vector<string> params);
 		bool markedConst(string c1, bool c2);
+		bool markedDefault(string c1, bool c2);
 		bool checkDefArgs(const FunctionDecl* function, unsigned int numDefArgs, vector<string> defArgs);
 		bool checkRegularExpresion(string str1, string str2);
 
@@ -123,7 +116,6 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 	private:
 		void classWithDefaultConstructor(const MatchFinder::MatchResult &Result);
 		void hasDefaultConstructor();
-		bool foundAllDefaultConstructors(A a);
 		A defaultConstructors;
 
 // ----------------------- COPY CONSTRUCTOR ---------------------
@@ -218,7 +210,7 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 // ----------------------- MEMBER ---------------------
 
 	public:
-		void setMembers(string className, string memberName, string constant, string message);
+		void setMembers(string className, string memberName, string constant, bool exist, string message);
 
 	private:
 		void classWithMember(const MatchFinder::MatchResult &Result);
@@ -246,6 +238,16 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 		map<const VarDecl*, bool> variables_new;
 		string releasedVariableMessage;
 		void hasReleasedVariable();
+
+// ----------------------- PRIVATE MEMBERS ---------------------
+
+	public:
+		void setClassWithAllPrivateMembers(string className, string message);
+
+	private:
+		void classWithAllPrivateMember(const MatchFinder::MatchResult &Result);
+		void hasAllPrivateMember();
+		A classWithAllPrivateMembers;
 
 // ----------------------- ACCESS LEVEL VARIABLE MEMBERS ----------
 
@@ -276,10 +278,20 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 		A methodsWithName;
 		void hasMethodWithName();
 
+// -------------------- METHODS WITH DEFAULT ARG------------------
+
+	public:
+		void setMethodsWithDefaultArg(string methodName, string className, vector<string> params, vector<string> defaults, string constant, string message);
+
+	private:
+		void methodWithDefaultArg(const MatchFinder::MatchResult &Result);
+		A methodsWithDefaultArg;
+		void hasMethodWithDefaultArg();
+
 // ----------------------- METHODS WITH REFERENCED VARIABLE---------------------
 
 	public:
-		void setMethodsWithReferencedVariable(string methodName, string className, vector<string> params, string constant, string message);
+		void setMethodsWithReferencedVariable(string methodName, string className, vector<string> params, string constant, string memberVariable, string message);
 
 	private:
 		void methodWithReferencedVariable(const MatchFinder::MatchResult &Result);
@@ -289,7 +301,7 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 // ----------------------- METHODS WITH REFERENCED METHOD---------------------
 
 	public:
-		void setMethodsWithReferencedMethod(string mainMethodName, vector<string> mainMethodParams, string mainClassName, string mainConstant, string usedMethodName, vector<string> usedMethodParams, string usedConstant, string message);
+		void setMethodsWithReferencedMethod(string mainMethodName, vector<string> mainMethodParams, string mainClassName, string mainConstant, string usedMethodName, vector<string> usedMethodParams, string usedClasName, string usedConstant, string message);
 
 	private:
 		void methodWithReferencedMethod(const MatchFinder::MatchResult &Result);
@@ -346,6 +358,15 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 		void hasDefaultedMethod();
 		A defaultedMethods;
 
+
+// ----------------------- METHODS VIRTUAL ---------------------
+	public:
+		void setVirtualMethods(string methodName, string className, vector<string> params, string constant, string message);
+	private:
+		void virtualMethod(const MatchFinder::MatchResult &Result);
+		void hasVirtualMethod();
+		A virtualMethods;
+
 /*
 **
 ** OPERATORS
@@ -376,11 +397,31 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 
 	public:
 		void setFunctionsWithReferencedFunction(string mainFunctionName, vector<string> mainFunctionParameters, string usedFuncionName, vector<string> usedFunctionParameters, string message);
-		
+
 	private:
 		void functionWithReferencedFunction(const MatchFinder::MatchResult &Result);
 		A functionsWithReferencedFunction;
 		void hasFunctionWithReferencedFunction();
+
+// ----------------------- METHODS WITH REFERENCED FUNCTIONS ---------------------
+
+	public:
+		void setMethodsWithReferencedFunction(string mainMethodName, vector<string> mainMethodParameters, string mainClassName, string mainConstant, string usedFuncionName, vector<string> usedFunctionParameters, string message);
+
+	private:
+		void methodWithReferencedFunction(const MatchFinder::MatchResult &Result);
+		A methodsWithReferencedFunction;
+		void hasMethodWithReferencedFunction();
+
+// ----------------------- FUNCTIONS WITH REFERENCED METHODS ---------------------
+
+	public:
+		void setFunctionsWithReferencedMethod(string mainFunctionName, vector<string> mainFunctionParameters, string usedMethodName, vector<string> usedMethodParameters, string usedConstant, string usedClass, string message);
+
+	private:
+		void functionWithReferencedMethod(const MatchFinder::MatchResult &Result);
+		A functionsWithReferencedMethod;
+		void hasFunctionWithReferencedMethod();
 
 // ----------------------- FUNCTIONS WITH NAME ---------------------
 
@@ -405,12 +446,12 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 // ----------------------- INCLUDED HEADER---------------------
 
 	public:
-		void setIncludedHeaders(string functionNames, string headerName, bool exist, string message);
+		void setInvocationsFromHeader(string functionNames, string headerName, bool exist, string message);
 
 	private:
-		void includedHeader(const MatchFinder::MatchResult &Result);
-		A includedHeaders;
-		void hasIncludedHeader();
+		void invocationsFromHeader(const MatchFinder::MatchResult &Result);
+		A invocationsFromHeaders;
+		void hasInvocationsFromHeader();
 
 // --------------------- FILE INCLUDE HEADER ------------------
 	public:
@@ -473,10 +514,19 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
                 void hasFriendClass();
 		bool friend_class(const CXXRecordDecl* c1, string c2);
 
+//------------------------ DYNAMIC CAST --------------------------
+	public:
+		void setDynamicCast(string methodName, vector<string> parameters, string constant, string className, string originType, string dstType, string message);
+	private:
+		void methodWithDynamicCast(const MatchFinder::MatchResult &Result);
+		A dynamicCast;
+		void hasDynamicCast();
+
+
 
 /*
 **
-** FINAL CHECKING
+** FINAL CHECK
 **
 */
 
@@ -487,20 +537,13 @@ class execute : public MatchFinder::MatchCallback, public ASTConsumer, public Re
 		string getCorrectMessage();
 		void setIncorrectMessage(string message);
 		string getIncorrectMessage();
-		
-	private:		
+
+	private:
 		bool correct = true;
 		string correctMessage, incorrectMessage;
 		void isCorrect();
-		void showMessages();	
+		void showMessages();
 		set<string> messages;
-		struct class_t{
-			string nom;
-			bool isDefault;
-			class_t(string nom):nom{nom},isDefault{false} {}
-		};
-		list<class_t> clases;
-		
 };
 
 
