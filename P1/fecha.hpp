@@ -34,7 +34,7 @@ public:
     Fecha& operator -- ();
     Fecha operator -- (int);
     //operador de conversión
-    operator const char *() const;
+    const char* cadena() const;
 private:
     int _d,_m,_a;
     //Validador fecha
@@ -46,4 +46,8 @@ bool operator < (const Fecha&, const Fecha&);
 bool operator > (const Fecha&, const Fecha&);
 bool operator <= (const Fecha&, const Fecha&);
 bool operator >= (const Fecha&, const Fecha&);
+
+istream& operator >>(istream& is, Fecha& f);
+ostream& operator <<(ostream& os, const Fecha& f);
+
 #endif

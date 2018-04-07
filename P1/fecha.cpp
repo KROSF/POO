@@ -76,7 +76,7 @@ Fecha Fecha::operator--(int) {
     return t;
 }
 
-Fecha::operator const char *() const {
+const char* Fecha::cadena() const{
   Hrsys shrsys(this->dia(),this->mes(),this->anno());
   return shrsys.toString();
 }
@@ -105,4 +105,19 @@ bool operator <= (const Fecha& fecha1, const Fecha& fecha2){
 }
 bool operator >= (const Fecha& fecha1, const Fecha& fecha2 ){
     return (fecha1 > fecha2) || (fecha1 == fecha2 );
+}
+
+istream& operator >>(istream& is, Fecha& fecha)
+{
+  char* tmp = new char[11];
+  is.getline(tmp,11);
+  fecha = Fecha(tmp);
+  delete[] tmp;
+  return is;
+}
+
+ostream& operator <<(ostream& os, const Fecha& fecha)
+{
+	os << fecha.cadena();
+	return os;
 }

@@ -29,7 +29,6 @@ test-P1-auto: test-caso0-fecha-auto.o test-caso0-cadena-auto.o test-auto.o caden
 test-caso0-fecha-auto.o test-caso0-cadena-auto.o test-auto.o: \
 	test-caso0-fecha-auto.cpp test-caso0-cadena-auto.cpp \
 	test-auto.cpp test-auto.hpp fecha.hpp cadena.hpp
-#$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
 fecha.o: fecha.cpp fecha.hpp hrsys.hpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
