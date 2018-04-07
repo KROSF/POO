@@ -16,7 +16,7 @@ CXXFLAGS    := -std=c++11
 # desarrollo de LLVM/CLang.
 LDFLAGS     := # -static
 LLVMLDFLAGS := $(shell llvm-config --libs) $(LDFLAGS)
-COMMONSRCS  := $(DIR)checkCode.cpp $(DIR)execute.cpp $(DIR)matchers.cpp
+COMMONSRCS  := $(DIR)caclibrary.cpp $(DIR)execute.cpp $(DIR)matchers.cpp
 SOURCES     := fecha_check.cpp cadena_check.cpp ${COMMONSRCS}
 COMMONHDRS  := $(COMMONSRCS:.cpp=.h) $(DIR)info.h
 COMMONOBJS  := $(COMMONSRCS:.cpp=.o)

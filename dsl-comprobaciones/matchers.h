@@ -21,13 +21,16 @@ using namespace clang;
 using namespace clang::ast_matchers;
 using namespace std;
 
+#ifndef MATCHERS_H
+#define MATCHERS_H
+
 namespace clang{
 	namespace ast_matchers{
-	
+
 		AST_MATCHER(clang::CXXDestructorDecl, isImplicitDestructor) {
 			return Node.isImplicit();
 		}
-		
+
 		AST_MATCHER(clang::CXXRecordDecl, hasCopyConstructorWithConstParam) {
 			return Node.hasCopyConstructorWithConstParam();
 		}
@@ -38,7 +41,7 @@ namespace clang{
 
 		AST_MATCHER(clang::FunctionDecl, isImplicitFunction) {
 			return Node.isImplicit();
-		}		
+		}
 	}
 }
 
@@ -52,6 +55,7 @@ namespace clang{
 
 DeclarationMatcher classWithName_Matcher(string className);
 
+DeclarationMatcher dynamic_cast_Matcher(string methodName, string className);
 
 
 
@@ -60,9 +64,6 @@ DeclarationMatcher classWithName_Matcher(string className);
 ** CONSTRUCTORS
 **
 */
-
-//Nuevo Matcher
-DeclarationMatcher notDefaultConstructor_Matcher(string className);
 
 DeclarationMatcher defaultConstructor_Matcher(string className);
 
@@ -139,6 +140,8 @@ DeclarationMatcher deletedMethod_Matcher(string methodName, string className);
 
 DeclarationMatcher defaultedMethod_Matcher(string methodName, string className);
 
+DeclarationMatcher virtualMethod_Matcher(string methodName, string className);
+
 
 /*
 **
@@ -148,11 +151,13 @@ DeclarationMatcher defaultedMethod_Matcher(string methodName, string className);
 
 DeclarationMatcher copyAssignmentOperator_Matcher(string className);
 
-//DeclarationMatcher deletedCopyAssignmentOperator_Matcher(string className);
-
 DeclarationMatcher moveAssignmentOperator_Matcher(string className);
 
 DeclarationMatcher functionWithReferencedFuntion_Matcher(string mainFunctionName, string usedFunctionName);
+
+DeclarationMatcher methodWithReferencedFuntion_Matcher(string mainMethodName, string mainClassName, string usedFunctionName);
+
+DeclarationMatcher functionWithReferencedMethod_Matcher(string mainFunctionName, string usedMethodName, string usedClassName);
 
 DeclarationMatcher functionName_Matcher(string functionName);
 
@@ -163,5 +168,6 @@ DeclarationMatcher functionName_Matcher(string functionName);
 **
 */
 
-DeclarationMatcher includedHeader_Matcher(string nameFunction);
+DeclarationMatcher invocationsFromHeader_Matcher(string nameFunction);
 
+#endif //MATCHERS_H

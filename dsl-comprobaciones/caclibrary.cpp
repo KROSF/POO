@@ -1,4 +1,4 @@
-#include "checkCode.h"
+#include "caclibrary.h"
 #include <iostream>
 
 static llvm::cl::OptionCategory MyToolCategoryFind("check options");
@@ -7,26 +7,26 @@ static llvm::cl::OptionCategory MyToolCategoryExe("check options");
 checkCode::checkCode(int argc, const char **argv, string fileClass, string help){
   setHelper(help);
   if (argc < 2){
-    llvm::outs() << "No se ha indicado el fichero a comprobar.\n" << getHelper() + "\n";
+    llvm::outs() << "The file to be checked has not been indicated.\n" << getHelper() + "\n";
     exit(EXIT_SUCCESS);
   }else{
     string option = argv[1];
     if (option.compare("--help") == 0){
       llvm::outs() << getHelper() + "\n";
       exit(EXIT_SUCCESS);
-    }    
+    }
   }
-  
+
   listSources = getListSources(argc, argv);
 
   string file_name = "control.tmp";
-  string orden =  "echo | clang -E -v -x c++ - 2>&1 | sed -n '/<...> search starts here/,/End of search list./p' | sed 's/End of search list.//g' | sed 's/#include <...> search starts here://g' >" + file_name;
+  string command =  "echo | clang -E -v -x c++ - 2>&1 | sed -n '/<...> search starts here/,/End of search list./p' | sed 's/End of search list.//g' | sed 's/#include <...> search starts here://g' >" + file_name;
 
-  list<string> lstr = cabeceras_leidas(file_name, orden);
+  list<string> lstr = headers_read(file_name, command);
 
-  orden =  "echo | LANG=C cpp -v -x c++ - 2>&1 | sed -n '/<...> search starts here/,/End of search list./p' | sed 's/End of search list.//g' | sed 's/#include <...> search starts here://g' >" + file_name;
+  command =  "echo | LANG=C cpp -v -x c++ - 2>&1 | sed -n '/<...> search starts here/,/End of search list./p' | sed 's/End of search list.//g' | sed 's/#include <...> search starts here://g' >" + file_name;
 
-  list<string> lstr_clang = cabeceras_leidas(file_name, orden);
+  list<string> lstr_clang = headers_read(file_name, command);
   lstr.insert(lstr.end(), lstr_clang.begin(), lstr_clang.end());
 
   argv1 = new const char*[lstr.size()+argc];
@@ -44,16 +44,16 @@ checkCode::checkCode(int argc, const char **argv, string fileClass, string help)
     argc2++;
   }
 
-  orden = "rm " + file_name  + " > /dev/null 2>&1";
-  system(orden.c_str()); 
+  command = "rm " + file_name  + " > /dev/null 2>&1";
+  system(command.c_str());
 
   this->fileClass = fileClass;
 }
 
 
- list<string> cabeceras_leidas(string file_name, string orden){
+ list<string> headers_read(string file_name, string command){
 
-  int res = system(orden.c_str());
+  int res = system(command.c_str());
   ifstream read_file;
 
   read_file.open(file_name.c_str(), std::ifstream::in);
@@ -83,7 +83,7 @@ checkCode::checkCode(int argc, const char **argv, string fileClass, string help)
 **
 ** Run methods
 **
-*/	
+*/
 
 
 
@@ -125,7 +125,7 @@ list<string> checkCode::getListSources(int argc, const char **argv){
     string arg = argv[i];
     if(arg.compare("--")==0){
       fixed = argc - i;
-      break;    
+      break;
     }
   }
   unsigned startSources = 1;
@@ -158,7 +158,7 @@ string checkCode::setFunctions(vector<string> functionNames){
     functions = functions + functionNames[i];
     if (i != size-1){
        functions = functions + "|";
-     } 
+     }
   }
   return functions;
 }
@@ -193,13 +193,15 @@ void checkCode::classWithName(string className, string message){
   Finder.addMatcher(classWithName_Matcher(className), &e);
 }
 
-void checkCode::apply_clase(const MatchFinder::MatchResult &Result){
-  if (Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithName")){
-    clase_encontrada = true;
+void checkCode::apply_class(const MatchFinder::MatchResult &Result){
+  if (const clang::CXXRecordDecl *Node = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("classWithName")){
+    map<string,bool>::iterator it = classes.find(Node->getNameAsString());
+    if(it != classes.end())
+      it->second = true;
   }
 }
 
-bool checkCode::findClass(string className) {
+bool checkCode::findClass(vector<string> className) {
 
   int i = 0;
   for (std::vector<string>::iterator it = argvs.begin() ; it != argvs.end(); ++it){
@@ -209,7 +211,7 @@ bool checkCode::findClass(string className) {
 
   CommonOptionsParser OptionsParser(argc1, argv1, MyToolCategoryFind);
   p = OptionsParser.getSourcePathList();
-  bool ficheroValido = false;
+  bool validFile = false;
   string posAux = "";
   if(fileClass == ""){
   }else{
@@ -219,26 +221,32 @@ bool checkCode::findClass(string className) {
       if(posAux == fileClass){
         p.clear();
         p.push_back(*pos);
-        ficheroValido = true;
+        validFile = true;
         break;
       }
     }
   }
-  if(ficheroValido==true){
+  if(validFile==true){
     MatchFinder FinderClase;
-    FinderClase.addMatcher(classWithName_Matcher(className), this);
+    for(vector<string>::iterator it = className.begin() ; it != className.end(); ++it){
+      FinderClase.addMatcher(classWithName_Matcher(*it), this);
+      classes.insert(std::pair<string,bool>(*it,false));
+    }
     ClangTool Tool(OptionsParser.getCompilations(),p);
     Tool.run(newFrontendActionFactory(&FinderClase).get());
+    for(std::pair<const string,bool>& c : classes){
+      class_found = class_found && c.second;
+    }
     if(this->foundClass()){
-      clase_encontrada = true;
+      class_found = true;
       return true;
     }else{
-      clase_encontrada = false;
+      class_found = false;
       return false;
     }
   }else{
     llvm::outs() << "--------------------\n";
-    llvm::outs()<<"El fichero indicado '" + fileClass + "' para realizar las comprobaciones no se ha encontrado entre los parámetros.\n";
+    llvm::outs()<<"The file indicated '" + fileClass + "' to apply the checks has not been found in the parameters.\n";
     llvm::outs() << "********************\n";
     return false;
   }
@@ -249,13 +257,13 @@ bool checkCode::findClass(string className) {
 
 
 bool checkCode::foundClass(){
-  return clase_encontrada;
+  return class_found;
 }
 
 void checkCode::run(const MatchFinder::MatchResult &Result) {
   Context = Result.Context;
   Rewrite.setSourceMgr(Context->getSourceManager(), Context->getLangOpts());
-  apply_clase(Result);
+  apply_class(Result);
 }
 
 
@@ -299,6 +307,11 @@ void checkCode::numberOfConstructors(string className, unsigned int constructors
   Finder.addMatcher(numberOfConstructor_Matcher(className), &e);
 }
 
+void checkCode::methodWithDynamicCast(string methodName, vector<string> parameters, string className, string constant, string originType, string dstType, string message) {
+    e.setDynamicCast(methodName,parameters,constant,className,originType,dstType,message);
+    Finder.addMatcher(dynamic_cast_Matcher(methodName,className),&e);
+}
+
 void checkCode::explicitSpecifiedConstructor(string className, vector<string> parameters, string message){
   e.setExplicitSpecifiedConstructors(className, parameters, message);
   Finder.addMatcher(explicitSpecifiedConstructor_Matcher(className), &e);
@@ -316,10 +329,10 @@ void checkCode::takeException(vector<string> exceptionClasses, string message){
 
 
 // ----------------------- CHECK VARIABLES ---------------------
-void checkCode::memberVariable(string className,vector<string> memberNames, vector<string> constant, string message)
+void checkCode::memberVariable(string className,vector<string> memberNames, vector<string> constant, vector<bool> exist, string message)
 {
   for (unsigned int i = 0 ; i < memberNames.size(); i++){
-  	e.setMembers(className, memberNames[i], constant[i], message);
+  	e.setMembers(className, memberNames[i], constant[i], exist[i], message);
   	Finder.addMatcher(member_Matcher(className, memberNames[i]), &e);
   }
 }
@@ -335,6 +348,11 @@ void checkCode::releaseVariable(string message) {
   e.setReleasedVariables(message);
   Finder.addMatcher(variableNew_Matcher(), &e);
   Finder.addMatcher(variableDelete_Matcher(), &e);
+}
+
+void checkCode::allPrivateVariableMember(string className, string message){
+  e.setClassWithAllPrivateMembers(className, message);
+  Finder.addMatcher(allPrivateMember_Matcher(className), &e);
 }
 
 void checkCode::memberVariableAccessLevel(string className, vector<string> memberNames, string level, string message){
@@ -356,34 +374,20 @@ void checkCode::method(vector<string> methodNames, vector<vector<string> > param
 	  }
   }
   else{
-	llvm::outs() << "checkCode::method => different number of methodNames and parameters.\n"; 
+	llvm::outs() << "checkCode::method => different number of methodNames and parameters.\n";
   }
 }
 
-void checkCode::methodWithReferencedVariable(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant, vector<string> usedVariables, string message){
+void checkCode::methodWithReferencedMemberVariable(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant, vector<string> usedVariables, string message){
 
   if(methodNames.size() == parameters.size() && methodNames.size() == usedVariables.size()){
 	for (unsigned int i = 0 ; i < methodNames.size(); i++){
-		e.setMethodsWithReferencedVariable(methodNames[i], className, parameters[i], constant[i], message);
+		e.setMethodsWithReferencedVariable(methodNames[i], className, parameters[i], constant[i], usedVariables[i], message);
 		Finder.addMatcher(methodWithReferencedVariable_Matcher(methodNames[i], className, usedVariables[i]), &e);
 	}
   }
   else{
-	llvm::outs() << "checkCode::methodWithReferencedVariable => different number of methodNames, parameters and usedVariables.\n"; 
-  }
-}
-
-void checkCode::methodWithReferencedMethod(vector<string> mainMethodNames, vector<vector<string> > mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedMethodNames, vector<vector<string> > usedMethodparameters, string usedClassName, vector<string> usedConstant, string message){
-
-  if(mainMethodNames.size() == mainMethodparameters.size() && usedMethodNames.size() == usedMethodparameters.size() && mainMethodNames.size() == usedMethodNames.size()){
-
-	  for (unsigned int i = 0 ; i < mainMethodNames.size(); i++){  
-		e.setMethodsWithReferencedMethod(mainMethodNames[i], mainMethodparameters[i], mainClassName, mainConstant[i], usedMethodNames[i], usedMethodparameters[i], usedConstant[i], message);
-		Finder.addMatcher(methodWithReferencedMethod_Matcher(mainMethodNames[i], mainClassName, usedMethodNames[i], usedClassName), &e);
-	  }
-  }
-  else{
-	llvm::outs() << "checkCode::methodWithReferencedMethod => different number of methodNames and parameters in the main and used method.\n"; 
+	llvm::outs() << "checkCode::methodWithReferencedMemberVariable => different number of methodNames, parameters and usedVariables.\n";
   }
 }
 
@@ -396,7 +400,7 @@ void checkCode::noExceptMethod(vector<string> methodNames, vector<vector<string>
   	}
   }
   else{
-	llvm::outs() << "checkCode::noExceptMethod => different number of methodNames and parameters.\n"; 
+	llvm::outs() << "checkCode::noExceptMethod => different number of methodNames and parameters.\n";
   }
 }
 
@@ -409,7 +413,7 @@ void checkCode::inlineMethod(vector<string> methodNames, vector<vector<string> >
   	}
   }
   else{
-	llvm::outs() << "checkCode::inlineMethod => different number of methodNames and parameters.\n"; 
+	llvm::outs() << "checkCode::inlineMethod => different number of methodNames and parameters.\n";
   }
 }
 
@@ -423,17 +427,17 @@ void checkCode::defaultArgumentsInMethod(vector<string> methodNames, vector<vect
 			Finder.addMatcher(defaultArgumentsInMethod_Matcher(methodNames[i], className), &e);
 		}
 		else{
-			llvm::outs() << "checkCode::defaultArgumentsInMethod => numDefaultArgs and defaultArgs do not match.\n"; 
+			llvm::outs() << "checkCode::defaultArgumentsInMethod => numDefaultArgs and defaultArgs do not match.\n";
 		}
   	}
   }
   else{
-	llvm::outs() << "checkCode::defaultArgumentsInMethod => different number of methodNames and parameters.\n"; 
-  }	
+	llvm::outs() << "checkCode::defaultArgumentsInMethod => different number of methodNames and parameters.\n";
+  }
 }
 
 void checkCode::deletedMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant, string message) {
-  
+
   if(methodNames.size() == parameters.size()){
     for (unsigned int i = 0 ; i < methodNames.size(); i++) {
       e.setDeletedMethods(methodNames[i], className, parameters[i], constant[i], message);
@@ -441,7 +445,7 @@ void checkCode::deletedMethod(vector<string> methodNames, vector<vector<string>>
     }
   }
   else {
-  llvm::outs() << "checkCode::deletedMethod => different number of methodNames and parameters.\n"; 
+  llvm::outs() << "checkCode::deletedMethod => different number of methodNames and parameters.\n";
   }
 }
 
@@ -454,7 +458,20 @@ void checkCode::defaultedMethod(vector<string> methodNames, vector<vector<string
     }
   }
   else {
-  llvm::outs() << "checkCode::defaultedMethod => different number of methodNames and parameters.\n"; 
+  llvm::outs() << "checkCode::defaultedMethod => different number of methodNames and parameters.\n";
+  }
+}
+
+void checkCode::virtualMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant, string message) {
+
+  if(methodNames.size() == parameters.size()){
+    for (unsigned int i = 0 ; i < methodNames.size(); i++) {
+      e.setVirtualMethods(methodNames[i], className, parameters[i], constant[i], message);
+      Finder.addMatcher(virtualMethod_Matcher(methodNames[i], className), &e);
+    }
+  }
+  else {
+  llvm::outs() << "checkCode::deletedMethod => different number of methodNames and parameters.\n";
   }
 }
 
@@ -471,9 +488,51 @@ void checkCode::moveAssignmentOperator(string className, bool exist, string mess
   Finder.addMatcher(moveAssignmentOperator_Matcher(className), &e);
 }
 
+void checkCode::methodWithReferencedMethod(vector<string> mainMethodNames, vector<vector<string> > mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedMethodNames, vector<vector<string> > usedMethodparameters, string usedClassName, vector<string> usedConstant, string message){
+
+  if(mainMethodNames.size() == mainMethodparameters.size() && usedMethodNames.size() == usedMethodparameters.size() && mainMethodNames.size() == usedMethodNames.size()){
+
+    for (unsigned int i = 0 ; i < mainMethodNames.size(); i++){
+    e.setMethodsWithReferencedMethod(mainMethodNames[i], mainMethodparameters[i], mainClassName, mainConstant[i], usedMethodNames[i], usedMethodparameters[i], usedClassName, usedConstant[i], message);
+    Finder.addMatcher(methodWithReferencedMethod_Matcher(mainMethodNames[i], mainClassName, usedMethodNames[i], usedClassName), &e);
+    }
+  }
+  else{
+  llvm::outs() << "checkCode::methodWithReferencedMethod => different number of methodNames and parameters in the main and used method.\n";
+  }
+}
+
+void checkCode::methodWithReferencedFunction(vector<string> mainMethodNames, vector<vector<string> > mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedFunctionNames, vector<vector<string> > usedFunctionParameters, string message){
+
+  if(mainMethodNames.size() == mainMethodparameters.size() && usedFunctionNames.size() == usedFunctionParameters.size() && mainMethodNames.size() == usedFunctionNames.size()){
+
+    for (unsigned int i = 0 ; i < mainMethodNames.size(); i++){
+    e.setMethodsWithReferencedFunction(mainMethodNames[i], mainMethodparameters[i], mainClassName, mainConstant[i], usedFunctionNames[i], usedFunctionParameters[i], message);
+    Finder.addMatcher(methodWithReferencedFuntion_Matcher(mainMethodNames[i], mainClassName, usedFunctionNames[i]), &e);
+    }
+  }
+  else{
+  llvm::outs() << "checkCode::methodWithReferencedFunction => different number of functionNames and parameters in the main and used function.\n";
+  }
+}
+
+void checkCode::functionWithReferencedMethod(vector<string> mainFunctionNames, vector<vector<string> > mainFunctionParameters, vector<string> usedMethodNames, vector<vector<string> > usedMethodparameters, string usedClassName, vector<string> usedConstant, string message){
+
+  if(mainFunctionNames.size() == mainFunctionParameters.size() && usedMethodNames.size() == usedMethodparameters.size() && mainFunctionNames.size() == usedMethodNames.size()){
+
+    for (unsigned int i = 0 ; i < mainFunctionNames.size(); i++){
+    e.setFunctionsWithReferencedMethod(mainFunctionNames[i], mainFunctionParameters[i], usedMethodNames[i], usedMethodparameters[i], usedConstant[i], usedClassName, message);
+    Finder.addMatcher(functionWithReferencedMethod_Matcher(mainFunctionNames[i], usedMethodNames[i], usedClassName), &e);
+    }
+  }
+  else{
+  llvm::outs() << "checkCode::functionWithReferencedMethod => different number of functionNames and parameters in the main and used function.\n";
+  }
+}
+
 void checkCode::functionWithReferencedFunction(vector<string> mainFunctionNames, vector<vector<string> > mainFunctionParameters, vector<string> usedFunctionNames, vector<vector<string> > usedFunctionParameters, string message){
 
-  if(mainFunctionNames.size() == mainFunctionParameters.size() && usedFunctionNames.size() == usedFunctionParameters.size() && mainFunctionNames.size() == usedFunctionNames.size()){  
+  if(mainFunctionNames.size() == mainFunctionParameters.size() && usedFunctionNames.size() == usedFunctionParameters.size() && mainFunctionNames.size() == usedFunctionNames.size()){
 
 	  for (unsigned int i = 0 ; i < mainFunctionNames.size(); i++){
 		e.setFunctionsWithReferencedFunction(mainFunctionNames[i], mainFunctionParameters[i], usedFunctionNames[i], usedFunctionParameters[i], message);
@@ -481,12 +540,14 @@ void checkCode::functionWithReferencedFunction(vector<string> mainFunctionNames,
 	  }
   }
   else{
-	llvm::outs() << "checkCode::functionWithReferencedFunction => different number of functionNames and parameters in the main and used function.\n"; 
+	llvm::outs() << "checkCode::functionWithReferencedFunction => different number of functionNames and parameters in the main and used function.\n";
   }
 }
 
+
+
 void checkCode::function(vector<string> functionNames, vector<vector<string> > parameters, string message){
-  
+
   if(functionNames.size() == parameters.size()){
 	for (unsigned int i = 0 ; i < functionNames.size(); i++){
 		e.setFunctionsWithName(functionNames[i], parameters[i], message);
@@ -494,17 +555,17 @@ void checkCode::function(vector<string> functionNames, vector<vector<string> > p
 	}
   }
   else{
-	llvm::outs() << "checkCode::function => different number of functionNames and parameters.\n"; 
+	llvm::outs() << "checkCode::function => different number of functionNames and parameters.\n";
   }
 }
 
 
 
 // ----------------------- CHECK HEADERS ---------------------
-void checkCode::includedHeader(vector<string> functionNames, string headerName, bool exist, string message){
+void checkCode::invocationsFromHeaders(vector<string> functionNames, string headerName, bool exist, string message){
   for (unsigned int i = 0 ; i < functionNames.size(); i++){
-    e.setIncludedHeaders(functionNames[i], headerName, exist, message);
-    Finder.addMatcher(includedHeader_Matcher(functionNames[i]), &e);
+    e.setInvocationsFromHeader(functionNames[i], headerName, exist, message);
+    Finder.addMatcher(invocationsFromHeader_Matcher(functionNames[i]), &e);
   }
 }
 

@@ -15,28 +15,36 @@ DeclarationMatcher classWithName_Matcher(string className){
     return matcher;
 }
 
+DeclarationMatcher dynamic_cast_Matcher(string methodName, string className){
+	DeclarationMatcher matcher =
+		cxxMethodDecl(
+			anyOf(
+				matchesName(methodName),
+				hasName(methodName)
+			),
+			unless(isImplicitMethod()),
+			forEachDescendant(
+				cxxDynamicCastExpr(
+                    hasDescendant(
+                        implicitCastExpr().bind("dynamic_type")
+                    )
+                ).bind("dynamic_method")
+			),
+			ofClass(
+				cxxRecordDecl(
+					matchesName(className),
+					unless(isTemplateInstantiation())
+				).bind("classWithDynamicCast")
+			)
+		).bind("methodWithDynamicCast");
+	return matcher;
+}
 
 /*
 **
 ** CONSTRUCTORS
 **
 */
-
-// Nuevo matcher
-DeclarationMatcher notDefaultConstructor_Matcher(string className){
-	DeclarationMatcher matcher =
-		cxxRecordDecl(
-			unless(has(
-				cxxConstructorDecl(
-					isDefaultConstructor(),
-					unless(isImplicit())
-				)
-			)),
-			matchesName(className),
-			unless(isTemplateInstantiation())
-		).bind("classWithoutDefaultConstructor");
-	return matcher;
-}
 
 DeclarationMatcher defaultConstructor_Matcher(string className){
 	DeclarationMatcher matcher =
@@ -54,7 +62,7 @@ DeclarationMatcher defaultConstructor_Matcher(string className){
 }
 
 DeclarationMatcher copyConstructor_Matcher(string className){
-	
+
  	DeclarationMatcher matcher =
 	    cxxConstructorDecl(
 			isCopyConstructor(),
@@ -69,33 +77,6 @@ DeclarationMatcher copyConstructor_Matcher(string className){
 		).bind("copyConstructor");
 	return matcher;
 }
-
-/*DeclarationMatcher deletedCopyConstructor_Matcher(string className){
-	DeclarationMatcher matcher =
-	    cxxRecordDecl(
-        	has(
-			cxxConstructorDecl(
-				isCopyConstructor(), 
-				isDeleted()
-			).bind("deletedCopyConstructor")
-		),
-		matchesName(className)
-	    ).bind("classWithDeletedCopyConstructor");
-	return matcher;
-}
-
-DeclarationMatcher deletedConstructor_Matcher(string className) {
-	DeclarationMatcher matcher = 
-		cxxRecordDecl(
-			has(
-			cxxConstructorDecl(
-				isDeleted()
-			).bind("deletedConstructor")
-		),
-		matchesName(className)
-		).bind("classWithDeletedConstructor");
-	return matcher;
-}*/
 
 DeclarationMatcher moveConstructor_Matcher(string className){
 	DeclarationMatcher matcher =
@@ -192,7 +173,7 @@ DeclarationMatcher explicitSpecifiedConstructor_Matcher(string className){
 }
 
 DeclarationMatcher takeException_Matcher(string exceptionClass){
-	DeclarationMatcher matcher = 
+	DeclarationMatcher matcher =
 	   functionDecl(
 			unless(isImplicitFunction()),
 			hasDescendant(
@@ -230,7 +211,7 @@ DeclarationMatcher member_Matcher(string className, string memberName){
 	DeclarationMatcher matcher =
 		cxxRecordDecl(
         		has(fieldDecl(matchesName(memberName)).bind("foundMember")),
-	    		matchesName(className), 
+	    		matchesName(className),
     			unless(isTemplateInstantiation())
  		).bind("foundClass");
 	return matcher;
@@ -238,9 +219,9 @@ DeclarationMatcher member_Matcher(string className, string memberName){
 
 DeclarationMatcher staticVariable_Matcher(string className, string variableName){
 	DeclarationMatcher matcher =
-		cxxRecordDecl(  	
+		cxxRecordDecl(
 			has(varDecl(matchesName(variableName)).bind("foundStaticVariable")),
-			matchesName(className), 
+			matchesName(className),
 			unless(isTemplateInstantiation())
 		).bind("foundClass");
 	return matcher;
@@ -268,7 +249,7 @@ DeclarationMatcher allPrivateMember_Matcher(string className){
 	DeclarationMatcher matcher =
 		cxxRecordDecl(
         		has(fieldDecl(isPublic())),
-	    		matchesName(className), 
+	    		matchesName(className),
     			unless(isTemplateInstantiation())
  		).bind("classWithAllPrivateMember");
 	return matcher;
@@ -277,7 +258,8 @@ DeclarationMatcher allPrivateMember_Matcher(string className){
 DeclarationMatcher memberVariableAccessLevel_Matcher(string className, string memberName){
         DeclarationMatcher matcher =
                 cxxRecordDecl(
-                        has(fieldDecl(matchesName(memberName)).bind("foundMemberVariableAccessLevel")),
+                        forEachDescendant(
+                            fieldDecl(matchesName(memberName)).bind("foundMemberVariableAccessLevel")),
                         matchesName(className),
                         unless(isTemplateInstantiation())
                 ).bind("foundClassAccessLevel");
@@ -330,7 +312,7 @@ DeclarationMatcher friendClass_Matcher(string className, string friendClassName)
                   cxxRecordDecl(
                      hasDescendant(
                         friendDecl(
-                             
+
                         ).bind("friendClass")
                     ),
 		    matchesName(className),
@@ -388,9 +370,55 @@ DeclarationMatcher methodWithReferencedVariable_Matcher(string methodName, strin
     return matcher;
 }
 
+DeclarationMatcher functionWithReferencedMethod_Matcher(string mainFunctionName, string usedMethodName, string usedClassName){
+	DeclarationMatcher matcher =
+  		functionDecl(
+			matchesName(mainFunctionName),
+			anyOf(
+				hasDescendant(
+					memberExpr(
+						hasDeclaration(
+							cxxMethodDecl(
+								anyOf(
+									matchesName(usedMethodName),
+									hasName(usedMethodName)
+								),
+								ofClass(
+									cxxRecordDecl(
+										matchesName(usedClassName),
+										unless(isTemplateInstantiation())
+									).bind("classOfReferencedMethodByFunction")
+								)
+							).bind("usedMethodByFunction")
+						)
+					)
+				),
+				hasDescendant(
+					cxxOperatorCallExpr(
+						hasDeclaration(
+							cxxMethodDecl(
+								anyOf(
+									matchesName(usedMethodName),
+									hasName(usedMethodName)
+								),
+								ofClass(
+									cxxRecordDecl(
+										matchesName(usedClassName),
+										unless(isTemplateInstantiation())
+									).bind("classOfReferencedMethodByFunction")
+								)
+							).bind("usedMethodByFunction")
+						)
+					)
+				)
+			)
+		).bind("mainFunctionWithReferencedMethod");
+	return matcher;
+}
+
 DeclarationMatcher methodWithReferencedMethod_Matcher(string mainMethodName, string mainClassName, string usedMethodName, string usedClassName){
 
-	//llvm::outs()<< "MAtcher: " << mainMethodName << " - " << usedMethodName << "\n";
+	//llvm::outs()<< "Matcher: " << mainMethodName << " - " << usedMethodName << "\n";
 
 	DeclarationMatcher matcher =
 		cxxMethodDecl(
@@ -429,7 +457,7 @@ DeclarationMatcher methodWithReferencedMethod_Matcher(string mainMethodName, str
 							).bind("classOfReferencedMethod")
 						)
 					).bind("usedMethod")
-				)	
+				)
 			      )
 			   )
 			),
@@ -464,7 +492,7 @@ DeclarationMatcher noExceptMethod_Matcher(string methodName, string className){
 
 DeclarationMatcher inlineMethod_Matcher(string methodName, string className){
 	DeclarationMatcher matcher =
-	
+
 		cxxMethodDecl(
 			anyOf(
 				matchesName(methodName),
@@ -473,7 +501,7 @@ DeclarationMatcher inlineMethod_Matcher(string methodName, string className){
 			unless(isImplicitMethod()),
 			ofClass(
 				cxxRecordDecl(
-					matchesName(className), 
+					matchesName(className),
 					unless(isTemplateInstantiation())
 				).bind("classWithInlineMethod")
 			)
@@ -484,7 +512,7 @@ DeclarationMatcher inlineMethod_Matcher(string methodName, string className){
 
 DeclarationMatcher defaultArgumentsInMethod_Matcher(string methodName, string className){
 	DeclarationMatcher matcher =
-	
+
 		cxxMethodDecl(
 			anyOf(
 				matchesName(methodName),
@@ -493,7 +521,7 @@ DeclarationMatcher defaultArgumentsInMethod_Matcher(string methodName, string cl
 			unless(isImplicitMethod()),
 			ofClass(
 				cxxRecordDecl(
-					matchesName(className), 
+					matchesName(className),
 					unless(isTemplateInstantiation())
 				).bind("classWithDefaultArgumentsInMethod")
 			)
@@ -501,9 +529,9 @@ DeclarationMatcher defaultArgumentsInMethod_Matcher(string methodName, string cl
 	return matcher;
 }
 
-DeclarationMatcher deletedMethod_Matcher(string methodName, string className) {	
+DeclarationMatcher deletedMethod_Matcher(string methodName, string className) {
 
-	DeclarationMatcher matcher = 
+	DeclarationMatcher matcher =
 		cxxMethodDecl(
 			anyOf(
 				matchesName(methodName),
@@ -521,9 +549,9 @@ DeclarationMatcher deletedMethod_Matcher(string methodName, string className) {
 	return matcher;
 }
 
-DeclarationMatcher defaultedMethod_Matcher(string methodName, string className) {	
+DeclarationMatcher defaultedMethod_Matcher(string methodName, string className) {
 
-	DeclarationMatcher matcher = 
+	DeclarationMatcher matcher =
 		cxxMethodDecl(
 			anyOf(
 				matchesName(methodName),
@@ -538,6 +566,26 @@ DeclarationMatcher defaultedMethod_Matcher(string methodName, string className) 
 				).bind("classWithDefaultedMethod")
 			)
 		).bind("defaultedMethod");
+	return matcher;
+}
+
+DeclarationMatcher virtualMethod_Matcher(string methodName, string className) {
+
+	DeclarationMatcher matcher =
+		cxxMethodDecl(
+			anyOf(
+				matchesName(methodName),
+				hasName(methodName)
+			),
+			isVirtual(),
+			unless(isImplicitMethod()),
+			ofClass(
+				cxxRecordDecl(
+					matchesName(className),
+					unless(isTemplateInstantiation())
+				).bind("classWithVirtualMethod")
+			)
+		).bind("virtualMethod");
 	return matcher;
 }
 
@@ -563,20 +611,6 @@ DeclarationMatcher copyAssignmentOperator_Matcher(string className){
 	return matcher;
 }
 
-/*DeclarationMatcher deletedCopyAssignmentOperator_Matcher(string className){
-	DeclarationMatcher matcher =
-	    cxxMethodDecl(
-			isCopyAssignmentOperator(),
-			isDeleted(),
-			ofClass(
-				cxxRecordDecl(
-					matchesName(className),
-					unless(isTemplateInstantiation())
-				).bind("classWithDeletedCopyAssignmentOperator")
-			)
-		).bind("deletedCopyAssignmentOperator");
-	return matcher;
-}*/
 
 DeclarationMatcher moveAssignmentOperator_Matcher(string className){
 	DeclarationMatcher matcher =
@@ -610,6 +644,29 @@ DeclarationMatcher functionWithReferencedFuntion_Matcher(string mainFunctionName
 	return matcher;
 }
 
+DeclarationMatcher methodWithReferencedFuntion_Matcher(string mainMethodName, string mainClassName, string usedFunctionName) {
+	DeclarationMatcher matcher =
+		cxxMethodDecl(
+			unless(isImplicitFunction()),
+			hasDescendant(
+			   	declRefExpr(
+					to(
+						functionDecl(matchesName(usedFunctionName)).bind("usedFunctionForMainMethod")
+					)
+				)
+			),
+			matchesName(mainMethodName),
+			ofClass(
+				cxxRecordDecl(
+					matchesName(mainClassName),
+					unless(isTemplateInstantiation())
+				).bind("mainClassWithReferencedFunction")
+			)
+	   	).bind("mainMethodWithReferencedFunction");
+	return matcher;
+}
+
+
 DeclarationMatcher functionName_Matcher(string functionName){
 	DeclarationMatcher matcher =
 		functionDecl(
@@ -626,7 +683,7 @@ DeclarationMatcher functionName_Matcher(string functionName){
 **
 */
 
-DeclarationMatcher includedHeader_Matcher(string nameFunction){
+DeclarationMatcher invocationsFromHeader_Matcher(string nameFunction){
 	DeclarationMatcher matcher =
 		functionDecl(
 			unless(isImplicitFunction()),
@@ -642,4 +699,3 @@ DeclarationMatcher includedHeader_Matcher(string nameFunction){
 		);
 	return matcher;
 }
-
