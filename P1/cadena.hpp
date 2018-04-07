@@ -5,16 +5,17 @@ using namespace std;
 class Cadena {
 public:
     //Constructores
-    explicit Cadena(size_t t = 0, char c=' ');//
+    explicit Cadena(size_t t = 0, char c = ' ');//
     Cadena( const char * cad );
     //Constructor de copia
     Cadena(const Cadena& cad);
+    //Constructor de movimiento
+    Cadena(Cadena&& cad);
     //destructor
     ~Cadena();
     //metodo para obtener una subcadena
     Cadena substr(size_t begindex, size_t len) const;
     //metodos observadores
-
     size_t length() const noexcept;
     //operadores indice que no producen exepciones
     char operator [] (size_t j) const noexcept;
@@ -26,9 +27,9 @@ public:
     Cadena& operator += (const Cadena& cad);
     Cadena& operator = (const Cadena& cad);
     Cadena& operator = (const char * cad);
+    Cadena& operator = ( Cadena&& cad );
     //operador de conversion
-    operator const char * () const noexcept;
-    //const char * c_str() const;
+    const char * c_str() const;
 private:
     //Atributos de la clase Cadena
     char * s_;
@@ -47,5 +48,7 @@ bool operator < (const Cadena& cad1, const Cadena& cad2) noexcept;
 bool operator <= (const Cadena& cad1, const Cadena& cad2) noexcept;
 bool operator >= (const Cadena& cad1, const Cadena& cad2) noexcept;
 
-//ostream& operator << (std::ostream& os, const Cadena& cad);
+ostream& operator << (std::ostream& os, const Cadena& cad);
+istream& operator >> (std::istream& is, Cadena& cad);
+
 #endif
