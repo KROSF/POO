@@ -1,5 +1,6 @@
+#include <cstdio>
 #include "fecha.hpp"
-#include "hrsys.hpp"//Clase propia para obtener la hora del sistema y sumar fechas.
+#include "hrsys.hpp"
 static const int DiaMes[]={0,31,28,31,30,31,30,31,31,30,31,30,31};
 
 Fecha::Fecha(int d, int m, int a) : _d(d),_m(m),_a(a) {
@@ -13,7 +14,7 @@ Fecha::Fecha(int d, int m, int a) : _d(d),_m(m),_a(a) {
 }
 
 Fecha::Fecha(const char * fecha) : _d(22),_m(22),_a(22) {
-    if(sscanf(fecha,"%d/%d/%4d",&_d,&_m,&_a) != 3) throw Invalida("Error de conversión");
+    if(std::sscanf(fecha,"%d/%d/%4d",&_d,&_m,&_a) != 3) throw Invalida("Error de conversión");
     if(_d==0||_m==0||_a==0) {
         Hrsys hrsys;
         if(_d==0) _d = hrsys.dia();
@@ -91,11 +92,11 @@ bool operator != (const Fecha& fecha1, const Fecha& fecha2){
 }
 bool operator < (const Fecha& fecha1, const Fecha& fecha2)
 {
-    if ( fecha1.anno() < fecha2.anno() ) return true;
-    else if ( fecha1.anno() > fecha2.anno() ) return false;
-         else if ( fecha1.mes() < fecha2.mes() ) return true;
-                else if ( fecha1.mes() > fecha2.mes() ) return false;
-                     else return fecha1.dia() < fecha2.dia();
+  if (fecha1.anno() < fecha2.anno()) return true;
+  else if (fecha1.anno() > fecha2.anno()) return false;
+  if (fecha1.mes() < fecha2.mes())return true;
+  else if (fecha1.mes() > fecha2.mes())return false;
+  return fecha1.dia() < fecha2.dia();
 }
 bool operator > (const Fecha& fecha1, const Fecha& fecha2){
     return fecha2 < fecha1;
@@ -104,5 +105,5 @@ bool operator <= (const Fecha& fecha1, const Fecha& fecha2){
     return ((fecha1 < fecha2) || (fecha1 == fecha2 ));
 }
 bool operator >= (const Fecha& fecha1, const Fecha& fecha2 ){
-    return (fecha1 > fecha2) || (fecha1 == fecha2 );
+    return !(fecha1 < fecha2);
 }

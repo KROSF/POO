@@ -1,8 +1,5 @@
 #ifndef FECHA_H
 #define FECHA_H
-#include <iostream>
-#include <cstring>
-using namespace std;
 class Fecha
 {
 public:
