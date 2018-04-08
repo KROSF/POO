@@ -11,3 +11,4 @@ script:
 compiler:
   - clang
   - gcc
+dist: trusty
