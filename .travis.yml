@@ -1,14 +1,21 @@
+sudo: required
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-5
+    - g++-5
 os:
   - linux
 language:
   - cpp
-
-script:
-  - cd P0/
-  - make test-auto
-  - make check
-
 compiler:
   - clang
   - gcc
-dist: trusty
+script:
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+  - gcc --version
+  - cd P0/
+  - make test-auto
+  - make check
