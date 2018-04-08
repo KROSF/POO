@@ -5,7 +5,7 @@ language:
   - cpp
 
 script:
-  - cd P1/
+  - cd P0/
   - make test-auto
 
 compiler:
