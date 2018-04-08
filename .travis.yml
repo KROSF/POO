@@ -6,6 +6,7 @@ language:
 script:
   - cd P0/
   - make test-auto
+  - make check
 
 compiler:
   - clang
