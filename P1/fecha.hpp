@@ -1,8 +1,6 @@
 #ifndef FECHA_H
 #define FECHA_H
 #include <iostream>
-#include <cstring>
-using namespace std;
 class Fecha
 {
 public:
@@ -47,7 +45,7 @@ bool operator > (const Fecha&, const Fecha&);
 bool operator <= (const Fecha&, const Fecha&);
 bool operator >= (const Fecha&, const Fecha&);
 
-istream& operator >>(istream& is, Fecha& f);
-ostream& operator <<(ostream& os, const Fecha& f);
+std::istream& operator >>(std::istream& is, Fecha& f);
+std::ostream& operator <<(std::ostream& os, const Fecha& f);
 
 #endif
