@@ -1,11 +1,12 @@
-sudo: required
+before_install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - gcc-5
-    - g++-5
+      - gcc-4.9
+      - g++-4.9
 os:
   - linux
 language:
@@ -14,8 +15,6 @@ compiler:
   - clang
   - gcc
 script:
-  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
-  - gcc --version
   - cd P0/
   - make test-auto
   - make check
