@@ -1,23 +1,13 @@
-dist: trusty
-before_install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-3.9
-    packages:
-      - gcc-4.9
-      - g++-4.9
-      - clang-3.9  
 os:
   - linux
+  - osx
 language:
   - cpp
+
+script:
+  - cd P1/
+  - make test-auto
+
 compiler:
   - clang
   - gcc
-script:
-  - cd P0/
-  - make test-auto
-  - make check
