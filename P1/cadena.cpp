@@ -130,26 +130,17 @@ ostream& operator << (std::ostream& os, const Cadena& cad)
 	return os;
 }
 
-istream& operator>>(istream& is, Cadena& cad)
+std::istream &operator>>(std::istream& input,Cadena& A)
 {
-	char buffer[32];
-
-	while(is.good() && isspace(is.get()));
-
-	is.unget();
-
-	size_t i = 0;
-
-	while (is.good() && !isspace(is.peek()) && i < 31)
-	{
-		char a = is.get();
-		if (is.good()) buffer[i++] = a;
-	}
-
-	buffer[i] = '\0';
-
-	if (is.good() && is.peek() != ' ') is.ignore();
-  cad = Cadena(buffer);
-
-	return is;
+  int i = 0;
+  char* s=new char[33];
+  while(isspace(input.get()) && i<32){i++;}
+  input.unget();
+  if(i<32)
+  {
+  input.width(33);
+  input>>s;
+  }
+  A=Cadena(s);
+  return input;
 }

@@ -110,10 +110,9 @@ bool operator >= (const Fecha& fecha1, const Fecha& fecha2 ){
 
 std::istream& operator >>(std::istream& is, Fecha& fecha)
 {
-  char* tmp = new char[11];
+  char tmp[11];
   is.getline(tmp,11);
   fecha = Fecha(tmp);
-  delete[] tmp;
   return is;
 }
 
