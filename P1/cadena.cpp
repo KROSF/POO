@@ -133,14 +133,15 @@ ostream& operator << (std::ostream& os, const Cadena& cad)
 std::istream &operator>>(std::istream& input,Cadena& A)
 {
   int i = 0;
-  char* s=new char[33];
+  char* tmp =new char[33];
   while(isspace(input.get()) && i<32){i++;}
   input.unget();
   if(i<32)
   {
   input.width(33);
-  input>>s;
+  input>>tmp;
   }
-  A=Cadena(s);
+  A=Cadena(tmp);
+  delete [] tmp;
   return input;
 }

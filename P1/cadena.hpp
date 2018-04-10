@@ -45,7 +45,7 @@ public:
 	  const_iterator end() const { return cend(); }
 
 	  const_reverse_iterator crbegin() const
-	  { return const_reverse_iterator(end()); }
+	  { return const_reverse_iterator(cend()); }
 
 	  reverse_iterator rbegin() { return reverse_iterator(end()); }
 	  const_reverse_iterator rbegin() const { return crbegin(); }
