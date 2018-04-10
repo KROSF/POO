@@ -113,11 +113,11 @@ std::istream& operator >>(std::istream& is, Fecha& fecha)
   char tmp[11];
   is.getline(tmp,11);
   try{
-  fecha = Fecha(tmp);}
-  catch(const Fecha::Invalida& e){
-  is.setstate(std::ios_base::failbit);
-  throw;
-}
+    fecha = Fecha(tmp);
+  }catch(const Fecha::Invalida& e){
+    is.setstate(std::ios_base::failbit);
+    throw;
+  }
   return is;
 }
 

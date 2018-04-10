@@ -124,24 +124,24 @@ Cadena Cadena::substr(size_t begindex, size_t len) const {
 
 inline const char * Cadena::c_str() const { return s_; }
 
-ostream& operator << (std::ostream& os, const Cadena& cad)
+std::ostream& operator << (std::ostream& os, const Cadena& cad)
 {
 	os << cad.c_str();
 	return os;
 }
 
-std::istream &operator>>(std::istream& input,Cadena& A)
+std::istream &operator>>(std::istream& is,Cadena& cad)
 {
   int i = 0;
-  char* tmp =new char[33];
-  while(isspace(input.get()) && i<32){i++;}
-  input.unget();
+  char* tmp = new char[33];
+  while(is.good() &&isspace(is.get()) && i<32){i++;}
+  is.unget();
   if(i<32)
   {
-  input.width(33);
-  input>>tmp;
+    is.width(33);
+    is>>tmp;
   }
-  A=Cadena(tmp);
+  cad = Cadena(tmp);
   delete [] tmp;
-  return input;
+  return is;
 }
