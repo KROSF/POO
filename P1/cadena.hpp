@@ -36,25 +36,25 @@ public:
 	  typedef std::reverse_iterator<iterator> reverse_iterator;
 	  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    iterator begin() {return s_;}
-	  const_iterator cbegin() const { return s_; }
-   	const_iterator begin() const { return cbegin(); }
+    iterator begin() noexcept {return s_;}
+	  const_iterator cbegin() const noexcept { return s_; }
+   	const_iterator begin() const noexcept{ return cbegin(); }
 
-	  iterator end() { return s_ + tam_; }
-	  const_iterator cend() const { return s_ + tam_; }
-	  const_iterator end() const { return cend(); }
+	  iterator end()noexcept { return s_ + tam_; }
+	  const_iterator cend() const noexcept { return s_ + tam_; }
+	  const_iterator end() const noexcept{ return cend(); }
 
-	  const_reverse_iterator crbegin() const
+	  const_reverse_iterator crbegin() const noexcept
 	  { return const_reverse_iterator(cend()); }
 
-	  reverse_iterator rbegin() { return reverse_iterator(end()); }
-	  const_reverse_iterator rbegin() const { return crbegin(); }
+	  reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+	  const_reverse_iterator rbegin() const noexcept { return crbegin(); }
 
-	  const_reverse_iterator crend() const
+	  const_reverse_iterator crend() const noexcept
 	  { return const_reverse_iterator(cbegin()); }
 
-	  reverse_iterator rend() { return reverse_iterator(begin()); }
-	  const_reverse_iterator rend() const { return crend(); }
+	  reverse_iterator rend()noexcept { return reverse_iterator(begin()); }
+	  const_reverse_iterator rend() const noexcept{ return crend(); }
 private:
     //Atributos de la clase Cadena
     char * s_;

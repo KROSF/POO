@@ -116,7 +116,7 @@ std::istream& operator >>(std::istream& is, Fecha& fecha)
   fecha = Fecha(tmp);}
   catch(const Fecha::Invalida& e){
   is.setstate(std::ios_base::failbit);
-  throw e;
+  throw;
 }
   return is;
 }
