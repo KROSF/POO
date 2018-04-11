@@ -6,7 +6,6 @@ VPATH = ../Tests-auto:.
 OBJS = test-P1-consola.o test-caso0-fecha-auto.o \
 	test-caso0-cadena-auto.o test-auto.o fecha.o cadena.o cadena_check.o fecha_check.o
 EXE = test-P1-auto test-P1-consola cadena_check fecha_check
-
 all: test-P1-consola test-P1-auto
 
 test: test-consola test-auto
@@ -42,7 +41,7 @@ cadena_check fecha_check: cadena_check.cpp fecha_check.cpp
 check_cadena: cadena_check
 	./cadena_check cadena.cpp -- -std=${STD}
 
-fecha_check: fecha_check
+check_fecha: fecha_check
 	./fecha_check fecha.cpp -- -std=${STD}
 
 .PHONY: clean

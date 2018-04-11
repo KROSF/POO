@@ -133,7 +133,7 @@ std::ostream& operator << (std::ostream& os, const Cadena& cad)
 
 std::istream &operator>>(std::istream& is,Cadena& cad)
 {
-  int i = 0;
+  /*int i = 0;
   char* tmp = new char[33];
   while(is.good() &&isspace(is.get()) && i<32){i++;}
   is.unget();
@@ -144,6 +144,20 @@ std::istream &operator>>(std::istream& is,Cadena& cad)
   }
   cad = Cadena(tmp);
   delete [] tmp;
+  return is;*/
+  char* tmp = new char[33];
+  int i = 0;
+  char aux;
+  while(isspace(is.get()) && is.good()){}
+  is.unget();
+  while (i < 32 && !isspace(is.peek()) && is.good() && is.peek() != '\n' && is.peek()!='\0') {
+    aux=is.get();
+    if(is.good()) tmp[i++]=aux;
+  }
+  tmp[i]='\0';
+  if(i!=0) cad = tmp;
+  else cad = Cadena();
+  delete[] tmp;
   return is;
 }
 
