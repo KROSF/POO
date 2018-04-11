@@ -39,9 +39,14 @@ cadena.o: cadena.cpp cadena.hpp
 cadena_check fecha_check: cadena_check.cpp fecha_check.cpp
 	make -f Make_check.mk
 
-check: cadena_check fecha_check
+check_cadena: cadena_check
 	./cadena_check cadena.cpp -- -std=${STD}
+
+fecha_check: fecha_check
 	./fecha_check fecha.cpp -- -std=${STD}
 
+.PHONY: clean
+
 clean:
+	make -f Make_check.mk clean
 	$(RM) $(OBJS) $(EXE)
