@@ -1,7 +1,5 @@
 #include <cstdio>
 #include "fecha.hpp"
-#include "hrsys.hpp"//Clase para obtener la fecha del sistema
-
 /* CONSTRUCTORES */
 
 Fecha::Fecha(int d, int m, int a) : _d(d),_m(m),_a(a) {

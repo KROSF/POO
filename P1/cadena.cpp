@@ -27,7 +27,8 @@ Cadena Cadena::substr(size_t begindex, size_t len) const
   if (begindex >= this->length() || begindex + len > this->length() || begindex + len < begindex)
       throw std::out_of_range("Error de rango");
   char* tmp = new char[len+1];
-  std::strncpy(tmp, s_ + begindex,len);
+  std::strncpy(tmp, s_+begindex,len);
+  tmp[len]='\0';
   Cadena ctmp(tmp);
   delete [] tmp;
   return ctmp;

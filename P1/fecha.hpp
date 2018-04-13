@@ -1,6 +1,8 @@
 #ifndef FECHA_H
 #define FECHA_H
 #include <iostream>
+#include <clocale>
+#include <ctime>
 class Fecha
 {
 public:
@@ -11,6 +13,32 @@ public:
         const char * por_que() const { return _msg; }
     private:
         const char * _msg;
+    };
+    /* CLASE PARA OBTENER LA HORA DEL SISTEMA */
+    class Hrsys {
+    public:
+      Hrsys(): t1(std::time(nullptr)),t2(new std::tm(*std::localtime(&t1)))
+      { std::setlocale(LC_TIME, "es_ES.UTF-8");}
+      Hrsys(int d,int m,int a,int n = 0): t1(std::time(nullptr)),t2(new std::tm{0})
+      {
+        t2->tm_mday = (d+n);
+        t2->tm_mon = m-1;
+        t2->tm_year = a-1900;
+        std::mktime(t2);
+      }
+      int dia() const{return t2->tm_mday;}
+      int mes() const{return t2->tm_mon+1;}
+      int anio() const{return t2->tm_year+1900;}
+      const char * toString() const
+      {
+        auto * s = new char[40];
+        std::strftime(s, 40, "%A %d de %B de %Y", t2);
+        return s;
+      }
+      ~Hrsys(){delete t2;}
+    private:
+      std::time_t t1;
+      std::tm* t2;
     };
     /* CONSTANTES */
     static const int AnnoMinimo = 1902;

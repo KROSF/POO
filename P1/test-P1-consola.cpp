@@ -1,4 +1,4 @@
-/* $Id: test-P1-consola.cpp 378 2017-03-22 13:01:36Z gerardo $
+/* $Id: test-P1-consola.cpp 407 2018-03-17 20:19:10Z gerardo $
   Programa para probar (no demasiado exhaustivamente)
   las clases Fecha y Cadena de P1.
   V. "fecha.hpp" y "cadena.hpp" para más información.
@@ -69,18 +69,6 @@ int main()
   Fecha f1 = obtener_fecha_v1(), f2 = obtener_fecha_v2();
   cout << "La 1ª fecha fue: \"" << f1
        << "\", y la 2ª: \"" << f2 << "\"." << endl;
-
-// Diferencia de fechas
-  setenv("TZ", "", 1); // Establecemos TZ a vacío ( => UTC )
-  tzset();	       // Establece la zona horaria a $TZ
-  cout << "6/2/2015 - 29/12/1958 = 20493 ..." ;
-  long d = 20493; 
-  if (d == 20493)
-    cout << "OK!";
-  else
-    cout << " =/= " << d;
-  cout << endl;
-
 
 /*****************************************************************************/
 /* Pruebas de la clase Cadena. */

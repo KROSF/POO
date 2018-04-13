@@ -33,31 +33,27 @@ public:
     ~Cadena();
     /* ITERADORES */
     typedef char* iterator;
-	  typedef char const* const_iterator;
-	  typedef std::reverse_iterator<iterator> reverse_iterator;
-	  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+    typedef const char* const_iterator;
+    typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    iterator begin() noexcept {return s_;}
-    iterator end() noexcept { return s_ + tam_;}
-
-    const_iterator begin() const noexcept{ return s_; }
-    const_iterator end() const noexcept{ return s_ + tam_; }
-
-	  const_iterator cbegin() const noexcept { return begin(); }
-	  const_iterator cend() const noexcept { return end();}
-
-    reverse_iterator rbegin() noexcept { return reverse_iterator(end());}
-    reverse_iterator rend() noexcept { return reverse_iterator(begin());}
-
+    iterator begin() noexcept{return s_;};
+    const_iterator begin() const noexcept{return s_;};
+    const_iterator cbegin() const noexcept{return s_;};
+    reverse_iterator rbegin() noexcept{return reverse_iterator(end());};
     const_reverse_iterator rbegin() const noexcept
-    { return const_reverse_iterator(end());}
-    const_reverse_iterator rend() const noexcept
-    { return const_reverse_iterator(begin()); }
-
+    {return const_reverse_iterator(end());}
     const_reverse_iterator crbegin() const noexcept
-	  { return rbegin(); }
-	  const_reverse_iterator crend() const noexcept
-	  { return rend(); }
+    {return const_reverse_iterator(end());}
+
+    iterator end() noexcept{return s_ + tam_;};
+    const_iterator end() const noexcept{return s_ + tam_;};
+    const_iterator cend() const noexcept{return s_ + tam_;};
+    reverse_iterator rend() noexcept{return reverse_iterator(begin());}
+    const_reverse_iterator rend() const noexcept
+    {return const_reverse_iterator(begin());};
+    const_reverse_iterator crend() const noexcept
+    {return const_reverse_iterator(begin());};
 
 private:
     char * s_;
