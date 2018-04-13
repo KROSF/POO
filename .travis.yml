@@ -1,13 +1,20 @@
 os:
   - linux
-  - osx
 language:
   - cpp
-
+before_script:
+  - sudo apt-get install clang-5.0
+  - sudp apt-get install libclang-5.0-dev
+  - sudo apt-get install llvm-5.0
+  - sudo apt-get install llvm-5.0-tools
+  - sudo apt-get install llvm-5.0-runtime
+  - sudo rm /usr/bin/clang /usr/bin/clang++ /usr/bin/llvm-config
+  - sudo ln -s /usr/bin/clang-5.0 /usr/bin/clang
+  - sudo ln -s /usr/bin/clang++-5.0 /usr/bin/clang++
+  - sudo ln -s /usr/bin/llvm-config-5.0 /usr/bin/llvm-config
 script:
   - cd P1/
   - make test-auto
-
+  - make check
 compiler:
   - clang
-  - gcc
