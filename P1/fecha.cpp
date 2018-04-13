@@ -4,7 +4,7 @@
 
 Fecha::Fecha(int d, int m, int a) : _d(d),_m(m),_a(a) {
     if(_d==0||_m==0||_a==0) {
-        Hrsys hrsys;//Objeto con la fecha del sistema
+        Fecha::Hrsys hrsys;//Objeto con la fecha del sistema
         if(_d == 0) _d = hrsys.dia();
         if(_m == 0) _m = hrsys.mes();
         if(_a == 0) _a = hrsys.anio();
@@ -15,7 +15,7 @@ Fecha::Fecha(int d, int m, int a) : _d(d),_m(m),_a(a) {
 Fecha::Fecha(const char * fecha) : _d(22),_m(22),_a(22) {
     if(std::sscanf(fecha,"%d/%d/%d",&_d,&_m,&_a) != 3) throw Invalida("Error de conversión");
     if(_d==0||_m==0||_a==0) {
-        Hrsys hrsys;//Objeto con la fecha del sistema
+        Fecha::Hrsys hrsys;//Objeto con la fecha del sistema
         if(_d==0) _d = hrsys.dia();
         if(_m==0) _m = hrsys.mes();
         if(_a==0) _a = hrsys.anio();
@@ -42,7 +42,7 @@ inline int Fecha::mes() const noexcept { return _m; }
 inline int Fecha::anno() const noexcept { return _a; }
 
 const char* Fecha::cadena() const{
-  Hrsys shrsys(this->dia(),this->mes(),this->anno());
+  Fecha::Hrsys shrsys(this->dia(),this->mes(),this->anno());
   return shrsys.toString();
 }
 
@@ -50,7 +50,7 @@ const char* Fecha::cadena() const{
 
 Fecha& Fecha::operator+=(int n) {
   if(n != 0){
-    Hrsys nhrsys(this->_d,this->_m,this->_a,n);//Obejeto con la suma de ndias a una fecha
+    Fecha::Hrsys nhrsys(this->_d,this->_m,this->_a,n);//Obejeto con la suma de ndias a una fecha
     this->_d=nhrsys.dia();
     this->_m=nhrsys.mes();
     this->_a=nhrsys.anio();
@@ -91,14 +91,14 @@ Fecha Fecha::operator -- (int) {
 
 /* OPERADORES DE COMPARACIÓN */
 
-bool operator == (const Fecha& fecha1,const Fecha& fecha2){
+bool operator == (const Fecha& fecha1,const Fecha& fecha2) noexcept {
   return (fecha1.dia()==fecha2.dia())
       && (fecha1.mes()==fecha2.mes())
       && (fecha1.anno()==fecha2.anno());
 }
-bool operator != (const Fecha& fecha1, const Fecha& fecha2){return !( fecha1 == fecha2 );}
+bool operator != (const Fecha& fecha1, const Fecha& fecha2) noexcept {return !( fecha1 == fecha2 );}
 
-bool operator < (const Fecha& fecha1, const Fecha& fecha2)
+bool operator < (const Fecha& fecha1, const Fecha& fecha2) noexcept
 {
     if ( fecha1.anno() < fecha2.anno() ) return true;
     else if ( fecha1.anno() > fecha2.anno() ) return false;
@@ -106,13 +106,12 @@ bool operator < (const Fecha& fecha1, const Fecha& fecha2)
                 else if ( fecha1.mes() > fecha2.mes() ) return false;
                      else return fecha1.dia() < fecha2.dia();
 }
-bool operator > (const Fecha& fecha1, const Fecha& fecha2){return fecha2 < fecha1;}
+bool operator > (const Fecha& fecha1, const Fecha& fecha2) noexcept {return fecha2 < fecha1;}
 
-bool operator <= (const Fecha& fecha1, const Fecha& fecha2){
-    return ((fecha1 < fecha2) || (fecha1 == fecha2 ));
-}
+bool operator <= (const Fecha& fecha1, const Fecha& fecha2) noexcept
+{return ((fecha1 < fecha2) || (fecha1 == fecha2 ));}
 
-bool operator >= (const Fecha& fecha1, const Fecha& fecha2 ){return !(fecha1 < fecha2);}
+bool operator >= (const Fecha& fecha1, const Fecha& fecha2 ) noexcept {return !(fecha1 < fecha2);}
 
 /* OPERADORES DE FLUJO */
 
@@ -129,7 +128,7 @@ std::istream& operator >>(std::istream& is, Fecha& fecha)
   return is;
 }
 
-std::ostream& operator <<(std::ostream& os, const Fecha& fecha)
+std::ostream& operator <<(std::ostream& os, const Fecha& fecha) noexcept
 {
 	os << fecha.cadena();
 	return os;

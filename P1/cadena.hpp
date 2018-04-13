@@ -16,7 +16,7 @@ public:
     // Metodo para obtener la logitud de una cadena.
     size_t length() const noexcept;
     // Metodo para convertir una "Cadena" a "const char*".
-    const char * c_str() const;
+    const char * c_str() const noexcept;
     /* OPERADORES */
     // Operadores indice que no producen exepciones.
     char operator [] (size_t j) const noexcept;
@@ -64,11 +64,11 @@ Cadena operator + (const Cadena& cad1, const Cadena& cad2);
 /* OPERADORES DE COMPARACIÓN */
 bool operator == (const Cadena& cad1, const Cadena& cad2) noexcept;
 bool operator != (const Cadena& cad1, const Cadena& cad2) noexcept;
-bool operator > (const Cadena& cad1, const Cadena& cad2) noexcept;
-bool operator < (const Cadena& cad1, const Cadena& cad2) noexcept;
+bool operator >  (const Cadena& cad1, const Cadena& cad2) noexcept;
+bool operator <  (const Cadena& cad1, const Cadena& cad2) noexcept;
 bool operator <= (const Cadena& cad1, const Cadena& cad2) noexcept;
 bool operator >= (const Cadena& cad1, const Cadena& cad2) noexcept;
 /* OPERADORES DE FLUJO */
-std::ostream& operator << (std::ostream& os, const Cadena& cad);
-std::istream& operator >> (std::istream& is, Cadena& cad);
+std::ostream& operator << (std::ostream& os, const Cadena& cad) noexcept;
+std::istream& operator >> (std::istream& is, Cadena& cad)noexcept;
 #endif

@@ -36,7 +36,7 @@ Cadena Cadena::substr(size_t begindex, size_t len) const
 
 inline size_t Cadena::length() const noexcept { return tam_; }
 
-inline const char * Cadena::c_str() const { return s_; }
+inline const char * Cadena::c_str() const noexcept{ return s_; }
 
 /* OPERADORES  DE ACCESO */
 
@@ -71,11 +71,14 @@ Cadena& Cadena::operator += (const Cadena &cad)
 
 Cadena& Cadena::operator = (Cadena&& cad)
 {
+  if(this != &cad)
+  {
     delete[] s_;
     tam_ = cad.tam_;
     s_= cad.s_;
     cad.s_ = nullptr;
     cad.tam_ = 0;
+  }
     return *this;
 }
 
@@ -126,13 +129,13 @@ bool operator >= (const Cadena& cad1, const Cadena& cad2) noexcept
 
 /* OPERADORES DE FLUJO */
 
-std::ostream& operator << (std::ostream& os, const Cadena& cad)
+std::ostream& operator << (std::ostream& os, const Cadena& cad) noexcept
 {
 	os << cad.c_str();
 	return os;
 }
 
-std::istream &operator>>(std::istream& is,Cadena& cad)
+std::istream &operator>>(std::istream& is,Cadena& cad) noexcept
 {
   char* tmp = new char[33];
   int i = 0;
@@ -144,8 +147,7 @@ std::istream &operator>>(std::istream& is,Cadena& cad)
     if(is.good()) tmp[i++]=aux;
   }
   tmp[i]='\0';
-  if(i!=0) cad = tmp;
-  else cad = Cadena();
+  cad = tmp;
   delete[] tmp;
   return is;
 }

@@ -26,10 +26,10 @@ public:
         t2->tm_year = a-1900;
         std::mktime(t2);
       }
-      int dia() const{return t2->tm_mday;}
-      int mes() const{return t2->tm_mon+1;}
-      int anio() const{return t2->tm_year+1900;}
-      const char * toString() const
+      int dia() const noexcept{return t2->tm_mday;}
+      int mes() const noexcept{return t2->tm_mon+1;}
+      int anio() const noexcept{return t2->tm_year+1900;}
+      const char * toString() const noexcept
       {
         auto * s = new char[40];
         std::strftime(s, 40, "%A %d de %B de %Y", t2);
@@ -65,13 +65,13 @@ private:
     void es_valida() const;
 };
 /* OPERADORES DE COMPARACIÓN */
-bool operator == (const Fecha&, const Fecha&);
-bool operator != (const Fecha&, const Fecha&);
-bool operator < (const Fecha&, const Fecha&);
-bool operator > (const Fecha&, const Fecha&);
-bool operator <= (const Fecha&, const Fecha&);
-bool operator >= (const Fecha&, const Fecha&);
+bool operator == (const Fecha&, const Fecha&) noexcept;
+bool operator != (const Fecha&, const Fecha&) noexcept;
+bool operator <  (const Fecha&, const Fecha&) noexcept;
+bool operator >  (const Fecha&, const Fecha&) noexcept;
+bool operator <= (const Fecha&, const Fecha&) noexcept;
+bool operator >= (const Fecha&, const Fecha&) noexcept;
 /* OPERADORES DE FLUJO */
 std::istream& operator >>(std::istream& is, Fecha& f);
-std::ostream& operator <<(std::ostream& os, const Fecha& f);
+std::ostream& operator <<(std::ostream& os, const Fecha& f) noexcept;
 #endif

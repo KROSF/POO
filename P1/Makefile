@@ -17,22 +17,22 @@ test-auto: test-P1-auto
 	@./$<
 
 test-P1-consola: test-P1-consola.o fecha.o cadena.o
-	@echo "Enlazando Objetos"
+	@echo "Enlazando Objetos test-P1-consola"
 	@$(CXX) $(CXXFLAGS) $^ -o $@
 
 test-P1-auto: test-caso0-fecha-auto.o test-caso0-cadena-auto.o test-auto.o cadena.o fecha.o
-	@echo "Enazando Objetos"
+	@echo "Enazando Objetos test-P1-auto"
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)  $^ -o $@
 
 $(OBJS): $(SRCPP)
 
 check: cadena_check fecha_check
-	./cadena_check cadena.cpp -- -std=${STD}
-	./fecha_check fecha.cpp -- -std=${STD}
+	@./cadena_check cadena.cpp -- -std=${STD}
+	@./fecha_check fecha.cpp -- -std=${STD}
 
 cadena_check fecha_check: cadena_check.cpp fecha_check.cpp
 	@$(MAKE) -f Make_check.mk
-.SILENT: $(OBJS)
+
 .PHONY: clean
 clean:
 	@echo "Limpiando ..."
