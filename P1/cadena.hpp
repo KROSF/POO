@@ -33,7 +33,7 @@ public:
     ~Cadena();
     /* ITERADORES */
     typedef char* iterator;
-    typedef const char* const_iterator;
+    typedef char const * const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 

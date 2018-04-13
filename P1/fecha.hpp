@@ -46,20 +46,23 @@ public:
     /* CONSTRUCTORES */
     explicit Fecha(int d = 0,int m = 0,int a = 0);
     Fecha(const char * );
+    Fecha(const Fecha& ) = default;
     /* METODOS */
     int dia() const noexcept;
     int mes() const noexcept;
     int anno() const noexcept;
     const char* cadena() const;
     /* OPERADORES */
-    Fecha& operator +=(int);
-    Fecha& operator -=(int);
-    Fecha operator + (int) const;
-    Fecha operator - (int) const;
+    Fecha& operator =  (const Fecha&) = default;
+    Fecha& operator += (int);
+    Fecha& operator -= (int);
+    Fecha  operator +  (int) const;
+    Fecha  operator -  (int) const;
     Fecha& operator ++ ();//prefijo
-    Fecha operator ++ (int);//posfijo
+    Fecha  operator ++ (int);//posfijo
     Fecha& operator -- ();
-    Fecha operator -- (int);
+    Fecha  operator -- (int);
+    ~Fecha() = default;
 private:
     int _d,_m,_a;
     void es_valida() const;
