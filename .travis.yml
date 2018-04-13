@@ -1,3 +1,11 @@
+sudo: required
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-5
+    - g++-5
 os:
   - linux
 language:
@@ -5,6 +13,8 @@ language:
 before_script:
   - clang++ --version
   - llvm-config --version
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+  - gcc --version
 script:
   - cd P1/
   - make check
