@@ -37,4 +37,4 @@ cadena_check fecha_check: cadena_check.cpp fecha_check.cpp
 clean:
 	@echo "Limpiando ..."
 	@$(MAKE) -f Make_check.mk clean
-	@$(RM) $(OBJS) $(EXE)
+	@$(RM) $(OBJS) $(EXES)
