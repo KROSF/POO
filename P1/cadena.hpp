@@ -1,6 +1,7 @@
 #ifndef CADENA_H
 #define CADENA_H
 #include <iostream>
+#include <functional>
 class Cadena {
 public:
     /* CONSTRUCTORES */
@@ -71,4 +72,11 @@ bool operator >= (const Cadena& cad1, const Cadena& cad2) noexcept;
 /* OPERADORES DE FLUJO */
 std::ostream& operator << (std::ostream& os, const Cadena& cad) noexcept;
 std::istream& operator >> (std::istream& is, Cadena& cad)noexcept;
+/* HASH */
+namespace std {
+  template <> struct hash<Cadena> {
+    size_t operator()(const Cadena& cad) const
+    {return hash<std::string>{}(cad.c_str());}
+  };
+}
 #endif
