@@ -1,8 +1,8 @@
 #include "articulo.hpp"
 #include <iomanip>
 
-Articulo::Articulo(const Cadena& referencia,const Cadena& titulo,const Fecha& publicacion,unsigned num,double precio):
-cod_ref_(referencia),titulo_(titulo),publicacion_(publicacion),num_artcls(num),precio_(precio){}
+Articulo::Articulo(const Cadena& referencia,const Cadena& titulo,const Fecha& publicacion,double precio,unsigned num):
+cod_ref_(referencia),titulo_(titulo),publicacion_(publicacion),precio_(precio),num_artcls(num){}
 
 inline Cadena Articulo::referencia() const { return cod_ref_; }
 inline Cadena Articulo::titulo() const {return titulo_; }

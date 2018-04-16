@@ -27,6 +27,9 @@ tipo_(tipo),numero_(num),titular_(nullptr)
   if(fecha < caducidad_ )throw Caducada(fecha);
 }
 
+Tarjeta::~Tarjeta()
+{ if (titular_) titular_->no_es_titular_de(*this); }
+
 /* METODOS */
 
 void Tarjeta::anula_titular() { const_cast<Usuario*&>(titular_) = nullptr; }

@@ -3,7 +3,7 @@
 #include <ostream>
 #include "../P1/fecha.hpp"
 #include "../P1/cadena.hpp"
-class Usuario;
+#include "usuario.hpp"
 /* Clase Numero */
 class Numero{
 public:
@@ -22,6 +22,7 @@ public:
 private:
   Cadena num_;
 };
+class Usuario;
 /* Clase Tarjeta */
 class Tarjeta{
 public:
@@ -38,6 +39,8 @@ public:
   const Fecha& caducidad() const;
   const Cadena& titular_facial() const;
   void anula_titular();
+  /* DESTRUCTOR */
+  ~Tarjeta();
   /* Clase Execpcion Tarjeta */
   class Caducada
   {

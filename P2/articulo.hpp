@@ -4,7 +4,7 @@
 #include "../P1/cadena.hpp"
 class Articulo{
 public:
-  Articulo(const Cadena&,const Cadena&,const Fecha&,unsigned,double);
+  explicit Articulo(const Cadena&,const Cadena&,const Fecha&,double,unsigned);
   Cadena referencia() const;
   Cadena titulo() const;
   Fecha f_publi() const;
@@ -15,8 +15,8 @@ public:
 private:
   Cadena cod_ref_,titulo_;
   Fecha publicacion_;
-  unsigned num_artcls;
   double precio_;
+  unsigned num_artcls;
 };
 std::ostream& operator << (std::ostream& os,const Articulo& artcl);
 #endif

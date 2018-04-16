@@ -1,6 +1,7 @@
 #include <cstring>
 #include <random>
 #include <unistd.h>
+#include <iomanip>
 #include "usuario.hpp"
 #define MD5 "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 /* Clase Clave */
@@ -66,4 +67,20 @@ std::ostream& operator << (std::ostream&os,const Usuario& user)
       << user.apellido_ << std::endl << user.direccion_ << std::endl << "Tarjetas:" << std::endl;
    for (auto& card : user.cards_) os << *card.second << std::endl;
   return os;
+}
+
+void mostrar_carro(std::ostream& os, const Usuario& user)
+{
+  os << "Carrito de compra de " << user.id() << " [Artículos: "
+     << user.n_articulos() << "]" << std::endl;
+  while(user.n_articulos())
+  {
+    os << " Cant. Artículo" << std::endl
+       << std::setw(95) << std::setfill('=') << '\n'  << std::setfill(' ');
+
+    for (auto const& i : user.compra())
+        os << std::setw(4) << i.second << "   "<< *i.first << std::endl;
+
+    os << std::endl;
+  }
 }

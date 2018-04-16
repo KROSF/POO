@@ -28,7 +28,8 @@ private:
 };
 
 /* Clase Usuario */
-
+class Numero;
+class Tarjeta;
 class Usuario{
 public:
   /* TIPOS */
@@ -72,4 +73,5 @@ private:
   Articulos artcls_;
   static std::unordered_set<Cadena> usuarios_;
 };
+void mostrar_carro(std::ostream& os, const Usuario& user);
 #endif
