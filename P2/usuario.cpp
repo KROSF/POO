@@ -39,7 +39,7 @@ const Usuario::Tarjetas& Usuario::tarjetas() const {return cards_;}
 const Usuario::Articulos& Usuario::compra() const {return artcls_;}
 inline size_t Usuario::n_articulos() const {return artcls_.size();}
 
-void Usuario::es_titular_de(const Tarjeta& card)
+void Usuario::es_titular_de(Tarjeta& card)
 { if(card.titular() == this) cards_[card.numero()] = const_cast<Tarjeta*>(&card);}
 
 void Usuario::no_es_titular_de(Tarjeta& card)
@@ -73,14 +73,20 @@ void mostrar_carro(std::ostream& os, const Usuario& user)
 {
   os << "Carrito de compra de " << user.id() << " [Artículos: "
      << user.n_articulos() << "]" << std::endl;
-  while(user.n_articulos())
+     os << " Cant. Artículo" << std::endl
+        << std::setw(95) << std::setfill('=') << '\n'  << std::setfill(' ');
+        int tmp = user.n_articulos();
+  while(tmp > 0)
   {
-    os << " Cant. Artículo" << std::endl
-       << std::setw(95) << std::setfill('=') << '\n'  << std::setfill(' ');
-
     for (auto const& i : user.compra())
-        os << std::setw(4) << i.second << "   "<< *i.first << std::endl;
-
+        {
+          os << std::setw(4) << i.second << "   "
+             << "[" << (*i.first).referencia() << "] \""
+             << (*i.first).titulo() << "\", " << (*i.first).f_publi().anno()
+             << ". " << std::fixed << std::setprecision(2) << (*i.first).precio()
+             << " €" << std::endl;
+          --tmp;
+        }
     os << std::endl;
   }
 }

@@ -31,27 +31,18 @@ tipo_(tipo),numero_(num),titular_(nullptr)
 Tarjeta::~Tarjeta()
 { if (titular_) titular_->no_es_titular_de(*this); }
 
-/* METODOS */
-
-void Tarjeta::anula_titular() { const_cast<Usuario*&>(titular_) = nullptr; }
-//inline Tarjeta::Tipo Tarjeta::tipo() const { return tipo_; }
-//inline Numero Tarjeta::numero() const { return numero_; }
-const Usuario* Tarjeta::titular() const { return titular_; }
-//inline Fecha Tarjeta::caducidad() const { return caducidad_; }
-//inline Cadena Tarjeta::titular_facial() const { return titular_facial_; }
-
 //> OPERADOR
 bool operator< (const Tarjeta& card,const Tarjeta& card2)
 {return card.numero()< card2.numero();}
 
-std::ostream& operator <<(std::ostream& os,const Tarjeta::Tipo& tipo)
+std::ostream& operator <<(std::ostream& os,Tarjeta::Tipo const&  tipo)
 {
   switch (tipo) {
-    case Tarjeta::Tipo::VISA:	os << "VISA";break;
-		case Tarjeta::Tipo::Mastercard: os << "Mastercard";break;
-		case Tarjeta::Tipo::Maestro: os << "Maestro";break;
-		case Tarjeta::Tipo::JCB: os << "JCB";break;
-		case Tarjeta::Tipo::AmericanExpress: os << "AmericanExpress";break;
+    case Tarjeta::Tipo::VISA:	os << " VISA ";break;
+		case Tarjeta::Tipo::Mastercard: os << " Mastercard ";break;
+		case Tarjeta::Tipo::Maestro: os << " Maestro ";break;
+		case Tarjeta::Tipo::JCB: os << " JCB ";break;
+		case Tarjeta::Tipo::AmericanExpress: os << " AmericanExpress ";break;
   }
   return os;
 }
@@ -60,7 +51,7 @@ std::ostream& operator <<(std::ostream& os,const Tarjeta& card)
   os<<card.tipo()<<std::endl;
   os<<card.numero()<<std::endl;
   os<<card.titular_facial()<<std::endl;
-  os<<"caduca: "<< std::setfill('0') << std::setw(2) << card.caducidad().mes()
+  os<<"Caduca: "<< std::setfill('0') << std::setw(2) << card.caducidad().mes()
      << '/' << std::setw(2) << (card.caducidad().anno() % 100);
   return os;
 }

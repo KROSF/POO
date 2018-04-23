@@ -28,17 +28,18 @@ class Tarjeta{
 public:
   enum Tipo {VISA,Mastercard, Maestro, JCB, AmericanExpress};
   /* CONSTRUCTORES */
-  Tarjeta(Tipo tipo,const Numero& num,Usuario& titular,const Fecha& fecha);
+  Tarjeta(Tipo t,const Numero& n,Usuario& u,const Fecha& f);
   Tarjeta(const Tarjeta& ) = delete;
   /* OPERADORES */
   Tarjeta& operator= (const Tarjeta &) = delete;
   /* METODOS */
   Tipo tipo() const { return tipo_; }
   Numero numero() const { return numero_; }
-  const Usuario* titular() const;
+  Usuario* titular() const{ return titular_; }
   Fecha caducidad() const{ return caducidad_; }
   Cadena titular_facial() const{ return titular_facial_; }
-  void anula_titular();
+
+  void anula_titular(){ const_cast<Usuario*&>(titular_) = nullptr; }
   /* DESTRUCTOR */
   ~Tarjeta();
   /* Clase Execpcion Tarjeta */
@@ -61,6 +62,6 @@ private:
 
 /* OPERADORES*/
 bool operator< (const Tarjeta& card,const Tarjeta& card2);
-std::ostream& operator <<(std::ostream& os,const Tarjeta::Tipo& tipo);
+std::ostream& operator <<(std::ostream& os,Tarjeta::Tipo const&  tipo);
 std::ostream& operator <<(std::ostream& os,const Tarjeta& card);
 #endif

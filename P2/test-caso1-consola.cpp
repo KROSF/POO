@@ -81,14 +81,14 @@ int main()
     std::cerr << "Error de verificación de clave: "
 	      << "\"TeDaKuén\" != \"TeDaKuén\". (\?\?\?)" << std::endl;
   try {		 // O938 en vez de 0938 ;-) (era una O, no un cero)
-    Tarjeta falsa(Tipo::AmericanExpress, Numero("4539 4512 O398 7356"), 
+    Tarjeta falsa(Tipo::AmericanExpress, Numero("4539 4512 O398 7356"),
 		  lucas, "31/12/2020");
   }
   catch(Numero::Incorrecto& e) {
     numero_incorrecto(e);
   }
   try {
-    Tarjeta judas(Tipo::AmericanExpress, Numero("1234567890123456"), 
+    Tarjeta judas(Tipo::AmericanExpress, Numero("1234567890123456"),
 		  lucas, "31/12/2020");
   }
   catch(Numero::Incorrecto& e) {
@@ -101,14 +101,14 @@ int main()
     numero_incorrecto(e);
   }
   try {
-    Tarjeta caduca(Tipo::AmericanExpress, Numero("4222222222222"), 
+    Tarjeta caduca(Tipo::AmericanExpress, Numero("4222222222222"),
 		   lucas, "30/04/2002");
   }
   catch(Tarjeta::Caducada &e) {
     std::cerr << "Error: tarjeta caducada. " << e.cuando() << std::endl;
   }
   try { 			// En la fecha, O = letra O, no cero (O-0)
-    Tarjeta rota(Tipo::AmericanExpress, Numero(" 4222222222222 "), 
+    Tarjeta rota(Tipo::AmericanExpress, Numero(" 4222222222222 "),
 		 lucas, "1O/O4/2O2O");
   }
   catch(Fecha::Invalida &e) {
