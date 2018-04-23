@@ -8,9 +8,9 @@ inline Cadena Articulo::referencia() const { return cod_ref_; }
 inline Cadena Articulo::titulo() const {return titulo_; }
 inline Fecha Articulo::f_publi() const { return publicacion_; }
 inline double Articulo::precio() const { return precio_; }
-inline double& Articulo::precio() {return precio_;}
+double& Articulo::precio() {return precio_;}
 inline unsigned Articulo::stock() const { return num_artcls; }
-inline unsigned& Articulo::stock(){ return num_artcls; }
+unsigned& Articulo::stock(){ return num_artcls; }
 
 std::ostream& operator <<(std::ostream& os,const Articulo& artcl)
 {

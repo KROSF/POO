@@ -33,10 +33,10 @@ public:
   /* OPERADORES */
   Tarjeta& operator= (const Tarjeta &) = delete;
   /* METODOS */
-  const Tipo& tipo() const;
-  const Numero& numero() const;
+  Tipo tipo() const;
+  Numero numero() const;
   Usuario* titular() const;
-  const Fecha& caducidad() const;
+  Fecha caducidad() const;
   const Cadena& titular_facial() const;
   void anula_titular();
   /* DESTRUCTOR */

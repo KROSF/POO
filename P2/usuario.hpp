@@ -35,6 +35,7 @@ public:
   /* TIPOS */
   typedef std::map<Numero, Tarjeta*> Tarjetas;
   typedef std::unordered_map<Articulo*, unsigned> Articulos;
+  typedef std::unordered_set<Cadena> Usuarios;
   /* CONSTRUCTORES */
   Usuario(const Cadena& idtfdr,const Cadena& nombre,
           const Cadena& apellido,const Cadena& dir,
@@ -71,7 +72,7 @@ private:
   Clave password_;
   Tarjetas cards_;
   Articulos artcls_;
-  static std::unordered_set<Cadena> usuarios_;
+  static Usuarios usuarios_;
 };
 void mostrar_carro(std::ostream& os, const Usuario& user);
 #endif

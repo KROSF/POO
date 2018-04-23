@@ -19,11 +19,11 @@ Clave::Clave(const char * pass)
 }
 /* METODOS */
 inline const Cadena& Clave::clave() const{return password;}
-inline bool Clave::verifica(const char* pass) const
+bool Clave::verifica(const char* pass) const
 { return std::strcmp(crypt(pass, password.c_str()), password.c_str()) == 0 ; }
 
 /* Clase Usuario */
-
+Usuario::Usuarios Usuario::usuarios_;
 Usuario::Usuario(const Cadena& idtfdr,const Cadena& nombre,const Cadena& apellido,
                  const Cadena& dir,const Clave& pass):identificador_(idtfdr),
                  nombre_(nombre),apellido_(apellido),direccion_(dir),password_(pass)

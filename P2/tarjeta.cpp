@@ -33,10 +33,10 @@ Tarjeta::~Tarjeta()
 /* METODOS */
 
 void Tarjeta::anula_titular() { const_cast<Usuario*&>(titular_) = nullptr; }
-const Tarjeta::Tipo& Tarjeta::tipo() const { return tipo_; }
-const Numero& Tarjeta::numero() const { return numero_; }
+inline Tarjeta::Tipo Tarjeta::tipo() const { return tipo_; }
+inline Numero Tarjeta::numero() const { return numero_; }
 Usuario* Tarjeta::titular() const { return titular_; }
-const Fecha& Tarjeta::caducidad() const { return caducidad_; }
+inline Fecha Tarjeta::caducidad() const { return caducidad_; }
 const Cadena& Tarjeta::titular_facial() const { return titular_facial_; }
 
 //> OPERADOR
