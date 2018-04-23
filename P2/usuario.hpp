@@ -48,10 +48,10 @@ public:
   void no_es_titular_de(Tarjeta &);
   void compra(Articulo&, unsigned s = 1);
 
-  const Cadena& id() const;
-  const Cadena& nombre() const;
-  const Cadena& apellidos() const;
-  const Cadena& direccion() const;
+  Cadena id() const;
+  Cadena nombre() const{return nombre_;}
+  Cadena apellidos() const{return apellido_;}
+  Cadena direccion() const{return direccion_;}
   const Tarjetas& tarjetas() const;
   const Articulos& compra() const;
   size_t n_articulos() const;

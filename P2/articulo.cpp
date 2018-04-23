@@ -1,5 +1,6 @@
-#include "articulo.hpp"
 #include <iomanip>
+#include "articulo.hpp"
+
 
 Articulo::Articulo(const Cadena& referencia,const Cadena& titulo,const Fecha& publicacion,double precio,unsigned num):
 cod_ref_(referencia),titulo_(titulo),publicacion_(publicacion),precio_(precio),num_artcls(num){}

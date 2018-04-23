@@ -26,18 +26,18 @@ class Usuario;
 /* Clase Tarjeta */
 class Tarjeta{
 public:
-  enum Tipo {VISA,Mastercard, Maestro, JCB,AmericanExpress};
+  enum Tipo {VISA,Mastercard, Maestro, JCB, AmericanExpress};
   /* CONSTRUCTORES */
   Tarjeta(Tipo tipo,const Numero& num,Usuario& titular,const Fecha& fecha);
   Tarjeta(const Tarjeta& ) = delete;
   /* OPERADORES */
   Tarjeta& operator= (const Tarjeta &) = delete;
   /* METODOS */
-  Tipo tipo() const;
-  Numero numero() const;
-  Usuario* titular() const;
-  Fecha caducidad() const;
-  const Cadena& titular_facial() const;
+  Tipo tipo() const { return tipo_; }
+  Numero numero() const { return numero_; }
+  const Usuario* titular() const;
+  Fecha caducidad() const{ return caducidad_; }
+  Cadena titular_facial() const{ return titular_facial_; }
   void anula_titular();
   /* DESTRUCTOR */
   ~Tarjeta();

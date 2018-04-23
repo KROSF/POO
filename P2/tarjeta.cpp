@@ -1,19 +1,20 @@
-#include "tarjeta.hpp"
 #include <algorithm>
 #include <cctype>
+#include <iomanip>
+#include "tarjeta.hpp"
 #define REMOVE std::remove_if(num.begin(),num.end(),[](unsigned char x){return std::isspace(x);})
-#define FIND std::find_if(num.begin(),num.end(),(int(*)(int))std::isdigit)
+#define FIND std::count_if(num.begin(), num.end(), static_cast<int(*)(int)>(std::isdigit))
 
-bool luhn(const Cadena& num, size_t n);
+bool luhn(const Cadena& numero);
 /*******************************  NUMERO **********************************/
 //> CONSTRUCTOR
 Numero::Numero(Cadena num)
 {
-  if (!num.length()) throw Incorrecto(Razon::LONGITUD);
+  if (num.length() == 0) throw Incorrecto(Razon::LONGITUD);
   num = num.substr(0,REMOVE - num.begin());
-  if(FIND != num.end()) throw Incorrecto(Razon::DIGITOS);
+  if(FIND != num.length()) throw Incorrecto(Razon::DIGITOS);
   if(num.length()< 13 || num.length() > 19) throw Incorrecto(Razon::LONGITUD);
-  if(!luhn(num,num.length())) throw Incorrecto(Razon::NO_VALIDO);
+  if(!luhn(num))throw Incorrecto(Razon::NO_VALIDO);
   num_ = num;
 }
 //> OPERADOR
@@ -33,11 +34,11 @@ Tarjeta::~Tarjeta()
 /* METODOS */
 
 void Tarjeta::anula_titular() { const_cast<Usuario*&>(titular_) = nullptr; }
-inline Tarjeta::Tipo Tarjeta::tipo() const { return tipo_; }
-inline Numero Tarjeta::numero() const { return numero_; }
-Usuario* Tarjeta::titular() const { return titular_; }
-inline Fecha Tarjeta::caducidad() const { return caducidad_; }
-const Cadena& Tarjeta::titular_facial() const { return titular_facial_; }
+//inline Tarjeta::Tipo Tarjeta::tipo() const { return tipo_; }
+//inline Numero Tarjeta::numero() const { return numero_; }
+const Usuario* Tarjeta::titular() const { return titular_; }
+//inline Fecha Tarjeta::caducidad() const { return caducidad_; }
+//inline Cadena Tarjeta::titular_facial() const { return titular_facial_; }
 
 //> OPERADOR
 bool operator< (const Tarjeta& card,const Tarjeta& card2)
@@ -45,21 +46,21 @@ bool operator< (const Tarjeta& card,const Tarjeta& card2)
 
 std::ostream& operator <<(std::ostream& os,const Tarjeta::Tipo& tipo)
 {
-  switch (static_cast<int>(tipo)) {
-    case 0:	os << " VISA ";
-				break;
-		case 1: os << " Mastercard ";
-				break;
-		case 2: os << " Maestro ";
-				break;
-		case 3: os << " JCB	";
-				break;
-		case 4: os << " AmericanExpress ";
-				break;
+  switch (tipo) {
+    case Tarjeta::Tipo::VISA:	os << "VISA";break;
+		case Tarjeta::Tipo::Mastercard: os << "Mastercard";break;
+		case Tarjeta::Tipo::Maestro: os << "Maestro";break;
+		case Tarjeta::Tipo::JCB: os << "JCB";break;
+		case Tarjeta::Tipo::AmericanExpress: os << "AmericanExpress";break;
   }
   return os;
 }
 std::ostream& operator <<(std::ostream& os,const Tarjeta& card)
 {
+  os<<card.tipo()<<std::endl;
+  os<<card.numero()<<std::endl;
+  os<<card.titular_facial()<<std::endl;
+  os<<"caduca: "<< std::setfill('0') << std::setw(2) << card.caducidad().mes()
+     << '/' << std::setw(2) << (card.caducidad().anno() % 100);
   return os;
 }

@@ -31,13 +31,13 @@ Usuario::Usuario(const Cadena& idtfdr,const Cadena& nombre,const Cadena& apellid
 
 /* METODOS */
 
-inline const Cadena& Usuario::id() const{return identificador_;}
-inline const Cadena& Usuario::nombre() const{return nombre_;}
-inline const Cadena& Usuario::apellidos() const{return apellido_;}
-inline const Cadena& Usuario::direccion() const{return direccion_;}
-inline const Usuario::Tarjetas& Usuario::tarjetas() const{return cards_;}
-inline const Usuario::Articulos& Usuario::compra() const{return artcls_;}
-inline size_t Usuario::n_articulos() const{return artcls_.size();}
+inline Cadena Usuario::id() const {return identificador_;}
+//inline Cadena Usuario::nombre() const {return nombre_;}
+//inline Cadena Usuario::apellidos() const {return apellido_;}
+//inline Cadena Usuario::direccion() const {return direccion_;}
+const Usuario::Tarjetas& Usuario::tarjetas() const {return cards_;}
+const Usuario::Articulos& Usuario::compra() const {return artcls_;}
+inline size_t Usuario::n_articulos() const {return artcls_.size();}
 
 void Usuario::es_titular_de(const Tarjeta& card)
 { if(card.titular() == this) cards_[card.numero()] = const_cast<Tarjeta*>(&card);}

@@ -138,10 +138,17 @@ std::ostream& operator << (std::ostream& os, const Cadena& cad) noexcept
 std::istream &operator>>(std::istream& is,Cadena& cad) noexcept
 {
   char* tmp = new char[33];
-  is.width(33);
-  is >> tmp;
+  int i = 0;
+  char aux;
+  while(isspace(is.get()) && is.good()){}
+  is.unget();
+  while (i < 32 && !isspace(is.peek()) && is.good() && is.peek() != '\n' && is.peek()!='\0') {
+    aux=is.get();
+    if(is.good()) tmp[i++]=aux;
+  }
+  tmp[i]='\0';
   cad = tmp;
-  delete [] tmp;
+  delete[] tmp;
   return is;
 }
 
