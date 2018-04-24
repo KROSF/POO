@@ -6,13 +6,16 @@
 #include "../P1/cadena.hpp"
 #include "tarjeta.hpp"
 #include "articulo.hpp"
-/* Clase Clave */
+class Numero;
+class Tarjeta;
+/***************************** Clase Clave *************************************/
 class Clave{
 public:
+  /* enum */
   enum Razon { CORTA,ERROR_CRYPT };
-  /* CONSTRUCTOR */
+  /* Constructor */
   Clave(const char* );
-  /* METODOS */
+  /* Metodos */
   const Cadena& clave() const;
   bool verifica(const char* validate) const;
   /* Clase Execpcion */
@@ -26,38 +29,38 @@ public:
 private:
   Cadena password;
 };
-
+/***************************** Clase Clave *************************************/
 /* Clase Usuario */
-class Numero;
-class Tarjeta;
+/***************************** Clase Usuario *************************************/
 class Usuario{
 public:
-  /* TIPOS */
+  /* Definicion de tipos */
   typedef std::map<Numero, Tarjeta*> Tarjetas;
   typedef std::unordered_map<Articulo*, unsigned> Articulos;
   typedef std::unordered_set<Cadena> Usuarios;
-  /* CONSTRUCTORES */
+  /* Constructor */
   Usuario(const Cadena& idtfdr,const Cadena& nombre,
           const Cadena& apellido,const Cadena& dir,
           const Clave& pas);
+  /* No se permite la copia de Usuario */
   Usuario(const Usuario&) = delete;
-  /* OPERADORES */
   Usuario& operator=(const Usuario&) = delete;
-  /* METODOS */
-  void es_titular_de(const Tarjeta &);
-  void no_es_titular_de(Tarjeta &);
-  void compra(Articulo&, unsigned s = 1);
-
-  Cadena id() const;
-  Cadena nombre() const{return nombre_;}
-  Cadena apellidos() const{return apellido_;}
+  /* Metodos */
+  void es_titular_de(Tarjeta &);//Vincular una tarjeta con Usuario
+  void no_es_titular_de(Tarjeta &);//Desvicular tarjeta de usuario
+  void compra(Articulo&, unsigned s = 1);//Agregar un articulo
+  /* Observadores */
+  Cadena id() const { return identificador_; }
+  Cadena nombre() const{ return nombre_; }
+  Cadena apellidos() const{return apellidos_;}
   Cadena direccion() const{return direccion_;}
-  const Tarjetas& tarjetas() const;
-  const Articulos& compra() const;
-  size_t n_articulos() const;
+  size_t n_articulos() const {return artcls_.size();}
 
-  friend std::ostream& operator << (std::ostream&os,const Usuario& user);
+  const Tarjetas& tarjetas() const { return cards_; }
+  const Articulos& compra() const  { return artcls_;}
 
+  friend std::ostream& operator << (std::ostream& os,const Usuario& user);
+~Usuario();
   /* Clase Execpcion */
   class Id_duplicado{
   public:
@@ -66,13 +69,13 @@ public:
   private:
     Cadena duplicate_;
   };
-~Usuario();
 private:
-  Cadena identificador_, nombre_, apellido_, direccion_;
+  Cadena identificador_, nombre_, apellidos_, direccion_;
   Clave password_;
   Tarjetas cards_;
   Articulos artcls_;
   static Usuarios usuarios_;
 };
-void mostrar_carro(std::ostream& os, const Usuario& user);
+std::ostream& mostrar_carro(std::ostream& os, const Usuario& user);
+/***************************** Clase Usuario *************************************/
 #endif

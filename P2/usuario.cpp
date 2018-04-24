@@ -1,61 +1,75 @@
+extern "C"{
+  #include <unistd.h>
+}
 #include <cstring>
 #include <random>
-#include <unistd.h>
 #include <iomanip>
 #include "usuario.hpp"
-#define MD5 "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+#define  CARACTERESVALIDOS "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210/."
 /* Clase Clave */
+/* Inicio constructor Clave */
 Clave::Clave(const char * pass)
 {
   if(std::strlen(pass) < 5) throw Incorrecta(Clave::CORTA);
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dis(0, 63);
-  char const md5[] = MD5;
-  char salt[2] = { md5[dis(rd)], md5[dis(rd)] };
-  char* encrypt = crypt(pass, salt);
-  if(encrypt == nullptr) throw Incorrecta(Razon::ERROR_CRYPT);
-	password = encrypt;
+  static std::random_device rd;
+  static std::uniform_int_distribution<std::size_t> dis(0, 63);
+  static const char *const cv = CARACTERESVALIDOS;
+  const char salt[] = { cv[dis(rd)], cv[dis(rd)] };
+  if(const char* const encrypt = crypt(pass, salt)) password = encrypt;
+  else throw Incorrecta(Razon::ERROR_CRYPT);
 }
+/* Fin Constructor Clave */
 /* METODOS */
-inline const Cadena& Clave::clave() const{return password;}
+inline const Cadena& Clave::clave() const { return password; }
 bool Clave::verifica(const char* pass) const
-{ return std::strcmp(crypt(pass, password.c_str()), password.c_str()) == 0 ; }
+{
+  if(const char* const pw = crypt(pass, password.c_str()))
+    return  pw == password;
+  throw Incorrecta(Razon::ERROR_CRYPT);
+}
 
 /* Clase Usuario */
 Usuario::Usuarios Usuario::usuarios_;
-Usuario::Usuario(const Cadena& idtfdr,const Cadena& nombre,const Cadena& apellido,
-                 const Cadena& dir,const Clave& pass):identificador_(idtfdr),
-                 nombre_(nombre),apellido_(apellido),direccion_(dir),password_(pass)
-{if (!usuarios_.insert(idtfdr).second) throw Id_duplicado(identificador_);}
+/* Inicio construcutor Usuario */
+Usuario::Usuario(const Cadena& id,
+                 const Cadena& nombre,
+                 const Cadena& apellidos,
+                 const Cadena& dir,
+                 const Clave& pass):
+                 identificador_(id),
+                 nombre_(nombre),
+                 apellidos_(apellidos),
+                 direccion_(dir),
+                 password_(pass)
 
-/* METODOS */
-
-inline Cadena Usuario::id() const {return identificador_;}
-//inline Cadena Usuario::nombre() const {return nombre_;}
-//inline Cadena Usuario::apellidos() const {return apellido_;}
-//inline Cadena Usuario::direccion() const {return direccion_;}
-const Usuario::Tarjetas& Usuario::tarjetas() const {return cards_;}
-const Usuario::Articulos& Usuario::compra() const {return artcls_;}
-inline size_t Usuario::n_articulos() const {return artcls_.size();}
-
+{ if (!usuarios_.insert(id).second) throw Id_duplicado(identificador_); }
+/* Fin constructor */
 void Usuario::es_titular_de(Tarjeta& card)
-{ if(card.titular() == this) cards_[card.numero()] = const_cast<Tarjeta*>(&card);}
+{ if(this == card.titular()) cards_.insert(std::make_pair(card.numero(),&card));}
 
 void Usuario::no_es_titular_de(Tarjeta& card)
-{ cards_.erase(card.numero()); }
+{
+  card.anula_titular();
+  cards_.erase(card.numero());
+}
 
 void Usuario::compra(Articulo&  artcl, unsigned cantidad)
 {
-    if (cantidad == 0) artcls_.erase(const_cast<Articulo*>(&artcl));
-    else artcls_[const_cast<Articulo*>(&artcl)] = cantidad;
+    if (cantidad == 0) artcls_.erase(&artcl);
+    //eliminar el ariculos si cantidad es 0
+    else artcls_[&artcl] = cantidad;
+    //si no agregar el articulo
 }
 
 /* DESTRUCTOR */
 
 Usuario::~Usuario()
 {
-  for (auto& card : cards_) card.second->anula_titular();
+  auto iter = cards_.begin();
+  while(iter != cards_.end()) {
+    iter->second->anula_titular();
+    iter++;
+  }
   usuarios_.erase(identificador_);
 }
 
@@ -63,19 +77,22 @@ Usuario::~Usuario()
 
 std::ostream& operator << (std::ostream&os,const Usuario& user)
 {
-  os << user.identificador_ << "[" << user.password_.clave() << "]" << user.nombre_
-      << user.apellido_ << std::endl << user.direccion_ << std::endl << "Tarjetas:" << std::endl;
-   for (auto& card : user.cards_) os << *card.second << std::endl;
+  os << user.identificador_ << "[" << user.password_.clave().c_str() << "]" << user.nombre_
+      << user.apellidos_ << std::endl << user.direccion_ << std::endl << "Tarjetas:" << std::endl;
+  auto iter = user.tarjetas().begin();
+   while(iter != user.tarjetas().end()) {
+     os << *iter->second << std::endl;
+     iter++;
+   }
   return os;
 }
-
-void mostrar_carro(std::ostream& os, const Usuario& user)
+std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
 {
   os << "Carrito de compra de " << user.id() << " [Artículos: "
      << user.n_articulos() << "]" << std::endl;
      os << " Cant. Artículo" << std::endl
         << std::setw(95) << std::setfill('=') << '\n'  << std::setfill(' ');
-        int tmp = user.n_articulos();
+  int tmp = user.n_articulos();
   while(tmp > 0)
   {
     for (auto const& i : user.compra())
@@ -87,6 +104,6 @@ void mostrar_carro(std::ostream& os, const Usuario& user)
              << " €" << std::endl;
           --tmp;
         }
-    os << std::endl;
   }
+  return os;
 }

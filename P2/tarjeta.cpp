@@ -3,8 +3,8 @@
 #include <iomanip>
 #include "tarjeta.hpp"
 #define REMOVE std::remove_if(num.begin(),num.end(),[](unsigned char x){return std::isspace(x);})
-#define FIND std::count_if(num.begin(), num.end(), static_cast<int(*)(int)>(std::isdigit))
-
+#define COUNT std::count_if(num.begin(), num.end(), static_cast<int(*)(int)>(std::isdigit))
+//Declaracion anticipada de luhn
 bool luhn(const Cadena& numero);
 /*******************************  NUMERO **********************************/
 //> CONSTRUCTOR
@@ -12,7 +12,7 @@ Numero::Numero(Cadena num)
 {
   if (num.length() == 0) throw Incorrecto(Razon::LONGITUD);
   num = num.substr(0,REMOVE - num.begin());
-  if(FIND != num.length()) throw Incorrecto(Razon::DIGITOS);
+  if(COUNT != num.length()) throw Incorrecto(Razon::DIGITOS);
   if(num.length()< 13 || num.length() > 19) throw Incorrecto(Razon::LONGITUD);
   if(!luhn(num))throw Incorrecto(Razon::NO_VALIDO);
   num_ = num;
@@ -22,20 +22,24 @@ bool operator< (const Numero& num,const Numero& num2)
 {return num.num_ < num2.num_;}
 /******************************** TARJETA ********************************/
 
-Tarjeta::Tarjeta(Tipo tipo,const Numero& num,Usuario& titular,const Fecha& fecha):
-tipo_(tipo),numero_(num),titular_(nullptr)
+Tarjeta::Tarjeta(Tipo t,const Numero& n,Usuario& u,const Fecha& fecha):
+tipo_(t),numero_(n),titular_(&u),caducidad_(fecha),titular_facial_(u.nombre()+" "+u.apellidos())
 {
-  if(fecha < caducidad_ )throw Caducada(fecha);
+  if(caducidad_ < Fecha() )throw Caducada(caducidad_);
+  u.es_titular_de(*this);
 }
 
 Tarjeta::~Tarjeta()
-{ if (titular_) titular_->no_es_titular_de(*this); }
+{
+  if(Usuario* us = const_cast<Usuario*>(titular_))
+      us->no_es_titular_de(*this);
+}
 
 //> OPERADOR
 bool operator< (const Tarjeta& card,const Tarjeta& card2)
 {return card.numero()< card2.numero();}
 
-std::ostream& operator <<(std::ostream& os,Tarjeta::Tipo const&  tipo)
+std::ostream& operator <<(std::ostream& os,const Tarjeta::Tipo&  tipo)
 {
   switch (tipo) {
     case Tarjeta::Tipo::VISA:	os << " VISA ";break;

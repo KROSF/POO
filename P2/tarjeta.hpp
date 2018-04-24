@@ -8,8 +8,8 @@
 class Numero{
 public:
   enum Razon {LONGITUD,DIGITOS,NO_VALIDO};
-  Numero(Cadena num);
-  operator const char*() const{return num_.c_str();}
+  Numero(Cadena);
+  operator const char*() const {return num_.c_str();}
   friend bool operator < (const Numero& num,const Numero& num2);
 /* Clase Execpcion Numero */
   class Incorrecto{
@@ -22,24 +22,25 @@ public:
 private:
   Cadena num_;
 };
-class Usuario;
+
+class Usuario;//Declaracion anticipada de usuario
 /* Clase Tarjeta */
 class Tarjeta{
 public:
   enum Tipo {VISA,Mastercard, Maestro, JCB, AmericanExpress};
   /* CONSTRUCTORES */
   Tarjeta(Tipo t,const Numero& n,Usuario& u,const Fecha& f);
+  /* Delete */
   Tarjeta(const Tarjeta& ) = delete;
-  /* OPERADORES */
   Tarjeta& operator= (const Tarjeta &) = delete;
   /* METODOS */
   Tipo tipo() const { return tipo_; }
   Numero numero() const { return numero_; }
-  Usuario* titular() const{ return titular_; }
+  const Usuario* titular() const{ return titular_; }
   Fecha caducidad() const{ return caducidad_; }
   Cadena titular_facial() const{ return titular_facial_; }
 
-  void anula_titular(){ const_cast<Usuario*&>(titular_) = nullptr; }
+  void anula_titular(){ titular_= nullptr; }
   /* DESTRUCTOR */
   ~Tarjeta();
   /* Clase Execpcion Tarjeta */
@@ -47,21 +48,19 @@ public:
   {
   public:
       Caducada(const Fecha& caducada) : caducada_(caducada) {}
-      const Fecha& cuando() const { return caducada_;}
+      Fecha cuando() const { return caducada_;}
   private:
       Fecha caducada_;
   };
 private:
   Tipo tipo_;
   Numero numero_;
-  Usuario* const titular_;
+  const Usuario* titular_;
   Fecha caducidad_;
   Cadena titular_facial_;
 };
-
-
 /* OPERADORES*/
 bool operator< (const Tarjeta& card,const Tarjeta& card2);
-std::ostream& operator <<(std::ostream& os,Tarjeta::Tipo const&  tipo);
+std::ostream& operator <<(std::ostream& os,const Tarjeta::Tipo&  tipo);
 std::ostream& operator <<(std::ostream& os,const Tarjeta& card);
 #endif
