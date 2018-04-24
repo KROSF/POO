@@ -4,8 +4,8 @@ os:
 language:
   - cpp
 script:
-  - cd P1/
-  - make test-auto
+  - cd P2/
+  - make tests
 compiler:
   - clang
   - gcc
