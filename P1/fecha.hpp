@@ -31,7 +31,7 @@ public:
       int anio() const noexcept{return t2->tm_year+1900;}
       const char * toString() const noexcept
       {
-        auto * s = new char[40];
+        static char s[40];
         std::strftime(s, 40, "%A %d de %B de %Y", t2);
         return s;
       }
