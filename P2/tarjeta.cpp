@@ -46,7 +46,7 @@ Numero::Razon Numero::Incorrecto::razon() const {return rzn_;}
 Tarjeta::Tarjeta(Tipo t,const Numero& n,Usuario& u,const Fecha& fecha):
 tipo_(t),numero_(n),titular_(&u),caducidad_(fecha),titular_facial_(u.nombre()+" "+u.apellidos())
 {
-  if(caducidad_ < Fecha() )throw Caducada(caducidad_);
+  if(Fecha() > caducidad_ )throw Caducada(caducidad_);
   u.es_titular_de(*this);
 }
 

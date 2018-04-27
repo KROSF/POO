@@ -146,7 +146,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p2) {
     }
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Numero - validacion: cifra de comprobacion no valida) {
     try {
       // La cifra de comprobación correcta es 8, no 2
@@ -195,7 +195,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p2) {
     fct_chk(rU.tarjetas () == Usuario::Tarjetas());
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Usuario - Articulos es unordered_map) {
     fct_chk(pU->compra().bucket_count());
   }
@@ -314,7 +314,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p2) {
     fct_chk(!tarjeta.titular());
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Usuario---Tarjeta - insercion en flujo) {
     const Tarjeta tarjeta(TIPO::Mastercard, nTarjeta, *pU, fUnaSemana);
     const string s = toString(*pU);
@@ -339,7 +339,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p2) {
     fct_chk_eq_int(pU->compra().begin()->second, 3);
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Usuario---Articulo - meter varias veces) {
     pU->compra(articulo1, 1);
     pU->compra(articulo1, 3);
