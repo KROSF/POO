@@ -1,3 +1,10 @@
+/**
+* @file articulo.cpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief  Definicion de constructores y metodos de la clase Articulo.
+*/
 #include <iomanip>
 #include "articulo.hpp"
 
@@ -33,8 +40,9 @@ unsigned& Articulo::stock(){ return num_artcls; }
 
 std::ostream& operator <<(std::ostream& os,const Articulo& artcl)
 {
-  os<<'['<<artcl.referencia()<<"] \""
-    <<artcl.titulo()<<"\", "<<artcl.f_publi().anno()<<'.'
-    <<std::put_money(artcl.precio())<<std::endl;
+   os << "[" << artcl.referencia() << "] \""
+      << artcl.titulo() << "\", " << artcl.f_publi().anno()
+      << ". " << std::fixed << std::setprecision(2) << artcl.precio()
+      << " €" << std::endl;
   return os;
 }

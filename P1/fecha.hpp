@@ -1,3 +1,11 @@
+/**
+* @file fecha.hpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief Declaraciones clase Fecha.
+*/
+
 #ifndef FECHA_H
 #define FECHA_H
 #include <iostream>

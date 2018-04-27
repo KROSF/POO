@@ -1,3 +1,10 @@
+/**
+* @file usuario.cpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief  Definicion de constructores y metodos de las clases Clave y Usuario.
+*/
 extern "C"{
   #include <unistd.h>
 }
@@ -6,8 +13,10 @@ extern "C"{
 #include <iomanip>
 #include "usuario.hpp"
 #define  CARACTERESVALIDOS "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210/."
-/* Clase Clave */
-/* Inicio constructor Clave */
+/***************************** Clase Clave *************************************/
+
+//> Constructor.
+
 Clave::Clave(const char * pass)
 {
   if(std::strlen(pass) < 5) throw Incorrecta(Clave::CORTA);
@@ -18,8 +27,8 @@ Clave::Clave(const char * pass)
   if(const char* const encrypt = crypt(pass, salt)) password = encrypt;
   else throw Incorrecta(Razon::ERROR_CRYPT);
 }
-/* Fin Constructor Clave */
-/* METODOS */
+
+//> Metodos
 inline const Cadena& Clave::clave() const { return password; }
 bool Clave::verifica(const char* pass) const
 {
@@ -28,9 +37,17 @@ bool Clave::verifica(const char* pass) const
   throw Incorrecta(Razon::ERROR_CRYPT);
 }
 
-/* Clase Usuario */
+//> Incorrecta.
+
+Clave::Incorrecta::Incorrecta(Razon rzn):rzn_(rzn){}
+Clave::Razon Clave::Incorrecta::razon()const {return rzn_;}
+
+/***************************** Clase Usuario *************************************/
+
+//> Inicializacion usuarios_
 Usuario::Usuarios Usuario::usuarios_;
-/* Inicio construcutor Usuario */
+
+//> Constructor.
 Usuario::Usuario(const Cadena& id,
                  const Cadena& nombre,
                  const Cadena& apellidos,
@@ -43,7 +60,9 @@ Usuario::Usuario(const Cadena& id,
                  password_(pass)
 
 { if (!usuarios_.insert(id).second) throw Id_duplicado(identificador_); }
-/* Fin constructor */
+
+//> Metodos.
+
 void Usuario::es_titular_de(Tarjeta& card)
 { if(this == card.titular()) cards_.insert(std::make_pair(card.numero(),&card));}
 
@@ -61,49 +80,33 @@ void Usuario::compra(Articulo&  artcl, unsigned cantidad)
     //si no agregar el articulo
 }
 
-/* DESTRUCTOR */
+//> Destructor.
 
 Usuario::~Usuario()
 {
-  auto iter = cards_.begin();
-  while(iter != cards_.end()) {
-    iter->second->anula_titular();
-    iter++;
-  }
+  for(auto& i: cards_) i.second->anula_titular();
   usuarios_.erase(identificador_);
 }
 
-/* OPERADOR FLUJO */
+//> Operadores
 
 std::ostream& operator << (std::ostream&os,const Usuario& user)
 {
   os << user.identificador_ << "[" << user.password_.clave().c_str() << "]" << user.nombre_
       << user.apellidos_ << std::endl << user.direccion_ << std::endl << "Tarjetas:" << std::endl;
-  auto iter = user.tarjetas().begin();
-   while(iter != user.tarjetas().end()) {
-     os << *iter->second << std::endl;
-     iter++;
-   }
+   for(auto const& i : user.tarjetas()) os<<*i.second<<std::endl;
   return os;
 }
 std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
 {
   os << "Carrito de compra de " << user.id() << " [Artículos: "
-     << user.n_articulos() << "]" << std::endl;
-     os << " Cant. Artículo" << std::endl
-        << std::setw(95) << std::setfill('=') << '\n'  << std::setfill(' ');
-  int tmp = user.n_articulos();
-  while(tmp > 0)
-  {
+     << user.n_articulos() << "]" << std::endl
+     << " Cant. Artículo" << std::endl;
+  os << Cadena(70,'=') << std::endl;
     for (auto const& i : user.compra())
         {
-          os << std::setw(4) << i.second << "   "
-             << "[" << (*i.first).referencia() << "] \""
-             << (*i.first).titulo() << "\", " << (*i.first).f_publi().anno()
-             << ". " << std::fixed << std::setprecision(2) << (*i.first).precio()
-             << " €" << std::endl;
-          --tmp;
+           os << std::setw(4) << i.second << "   "
+              << (*i.first);
         }
-  }
   return os;
 }

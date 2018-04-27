@@ -1,21 +1,28 @@
+/**
+* @file tarjeta.hpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief Declaracion de constructores y metodos de las clases Numero y Tarjeta.
+*/
 #ifndef TARJETA_HPP
 #define TARJETA_HPP
 #include <ostream>
 #include "../P1/fecha.hpp"
 #include "../P1/cadena.hpp"
 #include "usuario.hpp"
-/* Clase Numero */
+/*******************************  NUMERO **********************************/
 class Numero{
 public:
   enum Razon {LONGITUD,DIGITOS,NO_VALIDO};
   Numero(Cadena);
-  operator const char*() const {return num_.c_str();}
+  operator const char*() const;
   friend bool operator < (const Numero& num,const Numero& num2);
 /* Clase Execpcion Numero */
   class Incorrecto{
   public:
-    Incorrecto(Razon rzn):rzn_(rzn){}
-    Razon razon() const {return rzn_;}
+    Incorrecto(Razon rzn);
+    Razon razon() const;
   private:
     Razon rzn_;
   };
@@ -23,32 +30,34 @@ private:
   Cadena num_;
 };
 
-class Usuario;//Declaracion anticipada de usuario
-/* Clase Tarjeta */
+//Declaracion anticipada clase usuario.
+class Usuario;
+
+/******************************** TARJETA ********************************/
+
 class Tarjeta{
 public:
   enum Tipo {VISA,Mastercard, Maestro, JCB, AmericanExpress};
-  /* CONSTRUCTORES */
+  /* CONSTRUCTOR */
   Tarjeta(Tipo t,const Numero& n,Usuario& u,const Fecha& f);
   /* Delete */
   Tarjeta(const Tarjeta& ) = delete;
   Tarjeta& operator= (const Tarjeta &) = delete;
   /* METODOS */
-  Tipo tipo() const { return tipo_; }
-  Numero numero() const { return numero_; }
-  const Usuario* titular() const{ return titular_; }
-  Fecha caducidad() const{ return caducidad_; }
-  Cadena titular_facial() const{ return titular_facial_; }
-
-  void anula_titular(){ titular_= nullptr; }
+  Tipo tipo() const;
+  Numero numero() const;
+  const Usuario* titular() const;
+  Fecha caducidad() const;
+  Cadena titular_facial() const;
+  void anula_titular();
   /* DESTRUCTOR */
   ~Tarjeta();
   /* Clase Execpcion Tarjeta */
   class Caducada
   {
   public:
-      Caducada(const Fecha& caducada) : caducada_(caducada) {}
-      Fecha cuando() const { return caducada_;}
+      Caducada(const Fecha& caducada);
+      Fecha cuando() const;
   private:
       Fecha caducada_;
   };

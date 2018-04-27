@@ -1,3 +1,10 @@
+/**
+* @file cadena.cpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief Implementacion clase Cadena.
+*/
 #include <cstring>
 #include <stdexcept>
 #include "cadena.hpp"

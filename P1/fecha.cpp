@@ -1,3 +1,10 @@
+/**
+* @file fecha.cpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief Implementaciones clase Fecha.
+*/
 #include <cstdio>
 #include "fecha.hpp"
 /* CONSTRUCTORES */

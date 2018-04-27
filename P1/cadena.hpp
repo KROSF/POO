@@ -1,3 +1,10 @@
+/**
+* @file cadena.hpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief Declaraciones clase Cadena.
+*/
 #ifndef CADENA_H
 #define CADENA_H
 #include <iostream>

@@ -1,3 +1,10 @@
+/**
+* @file usuario.hpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 27 Apr 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+* @brief Declaracion de constructores y metodos de las clases Clave y Usuario.
+*/
 #ifndef USUARIOS_HPP
 #define  USUARIOS_HPP
 #include <map>
@@ -21,17 +28,17 @@ public:
   /* Clase Execpcion */
   class Incorrecta{
   public:
-    Incorrecta(Razon rzn):rzn_(rzn){}
-    Razon razon()const {return rzn_;}
+    Incorrecta(Razon rzn);
+    Razon razon()const;
   private:
     Razon rzn_;
   };
 private:
   Cadena password;
 };
-/***************************** Clase Clave *************************************/
-/* Clase Usuario */
+
 /***************************** Clase Usuario *************************************/
+
 class Usuario{
 public:
   /* Definicion de tipos */
