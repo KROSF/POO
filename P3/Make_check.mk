@@ -1,7 +1,6 @@
-# $Id: Make_check.mk 412 2018-04-04 17:00:47Z u44965478 $
-# Makefile para el programa que comprueba el código fuente de la P1
-# ©2015 Pedro Delgado Pérez
-# ©2017 Los profesores de POO de la ESI de la UCA
+# $Id: Make_check.mk 416 2018-04-23 08:38:49Z u44965478 $
+# © 2014-17 Pedro Delgado y los profesores de POO
+# LIBRERÍA - P3
 
 # Directorio donde está el código compartido del DSL
 DIR=../dsl-comprobaciones/
@@ -9,7 +8,7 @@ DIR=../dsl-comprobaciones/
 # Obligatorio Clang, versión 3.9 al menos
 CXX         := clang++
 CPPFLAGS    := -I${DIR} $(shell llvm-config --cppflags)
-CXXFLAGS    := -std=c++11
+CXXFLAGS    := -std=c++14
 # Descomentar la siguiente línea para obtener un ejecutable enlazado 
 # estáticamente muy grande y pesado pero que se puede distribuir al 
 # alumnado para que no tengan que instalarse todos los paquetes de 
@@ -17,31 +16,32 @@ CXXFLAGS    := -std=c++11
 LDFLAGS     := # -static
 LLVMLDFLAGS := $(shell llvm-config --libs) $(LDFLAGS)
 COMMONSRCS  := $(DIR)caclibrary.cpp $(DIR)execute.cpp $(DIR)matchers.cpp
-SOURCES     := compra_check.cpp ${COMMONSRCS}
+SOURCES     := pedido_check.cpp ${COMMONSRCS}
 COMMONHDRS  := $(COMMONSRCS:.cpp=.h) $(DIR)info.h
 COMMONOBJS  := $(COMMONSRCS:.cpp=.o)
 OBJECTS     := $(SOURCES:.cpp=.o)
-EXES        := compra_check
+EXES        := pedido_check
 CLANGLIBS   := -lclangFrontend -lclangSerialization -lclangDriver \
 		-lclangTooling -lclangParse -lclangSema -lclangAnalysis \
 		-lclangEdit -lclangAST -lclangASTMatchers -lclangLex \
 		-lclangBasic -lclangRewrite
 
-.PHONY: clean all check check_compra
+.PHONY: clean all check check_pedido
 all: $(EXES)
 
 ${EXES}: $(OBJECTS)
-	@echo "(LINK) compra_check.o"
+	@echo "(LINK) pedido_check.o"
 	@$(CXX) -o $@ $^ $(CLANGLIBS) $(LLVMLDFLAGS)
 
-compra_check.o: $(COMMONHDRS)
+pedido_check.o: $(COMMONHDRS)
 
-check_compra: ${EXES}
-	@echo Verificando articulo.cpp, tarjeta.cpp y usuario.cpp ...
-	@./${EXES} -extra-arg-before="-I../P1" -extra-arg="-std=c++11" \
-		articulo.cpp usuario.cpp tarjeta.cpp --
+check_pedido: ${EXES}
+	@echo Verificando los fuentes ...
+	@./${EXES} -extra-arg-before="-I../P1" -extra-arg="-std=c++14" \
+		articulo.cpp usuario.cpp tarjeta.cpp pedido.cpp \
+		pedido-articulo.cpp usuario-pedido.hpp -- 2> /dev/null
 
-check: check_compra
+check: check_pedido
 
 clean:
 	@echo "Limpiando."
