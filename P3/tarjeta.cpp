@@ -9,11 +9,6 @@
 #include <cctype>
 #include <iomanip>
 #include "tarjeta.hpp"
-//> Macro quitar espacios cadena.
-#define REMOVE std::remove_if(num.begin(),num.end(),[](unsigned char x){return std::isspace(x);})
-//> Macro contar digitos en cadena.
-#define COUNT std::count_if(num.begin(), num.end(), static_cast<int(*)(int)>(std::isdigit))
-
 //> Declaracion anticipada de luhn.
 bool luhn(const Cadena& numero);
 /*******************************  NUMERO **********************************/
@@ -22,7 +17,7 @@ Numero::Numero(Cadena num)
 {
   if (num.length() == 0) throw Incorrecto(Razon::LONGITUD);
   num = num.substr(0,REMOVE - num.begin());
-  if(COUNT != num.length()) throw Incorrecto(Razon::DIGITOS);
+  if(FIND != num.end()) throw Incorrecto(Razon::DIGITOS);
   if(num.length()< 13 || num.length() > 19) throw Incorrecto(Razon::LONGITUD);
   if(!luhn(num))throw Incorrecto(Razon::NO_VALIDO);
   num_ = num;

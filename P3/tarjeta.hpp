@@ -11,6 +11,10 @@
 #include "../P1/fecha.hpp"
 #include "../P1/cadena.hpp"
 #include "usuario.hpp"
+//> Macro quitar espacios cadena.
+#define REMOVE std::remove_if(num.begin(),num.end(),[](unsigned char x){return std::isspace(x);})
+//> Macro contar digitos en cadena.
+#define FIND std::find_if(num.begin(), num.end(),[](unsigned char x){return !std::isdigit(x);})
 /*******************************  NUMERO **********************************/
 class Numero{
 public:
