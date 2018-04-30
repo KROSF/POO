@@ -6,7 +6,6 @@
 * @brief Definicion de constructores y metodos de las clases Numero y Tarjeta.
 */
 #include <algorithm>
-#include <cctype>
 #include <iomanip>
 #include "tarjeta.hpp"
 //> Declaracion anticipada de luhn.

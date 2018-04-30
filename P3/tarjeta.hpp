@@ -8,13 +8,19 @@
 #ifndef TARJETA_HPP
 #define TARJETA_HPP
 #include <ostream>
+#include <functional>
+#include <cctype>
 #include "../P1/fecha.hpp"
 #include "../P1/cadena.hpp"
 #include "usuario.hpp"
-//> Macro quitar espacios cadena.
+//> Lambda
 #define REMOVE std::remove_if(num.begin(),num.end(),[](unsigned char x){return std::isspace(x);})
-//> Macro contar digitos en cadena.
-#define FIND std::find_if(num.begin(), num.end(),[](unsigned char x){return !std::isdigit(x);})
+//> Lambda
+//#define FIND std::find_if(num.begin(), num.end(),[](unsigned char x){return !std::isdigit(x);})
+//> Funcion
+//#define REMOVE std::remove_if(num.begin(),num.end(),EsBlanco)
+//> Funcion
+#define FIND std::find_if(num.begin(), num.end(),std::not1(EsDigito()))
 /*******************************  NUMERO **********************************/
 class Numero{
 public:
@@ -22,6 +28,12 @@ public:
   Numero(Cadena);
   operator const char*() const;
   friend bool operator < (const Numero& num,const Numero& num2);
+  struct EsDigito : public std::unary_function<const unsigned char, bool> {
+	bool operator()(const unsigned char& x) const {return std::isdigit(x);}
+};
+  struct EsBlanco : public std::unary_function<const unsigned char, bool> {
+  bool operator()(const unsigned char& x) const {return std::isspace(x);}
+  };
 /* Clase Execpcion Numero */
   class Incorrecto{
   public:

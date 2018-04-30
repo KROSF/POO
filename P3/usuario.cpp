@@ -106,7 +106,7 @@ std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
     for (auto const& i : user.compra())
         {
            os << std::setw(4) << i.second << "   "
-              << (*i.first);
+              <<*i.first;
         }
   return os;
 }
