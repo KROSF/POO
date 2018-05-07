@@ -2,6 +2,8 @@ os:
   - linux
 language:
   - cpp
+before_script:
+  - sudo apt-get install valgrind
 script:
   - cd P2/
   - make tests
