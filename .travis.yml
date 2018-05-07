@@ -5,6 +5,7 @@ language:
 script:
   - cd P2/
   - make tests
+  - valgrind -v ./test-P2-auto
 compiler:
   - gcc
   - clang
