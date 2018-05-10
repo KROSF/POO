@@ -6,7 +6,7 @@ class Usuario_Pedido;
 class Pedido_Articulo;
 class Pedido{
 public:
-  Pedido(Usuario_Pedido& u_p,Pedido_Articulo& p_a,Usuario& u,Tarjeta& t,Fecha today = Fecha());
+  Pedido(Usuario_Pedido& u_p,Pedido_Articulo& p_a,Usuario& u,const Tarjeta& t,Fecha today = Fecha());
   /* Exepcion */
   class Vacio{
   public:
@@ -43,7 +43,7 @@ private:
   Tarjeta const* card_;
   Fecha date_;
   double total_;
-  size_t last_;
+  static size_t last_;
 };
 
 
