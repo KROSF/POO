@@ -29,5 +29,5 @@ Pedido::Pedido(Usuario_Pedido& u_p,
 
     }
     u_p.asocia(u,*this);
-    ++last_;    
+    ++last_;
 }
