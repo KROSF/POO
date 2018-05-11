@@ -30,12 +30,17 @@ Pedido::Pedido(Usuario_Pedido& u_p,
         double precio = pa->precio();
         pa->stock() -= cantidad;
         p_a.pedir(*this,*pa,precio,cantidad);
-        total_+=total_*cantidad;
+        total_+=precio*cantidad;
         u.compra(*pa,0);
 
     }
     u_p.asocia(u,*this);
     ++n_pedidos_;
+}
+
+size_t Pedido::n_total_pedidos() noexcept
+{
+	return n_pedidos_;
 }
 
 std::ostream& operator << (std::ostream& os ,const Pedido& pe)

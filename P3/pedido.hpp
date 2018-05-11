@@ -38,11 +38,11 @@ public:
     };
 
     /* Observadores */
-    size_t numero() const noexcept { return n_pedidos_; }
+    size_t numero() const noexcept { return num_; }
     Tarjeta const* tarjeta() const noexcept{ return card_; }
     Fecha fecha() const noexcept { return date_; }
     double total() const noexcept { return total_; }
-    size_t n_total_pedidos() noexcept { return num_; }
+    static size_t n_total_pedidos() noexcept;
 private:
     size_t num_;
     Tarjeta const* card_;

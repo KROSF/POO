@@ -43,8 +43,8 @@ std::ostream& Pedido_Articulo::mostrarDetallePedidos(std::ostream& os)
     for(auto obj : pedido_articulo_)
     {
         os << "Pedido num. " << obj.first->numero()
-           << "\tCliente: " << obj.first->tarjeta()
-           << "Fecha: " << obj.first->fecha()<<obj.second;
+           << "\tCliente: " << obj.first->tarjeta()->titular()->nombre()
+           << " \nFecha: " << obj.first->fecha()<<obj.second;
         tmp_total += obj.first->total();
     }
     return os << std::fixed << "TOTAL VENTAS: "
