@@ -1,11 +1,17 @@
+#include <iomanip>
 #include "pedido.hpp"
-size_t Pedido::last_ = 0;
+#include "usuario-pedido.hpp"
+#include "pedido-articulo.hpp"
+
+
+size_t Pedido::n_pedidos_ = 0;
+
 Pedido::Pedido(Usuario_Pedido& u_p,
                Pedido_Articulo& p_a,
                Usuario& u,
                const Tarjeta& t,
                Fecha today)
-:num_(last_+1),card_(&t),date_(today),total_(0)
+:num_(n_pedidos_+1),card_(&t),date_(today),total_(0)
 {
     if( u.n_articulos() == 0) throw Pedido::Vacio(&u);
     if(t.titular() != &u) throw Pedido::Impostor(&u);
@@ -29,5 +35,14 @@ Pedido::Pedido(Usuario_Pedido& u_p,
 
     }
     u_p.asocia(u,*this);
-    ++last_;
+    ++n_pedidos_;
+}
+
+std::ostream& operator << (std::ostream& os ,const Pedido& pe)
+{
+    os << "Núm. pedido:" << pe.numero() << std::endl
+       << "Fecha:" << pe.fecha() << std::endl
+       << "Pagado con:" << *pe.tarjeta() << std::endl
+       << "Importe:" << std::fixed << std::setprecision(2) << pe.total() << " \u20AC";
+    return os;
 }

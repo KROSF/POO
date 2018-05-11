@@ -1,5 +1,6 @@
 #ifndef PEDIDO_HPP
 #define PEDIDO_HPP
+#include <ostream>
 #include "../P1/fecha.hpp"
 #include "tarjeta.hpp"
 class Usuario_Pedido;
@@ -37,7 +38,7 @@ public:
     };
 
     /* Observadores */
-    size_t numero() const noexcept { return last_; }
+    size_t numero() const noexcept { return n_pedidos_; }
     Tarjeta const* tarjeta() const noexcept{ return card_; }
     Fecha fecha() const noexcept { return date_; }
     double total() const noexcept { return total_; }
@@ -47,20 +48,7 @@ private:
     Tarjeta const* card_;
     Fecha date_;
     double total_;
-    static size_t last_;
+    static size_t n_pedidos_;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+std::ostream& operator << (std::ostream& os,const Pedido& pe);
 #endif
