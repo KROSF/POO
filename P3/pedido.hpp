@@ -11,7 +11,7 @@ public:
         Pedido_Articulo& p_a,
         Usuario& u,
         const Tarjeta& t,
-        Fecha today = Fecha());
+        Fecha fecha = Fecha());
     /* Exepcion */
     class Vacio{
     public:
