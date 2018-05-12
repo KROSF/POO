@@ -11,7 +11,7 @@ public:
         Pedido_Articulo& p_a,
         Usuario& u,
         const Tarjeta& t,
-        Fecha fecha = Fecha());
+        const Fecha& fecha = Fecha());
     /* Exepcion */
     class Vacio{
     public:
@@ -38,17 +38,17 @@ public:
     };
 
     /* Observadores */
-    size_t numero() const noexcept { return num_; }
-    Tarjeta const* tarjeta() const noexcept{ return card_; }
+    int numero() const noexcept { return num_; }
+    Tarjeta const* tarjeta() const noexcept{ return tarjeta_; }
     Fecha fecha() const noexcept { return date_; }
     double total() const noexcept { return total_; }
-    static size_t n_total_pedidos() noexcept;
+    static int n_total_pedidos() noexcept;
 private:
-    size_t num_;
-    Tarjeta const* card_;
+    int num_;
+    const Tarjeta* tarjeta_;
     Fecha date_;
     double total_;
-    static size_t n_pedidos_;
+    static int n_pedidos_;
 };
 std::ostream& operator << (std::ostream& os,const Pedido& pe);
 #endif

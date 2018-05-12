@@ -3,14 +3,14 @@
 #include "usuario-pedido.hpp"
 #include "pedido-articulo.hpp"
 
-size_t Pedido::n_pedidos_ = 0;
+int Pedido::n_pedidos_ = 0;
 
 Pedido::Pedido(Usuario_Pedido& u_p,
                Pedido_Articulo& p_a,
                Usuario& u,
                const Tarjeta& t,
-               Fecha fecha)
-:num_(n_pedidos_+1),card_(&t),date_(fecha),total_(0)
+               const Fecha& fecha)
+:num_(n_pedidos_+1),tarjeta_(&t),date_(fecha),total_(0)
 {
     if( u.n_articulos() == 0) throw Pedido::Vacio(&u);
     if(t.titular() != &u) throw Pedido::Impostor(&u);
@@ -36,7 +36,7 @@ Pedido::Pedido(Usuario_Pedido& u_p,
     ++n_pedidos_;
 }
 
-size_t Pedido::n_total_pedidos() noexcept
+int Pedido::n_total_pedidos() noexcept
 {
 	return n_pedidos_;
 }
