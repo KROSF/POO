@@ -1,3 +1,9 @@
+/**
+* @file pedido-articulo.hpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 12 May 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+*/
 #ifndef PEDIDO_ARTICULO_HPP
 #define PEDIDO_ARTICULO_HPP
 #include <ostream>

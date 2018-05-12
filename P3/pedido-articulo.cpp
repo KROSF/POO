@@ -1,3 +1,9 @@
+/**
+* @file pedido-articulo.cpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 12 May 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+*/
 #include <iomanip>
 #include "pedido-articulo.hpp"
 

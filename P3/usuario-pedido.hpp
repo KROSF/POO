@@ -1,3 +1,9 @@
+/**
+* @file usuario-pedido.hpp
+* @author Carlos Rodrigo Sanabria Flores
+* @date 12 May 2018
+* @copyright 2018 Carlos Rodrigo Sanabria Flores
+*/
 #ifndef USUARIO_PEDIDO_HPP
 #define USUARIO_PEDIDO_HPP
 #include <set>
