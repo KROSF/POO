@@ -3,8 +3,10 @@
 #include <ostream>
 #include "../P1/fecha.hpp"
 #include "tarjeta.hpp"
+
 class Usuario_Pedido;
 class Pedido_Articulo;
+
 class Pedido{
 public:
     Pedido(Usuario_Pedido& u_p,
