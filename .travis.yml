@@ -3,7 +3,7 @@ os:
 language:
   - cpp
 script:
-  - cd P2/
+  - cd P3/
   - make tests
 compiler:
   - clang
