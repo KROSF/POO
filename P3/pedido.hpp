@@ -14,27 +14,33 @@ class Usuario_Pedido;
 class Pedido_Articulo;
 
 class Pedido{
+private:
+    int num_;
+    const Tarjeta* tarjeta_;
+    Fecha date_;
+    double total_;
+    static int n_pedidos_;
+    /* Exepcion */
+    class Exepcion{
+    public:
+        Exepcion(Usuario const* u) : user_(u) {}
+        const Usuario & usuario() const noexcept { return *user_ ; }
+    private:
+        Usuario const* user_;
+    };
 public:
     Pedido(Usuario_Pedido& u_p,
         Pedido_Articulo& p_a,
         Usuario& u,
         const Tarjeta& t,
         const Fecha& fecha = Fecha());
-    /* Exepcion */
-    class Vacio{
-    public:
-        Vacio(Usuario const* u) : empty_(u) {}
-        const Usuario & usuario() const noexcept { return *empty_ ; }
-    private:
-        Usuario const* empty_;
+
+    struct Impostor : public Exepcion{
+        Impostor(Usuario const * u) : Exepcion(u){}
     };
 
-    class Impostor{
-    public:
-        Impostor(Usuario const* u) : impostor_(u) {}
-        const Usuario& usuario() const noexcept { return *impostor_; }
-    private:
-        Usuario const* impostor_;
+    struct Vacio : public Exepcion{
+        Vacio(Usuario const * u) : Exepcion(u){}
     };
 
     class SinStock{
@@ -51,12 +57,6 @@ public:
     Fecha fecha() const noexcept { return date_; }
     double total() const noexcept { return total_; }
     static int n_total_pedidos() noexcept;
-private:
-    int num_;
-    const Tarjeta* tarjeta_;
-    Fecha date_;
-    double total_;
-    static int n_pedidos_;
 };
 std::ostream& operator << (std::ostream& os,const Pedido& pe);
 #endif

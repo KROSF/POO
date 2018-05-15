@@ -20,11 +20,11 @@ private:
 
 std::ostream& operator <<(std::ostream& os, const LineaPedido& li_pe);
 
-struct OrdenaPedidos: std::binary_function<Pedido*,Pedido*,bool>{
+struct OrdenaPedidos: public std::binary_function<const Pedido*,const Pedido*,bool>{
     bool operator()(const Pedido* pp,const Pedido* sp) const;
 };
 
-struct OrdenaArticulos: std::binary_function<Articulo*,Articulo*,bool>{
+struct OrdenaArticulos: public std::binary_function<const Articulo*,const Articulo*,bool>{
     bool operator()(const Articulo* pa,const Articulo* sa) const;
 };
 

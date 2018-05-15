@@ -28,7 +28,7 @@
 #include <locale>
 /**
    Lamentablemente, aún <regex>, de la biblioteca estándar de C++11,
-   no funciona bien en algunas versiones: muy mal en GCC C++ 4.8 y 
+   no funciona bien en algunas versiones: muy mal en GCC C++ 4.8 y
    algo menos, pero no bien, en GCC C++ 4.9. A partir de la versión 5 ya
    funciona bien. En cuanto a CLang, usa la misma biblioteca que GCC de
    forma predeterminada. El problema no es tanto del compilador como de
@@ -43,17 +43,17 @@
 
 #include "fct.h"
 
-#include "fecha.hpp"
-#include "cadena.hpp"
+#include "../P1/fecha.hpp"
+#include "../P1/cadena.hpp"
 #if defined(P2) || defined(P3) || defined(P4)
-# include "articulo.hpp"
-# include "tarjeta.hpp"
-# include "usuario.hpp"
+# include "../P3/articulo.hpp"
+# include "../P3/tarjeta.hpp"
+# include "../P3/usuario.hpp"
 #endif
 #if defined(P3) || defined(P4)
-# include "pedido.hpp"
-# include "pedido-articulo.hpp"
-# include "usuario-pedido.hpp"
+# include "../P3/pedido.hpp"
+# include "../P3/pedido-articulo.hpp"
+# include "../P3/usuario-pedido.hpp"
 #endif
 
 /*********************** COMPROBACIONES *********************/
@@ -102,7 +102,7 @@ private:
 
    a == b ssi < es orden total y !(a < b) y !(b < a)
 */
-inline bool operator ==(const Numero& a, const Numero& b) 
+inline bool operator ==(const Numero& a, const Numero& b)
 {
   return !(a < b) && !(b < a);
 }
@@ -110,7 +110,7 @@ inline bool operator ==(const Numero& a, const Numero& b)
 
 /**
    Elimina el separador de decimales, porque da problemas con
-   algunas localizaciones españolas, que incorrectamente ponen el ".". 
+   algunas localizaciones españolas, que incorrectamente ponen el ".".
    También, de paso, fijamos el separador de decimales a la coma.
 */
 struct sin_separador : std::numpunct<char> {
@@ -120,11 +120,11 @@ protected:
 };
 
 /**
-   Plantilla de función de utilidad para convertir algo a cadena (string), 
+   Plantilla de función de utilidad para convertir algo a cadena (string),
    aprovechando su operador de inserción en flujo.
 */
 template <typename T>
-std::string toString(const T& o) 
+std::string toString(const T& o)
 {
   std::ostringstream os;
   os.imbue(std::locale(std::locale("es_ES.UTF-8"), new sin_separador()));
@@ -149,8 +149,8 @@ Articulo::Autores crea_autores(Autor& autor);
 #ifndef CPP11REGEX
 /**
    Función que busca una expresión regular dentro de una cadena y
-   devuelve la posición del comienzo de la primera coincidencia. 
-   Devuelve -1 cuando no encuentra ninguna. Lanza la excepción 
+   devuelve la posición del comienzo de la primera coincidencia.
+   Devuelve -1 cuando no encuentra ninguna. Lanza la excepción
    BadRegex cuando la expresion regular no es válida.
 */
 regoff_t find_regex(const char* regex, const char* text) noexcept(false);

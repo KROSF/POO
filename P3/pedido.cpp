@@ -49,9 +49,14 @@ int Pedido::n_total_pedidos() noexcept
 
 std::ostream& operator << (std::ostream& os ,const Pedido& pe)
 {
-    os << "Núm. pedido:" << pe.numero() << std::endl
-       << "Fecha:" << pe.fecha() << std::endl
-       << "Pagado con:" << *pe.tarjeta() << std::endl
-       << "Importe:" << std::fixed << std::setprecision(2) << pe.total() << " \u20AC";
-    return os;
+    return os
+    << std::left << std::setw(13) << "Núm. pedido: " << pe.numero() << std::endl
+
+    << std::left << std::setw(13) << "Fecha:" << pe.fecha() << std::endl
+
+    << std::left << std::setw(13) << "Pagado con:" << pe.tarjeta()->tipo()
+    <<" N.º: "<<pe.tarjeta()->numero()<< std::endl
+
+    << std::left << std::setw(13) << "Importe:" << std::fixed
+    << std::setprecision(2) << pe.total() << " \u20AC"<< std::endl;
 }

@@ -34,19 +34,19 @@ namespace {
     articulo2("110", "Fundamentos de C++", fHoy, 35.95, 50);
 #endif
   Usuario* pU { nullptr };
-    
+
   Usuario_Pedido  *pAsocUsuarioPedido;
   Pedido_Articulo *pAsocPedidoArticulo;
   Usuario         *pU2;
   Tarjeta         *pTarjetaU;
   const Tarjeta   *pTarjetaU2;
   const Fecha     fAyer = fHoy - 1;
-  
+
   const Pedido  *pPed1, *pPed2;
   const unsigned cantidad_A1_P1 = 1;
   const unsigned cantidad_A1_P2 = 3;
   const unsigned cantidad_A2_P2 = 5;
-  
+
   bool bPrimera = true;
 
   using TIPO = Tarjeta::Tipo;
@@ -74,7 +74,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     fct_chk(!v);
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(LineaPedido - constructor de 2 parametros y observadores) {
     const double      pVenta   { 7.3 };
     const unsigned    cantidad { 5   };
@@ -83,7 +83,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     fct_chk_eq_int(lp.cantidad()    , cantidad);
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(LineaPedido - insercion en flujo) {
     const LineaPedido lp { 9.2, 42 };
     chk_eq_cstr(toString(lp), "9,20 €\t42");
@@ -137,7 +137,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     }
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Pedido - sin stock) {
     pU->compra(articulo1, 9001);
     try {
@@ -151,7 +151,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     }
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Pedido - tarjeta caducada) {
     pU->compra(articulo1, 4649);
     try {
@@ -164,21 +164,21 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     }
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Pedido - actualizacion relacionados y asociaciones) {
     const unsigned int cantidad { 1u };
     pU->compra(articulo1, cantidad);
     pU->compra(articulo2, cantidad);
     const unique_ptr<const Pedido> pPed {
       new Pedido { *pAsocUsuarioPedido, *pAsocPedidoArticulo,
-	  *pU, *pTarjetaU, fHoy } 
+	  *pU, *pTarjetaU, fHoy }
     };
-    
+
     // Actualización de carrito y stock
     fct_chk(pU->compra().empty());
     fct_chk_eq_int(articulo1.stock(), 49);
     fct_chk_eq_int(articulo2.stock(), 49);
-    
+
     // Asociación Usuario-Pedido
     fct_chk(pAsocUsuarioPedido->cliente(*const_cast<Pedido*>(pPed.get()))
 	    == pU);
@@ -187,10 +187,10 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     }
     else
       fct_chk(!"Debería asociarse al usuario con el pedido");
-    
+
     // Asociación Artículo-Pedido
     const Pedido_Articulo::ItemsPedido itPed {
-      pAsocPedidoArticulo->detalle(* const_cast<Pedido*>(pPed.get())) 
+      pAsocPedidoArticulo->detalle(* const_cast<Pedido*>(pPed.get()))
 	};
     if (itPed.size() == 2) {
       // Los artículos deben ir ordenados por código de referencia
@@ -205,7 +205,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
       fct_chk(!"El pedido debería tener dos artículos");
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Pedido - observadores) {
     pU->compra(articulo1, 1);
     pU->compra(articulo2, 1);
@@ -220,7 +220,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     fct_chk_eq_dbl(pPed->total(), totalEsperado);
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Pedido - insercion en flujo) {
     pU->compra(articulo1, 1);
     pU->compra(articulo2, 1);
@@ -241,7 +241,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
     chk_incl_str (sPed, toEuros(totalEsperado)  );
   }
   FCT_TEST_END();
-  
+
   // Pruebas de la clase de asociación Pedido_Articulo
 
   FCT_TEST_BGN(Articulo---Pedido - detalle de un pedido) {
@@ -264,7 +264,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_clases) {
       fct_chk(!"El pedido debería tener un solo elemento");
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Articulo---Pedido - insercion en flujo de ItemsPedido) {
     const unsigned int cantidad { 1u };
     pU->compra(articulo1, cantidad);
@@ -285,7 +285,7 @@ FCTMF_FIXTURE_SUITE_END()
 
 FCTMF_FIXTURE_SUITE_BGN(test_p3_informes) {
 
-  /// Batería de pruebas para los informes. Simula dos ventas de dos usuarios.  
+  /// Batería de pruebas para los informes. Simula dos ventas de dos usuarios.
   FCT_SETUP_BGN() {
     pAsocUsuarioPedido  = new Usuario_Pedido ;
     pAsocPedidoArticulo = new Pedido_Articulo;
@@ -296,7 +296,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_informes) {
 
     // Primera venta
     pU->compra(articulo1, cantidad_A1_P1);
-    pPed1 = new Pedido(*pAsocUsuarioPedido, *pAsocPedidoArticulo, 
+    pPed1 = new Pedido(*pAsocUsuarioPedido, *pAsocPedidoArticulo,
 		       *pU, *pTarjetaU, fHoy);
 
     // Segunda venta, de otro usuario
@@ -350,24 +350,24 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_informes) {
   FCT_TEST_BGN(Articulo---Pedido - insercion en flujo de Pedidos) {
     const auto& pedArticulo1 = pAsocPedidoArticulo->ventas(articulo1);
     const string sPedidos { toString(pedArticulo1) };
-    
+
     chk_incl_str(sPedidos,  toString(articulo1.precio()));
     chk_incl_str(sPedidos,  toString(cantidad_A1_P1));
     chk_incl_cstr(sPedidos, pPed1->fecha().cadena());
     chk_incl_str(sPedidos,  toString(cantidad_A1_P2));
     chk_incl_cstr(sPedidos, pPed2->fecha().cadena());
-    
+
     const double totalEsperado =
       (cantidad_A1_P1 + cantidad_A1_P2) * articulo1.precio();
     chk_incl_str(sPedidos, toEuros(totalEsperado));
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Articulo---Pedido - mostrar detalle pedidos) {
     ostringstream os;
     pAsocPedidoArticulo->mostrarDetallePedidos(os);
     const string sDetalle { os.str() };
-    
+
     const double totalEsperado =
       (cantidad_A1_P1 + cantidad_A1_P2) * articulo1.precio()
       + cantidad_A2_P2 * articulo2.precio();
@@ -390,14 +390,14 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_informes) {
       la cantidad es 1, ' 1' a final de línea, '1 ' a principio de
       línea, o ' 1 ' valen, pero no '123', por ejemplo.
     */
-    const string sRegexPrefijo { "€[[:space:]]+"   }; // "(€[[:space:]]|^)";  
+    const string sRegexPrefijo { "€[[:space:]]+"   }; // "(€[[:space:]]|^)";
     const string sRegexSufijo  { "([[:space:]]|$)" };
 #ifndef CPP11REGEX
-    const string 
+    const string
       sRegexA1P1(sRegexPrefijo + toString(cantidad_A1_P1) + sRegexSufijo),
       sRegexA1P2(sRegexPrefijo + toString(cantidad_A1_P2) + sRegexSufijo),
       sRegexA2P2(sRegexPrefijo + toString(cantidad_A2_P2) + sRegexSufijo);
-    const regoff_t 
+    const regoff_t
       posCantidad_A1_P1 = find_regex(sRegexA1P1.c_str(), sDetalle.c_str()),
       posCantidad_A1_P2 = find_regex(sRegexA1P2.c_str(), sDetalle.c_str()),
       posCantidad_A2_P2 = find_regex(sRegexA2P2.c_str(), sDetalle.c_str());
@@ -424,7 +424,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p3_informes) {
 #endif
   }
   FCT_TEST_END();
-  
+
   FCT_TEST_BGN(Pedido---Usuario - pedidos de un usuario) {
     const auto& pedidosU2 = pAsocUsuarioPedido->pedidos(*pU2);
     if (pedidosU2.size() == 1)
