@@ -21,13 +21,13 @@ public:
     {
         asocia(us, pe);
     }
-    Pedidos pedidos(Usuario& us) const
+    Pedidos pedidos(Usuario& us)
     {
-        return usuario_pedidos_.at(&us);
+        return usuario_pedidos_[&us];
     }
     Usuario* cliente(Pedido& pedido)
     {
-        return pedido_usuario_.find(&pedido)->second;
+        return pedido_usuario_[&pedido];
     }
 private:
     std::map<Usuario*, Pedidos> usuario_pedidos_;
