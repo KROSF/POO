@@ -117,9 +117,9 @@ int main()
     "4 de CPP y 2 de STL y ADA\n";
 
   // Recepción de mercancías
-  poo.stock() += 5; 
-  cpp.stock() *= 4; 
-  stl.stock() += 2; 
+  poo.stock() += 5;
+  cpp.stock() *= 4;
+  stl.stock() += 2;
   ada.stock() += 2;
 
   std::cout << "La Vane compra 1 STL, 1 ADA y 3 CPP\n";

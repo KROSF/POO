@@ -11,6 +11,7 @@ extern "C"{
 #include <cstring>
 #include <random>
 #include <iomanip>
+#include <typeinfo>
 #include "usuario.hpp"
 #define  CARACTERESVALIDOS "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210/."
 /***************************** Clase Clave *************************************/
@@ -84,17 +85,25 @@ void Usuario::compra(Articulo&  artcl, unsigned cantidad)
 
 Usuario::~Usuario()
 {
-  for(auto& i: cards_) i.second->anula_titular();
-  usuarios_.erase(identificador_);
+    // typeof i = pair (Numero, Tarjeta*)
+    // typeof i.first = Numero
+    // typeof i.second = Tarjeta*
+    for(auto i : cards_) i.second->anula_titular();
+    usuarios_.erase(identificador_);
 }
 
 //> Operadores
 
 std::ostream& operator << (std::ostream&os,const Usuario& user)
 {
-  os << user.identificador_ << "[" << user.password_.clave().c_str() << "]" << user.nombre_
-      << user.apellidos_ << std::endl << user.direccion_ << std::endl << "Tarjetas:" << std::endl;
-   for(auto const& i : user.tarjetas()) os<<*i.second<<std::endl;
+    os << user.identificador_ << "[" << user.password_.clave().c_str() << "]"
+       << user.nombre_ << user.apellidos_ << std::endl
+       << user.direccion_ << std::endl << "Tarjetas:" << std::endl;
+    // typeof i = pair (Numero, Tarjeta*)
+    // typeof i.first = Numero
+    // typeof i.second = Tarjeta*
+    for(auto i : user.tarjetas())
+        os << *i.second <<std::endl;
   return os;
 }
 std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
@@ -103,10 +112,12 @@ std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
      << user.n_articulos() << "]" << std::endl
      << " Cant. Artículo" << std::endl
      << Cadena(66,'=') << std::endl;
-    for (auto const& i : user.compra())
-        {
-           os << std::setw(4) << i.second << "   "
-              <<*i.first;
-        }
+    // typeof i = pair<Articulo*,unsigned>
+    // typeof i.first = Articulo*
+    // typeof i.second = unsigned
+    for (auto i : user.compra())
+    {
+        os << std::setw(4) << i.second << "   "<< *i.first;
+    }
   return os;
 }

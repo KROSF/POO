@@ -21,7 +21,10 @@ Pedido::Pedido(Usuario_Pedido& u_p,
     if( u.n_articulos() == 0) throw Pedido::Vacio(&u);
     if(t.titular() != &u) throw Pedido::Impostor(&u);
     if(t.caducidad() < fecha) throw Tarjeta::Caducada(t.caducidad());
-    for(auto c : u.compra())//c = pair<Articulo*,unsigned>(cantidad)
+    // typeof c = pair<Articulo*,unsigned>
+    // typeof c.first = Articulo*
+    // typeof c.second = unsigned
+    for(auto c : u.compra())
         if(c.first->stock()<c.second)
         {   //no hay articulos.
             const_cast<Usuario::Articulos&>(u.compra()).clear();

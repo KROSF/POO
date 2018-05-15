@@ -43,8 +43,10 @@ Pedido_Articulo::Pedidos Pedido_Articulo::ventas(Articulo& art)
 
 std::ostream& Pedido_Articulo::mostrarDetallePedidos(std::ostream& os)
 {
-    // typeof obj = std::map<Pedido*,ItemsPedido,OrdenaPedidos>
     double tmp_total = 0.0;
+    // typeof obj = pair(Pedido*,map(Articulo*,LineaPedido))
+    // typeof obj.first = Pedido*
+    // typeof obj.second = map(Articulo*,LineaPedido)
     for(auto obj : pedido_articulo_)
     {
         os << "Pedido núm. " << obj.first->numero()
@@ -58,7 +60,9 @@ std::ostream& Pedido_Articulo::mostrarDetallePedidos(std::ostream& os)
 
 std::ostream& Pedido_Articulo::mostrarVentasArticulos(std::ostream& os)
 {
-    // typeof obj =
+    // typeof obj = pair(Articulo*,map(Pedido*,LineaPedido))
+    // typeof obj.first = Articulo*
+    // typeof obj.second = map(Pedido*,LineaPedido)
     for(auto obj : articulo_pedido_)
     {
         os << "Pedidos: [" << obj.second.size() << "]\n"
@@ -69,8 +73,8 @@ std::ostream& Pedido_Articulo::mostrarVentasArticulos(std::ostream& os)
 
 std::ostream& operator << (std::ostream& os, const LineaPedido& li_pe)
 {
-    return os << std::fixed << std::setprecision(2) << li_pe.precio_venta() << " \u20AC\t"
-              << li_pe.cantidad();
+    return os << std::fixed << std::setprecision(2) << li_pe.precio_venta()
+              << " \u20AC\t" << li_pe.cantidad();
 }
 
 std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::ItemsPedido& items)
@@ -79,6 +83,9 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::ItemsPedido& i
     os <<'\n'<<Cadena(66,'=') << std::endl
        << "  PVP\tCantidad\tArtículo\n"
        << Cadena(66,'=') << std::endl;
+    // typeof i = std::pair(Articulo*,LineaPedido)
+    // typeof i.first = Articulo*
+    // typeof i.second = LineaPedido
     for(auto i : items)
     {
         os << i.second.precio_venta() << "\u20AC\t"
@@ -101,6 +108,9 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedid
     os << Cadena(66,'=') << std::endl
        << "  PVP\tCantidad\tFecha de venta\n"
        << Cadena(66,'=') << std::endl;
+    // typeof p = std::pair(Pedido*,LineaPedido)
+    // typeof p.first = Pedido*
+    // typeof p.second = LineaPedido
     for (auto p : pedidos)
     {
         os << p.second.precio_venta() << "\u20AC\t\t";
