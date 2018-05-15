@@ -11,7 +11,6 @@ extern "C"{
 #include <cstring>
 #include <random>
 #include <iomanip>
-#include <typeinfo>
 #include "usuario.hpp"
 #define  CARACTERESVALIDOS "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210/."
 /***************************** Clase Clave *************************************/
