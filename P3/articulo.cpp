@@ -43,6 +43,6 @@ std::ostream& operator <<(std::ostream& os,const Articulo& artcl)
    os << "[" << artcl.referencia() << "] \""
       << artcl.titulo() << "\", " << artcl.f_publi().anno()
       << ". " << std::fixed << std::setprecision(2) << artcl.precio()
-      << " €" << std::endl;
+      << " \u20AC" << std::endl;
   return os;
 }

@@ -103,7 +103,7 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedid
        << Cadena(66,'=') << std::endl;
     for (auto p : pedidos)
     {
-        os << p.second.precio_venta() << "€\t\t";
+        os << p.second.precio_venta() << "\u20AC\t\t";
         os << p.second.cantidad() << "\t";
         os << p.first->fecha() << std::endl;
         tmp_total  += p.second.precio_venta() * p.second.cantidad();
