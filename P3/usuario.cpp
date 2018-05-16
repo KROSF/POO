@@ -110,7 +110,7 @@ std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
   os << "Carrito de compra de " << user.id() << " [Artículos: "
      << user.n_articulos() << "]" << std::endl
      << " Cant. Artículo" << std::endl
-     << Cadena(66,'=') << std::endl;
+     << Cadena(80,'=') << std::endl;
     // typeof i = pair<Articulo*,unsigned>
     // typeof i.first = Articulo*
     // typeof i.second = unsigned

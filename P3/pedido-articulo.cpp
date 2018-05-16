@@ -80,22 +80,19 @@ std::ostream& operator << (std::ostream& os, const LineaPedido& li_pe)
 std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::ItemsPedido& items)
 {
     double tmp_total = 0.0;
-    os <<'\n'<<Cadena(66,'=') << std::endl
+    os <<'\n'<<Cadena(80,'=') << std::endl
        << "  PVP\tCantidad\tArtículo\n"
-       << Cadena(66,'=') << std::endl;
+       << Cadena(80,'=') << std::endl;
     // typeof i = std::pair(Articulo*,LineaPedido)
     // typeof i.first = Articulo*
     // typeof i.second = LineaPedido
     for(auto i : items)
     {
-        os << i.second.precio_venta() << "\u20AC\t"
-           << i.second.cantidad() << "\t\t"
-           << '[' << i.first->referencia() << "] \""
+        os << i.second << "\t\t["<< i.first->referencia() << "] \""
            << i.first->titulo() << "\"" << std::endl;
-
         tmp_total += i.second.precio_venta() * i.second.cantidad();
     }
-    os << Cadena(66,'=') << std::endl
+    os << Cadena(80,'=') << std::endl
        << "Total\t" << std::fixed<< std::setprecision(2)
        << tmp_total << " \u20AC\n" << std::endl;
     return os;
@@ -105,21 +102,19 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedid
 {
     unsigned tmp_precio = 0;
     double tmp_total = 0.0;
-    os << Cadena(66,'=') << std::endl
+    os << Cadena(80,'=') << std::endl
        << "  PVP\tCantidad\tFecha de venta\n"
-       << Cadena(66,'=') << std::endl;
+       << Cadena(80,'=') << std::endl;
     // typeof p = std::pair(Pedido*,LineaPedido)
     // typeof p.first = Pedido*
     // typeof p.second = LineaPedido
     for (auto p : pedidos)
     {
-        os << p.second.precio_venta() << "\u20AC\t\t";
-        os << p.second.cantidad() << "\t";
-        os << p.first->fecha() << std::endl;
+        os << p.second << "\t\t" << p.first->fecha() << std::endl;
         tmp_total  += p.second.precio_venta() * p.second.cantidad();
         tmp_precio += p.second.cantidad();
     }
-    os << Cadena(66,'=') << std::endl << std::fixed
+    os << Cadena(80,'=') << std::endl << std::fixed
     << std::setprecision(2) << tmp_total << " \u20AC\t" << tmp_precio <<std::endl;
     return os;
 }
