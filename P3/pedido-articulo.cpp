@@ -65,7 +65,8 @@ std::ostream& Pedido_Articulo::mostrarVentasArticulos(std::ostream& os)
     // typeof obj.second = map(Pedido*,LineaPedido)
     for(auto obj : articulo_pedido_)
     {
-        os << "Pedidos: [" << obj.second.size() << "]\n"
+        os << "Ventas de [" << obj.first->referencia() << "] \""
+           << obj.first->titulo()<< "\"\n"
            << obj.second << std::endl;
     }
     return os;
@@ -102,7 +103,8 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedid
 {
     unsigned tmp_precio = 0;
     double tmp_total = 0.0;
-    os << Cadena(80,'=') << std::endl
+    os << "Pedidos: [" << pedidos.size() << "]\n"
+       << Cadena(80,'=') << std::endl
        << "  PVP\tCantidad\tFecha de venta\n"
        << Cadena(80,'=') << std::endl;
     // typeof p = std::pair(Pedido*,LineaPedido)
