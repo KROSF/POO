@@ -58,7 +58,7 @@ std::ostream& operator << (std::ostream& os ,const Pedido& pe)
     << std::left << std::setw(13) << "Fecha:" << pe.fecha() << std::endl
 
     << std::left << std::setw(13) << "Pagado con:" << pe.tarjeta()->tipo()
-    <<" N.º: "<<pe.tarjeta()->numero()<< std::endl
+    <<" n.º: "<<pe.tarjeta()->numero()<< std::endl
 
     << std::left << std::setw(13) << "Importe:" << std::fixed
     << std::setprecision(2) << pe.total() << " \u20AC"<< std::endl;
