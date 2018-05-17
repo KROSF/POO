@@ -101,9 +101,9 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::ItemsPedido& i
 
 std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedidos)
 {
-    unsigned tmp_precio = 0;
+    unsigned tmp_cantidad = 0;
     double tmp_total = 0.0;
-    os << "Pedidos: [" << pedidos.size() << "]\n"
+    os << "[Pedidos: " << pedidos.size() << "]\n"
        << Cadena(80,'=') << std::endl
        << "  PVP\tCantidad\tFecha de venta\n"
        << Cadena(80,'=') << std::endl;
@@ -114,9 +114,9 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedid
     {
         os << p.second << "\t\t" << p.first->fecha() << std::endl;
         tmp_total  += p.second.precio_venta() * p.second.cantidad();
-        tmp_precio += p.second.cantidad();
+        tmp_cantidad += p.second.cantidad();
     }
     os << Cadena(80,'=') << std::endl << std::fixed
-    << std::setprecision(2) << tmp_total << " \u20AC\t" << tmp_precio <<std::endl;
+    << std::setprecision(2) << tmp_total << " \u20AC\t" << tmp_cantidad <<std::endl;
     return os;
 }
