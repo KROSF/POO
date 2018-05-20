@@ -1,4 +1,4 @@
-#include "../dsl-comprobaciones/caclibrary.h"
+#include "caclibrary.h"
 
 #include <vector>
 #include <iostream>
@@ -15,7 +15,7 @@ int main(int argc, const char **argv){
         vector<string> functionNames = {"strlen", "strcat", "memset", "strcpy", "strcmp"};
         string headerName = "cstring";
 
-        if(c1.findClass({"Articulo"})){
+        if(c1.findClass({"Articulo","ArticuloAlmacenable","Autor","Libro","Cederron","LibroDigital"})){
 
 	        llvm::outs() << "* articulo.cpp:\n";
 
@@ -27,11 +27,24 @@ int main(int argc, const char **argv){
 
 		c1.guardClauses("articulo.hpp", "Recuerda añadir las guardas de inclusión.");
 
-                c1.check();
+		// Catalogo-check
+	        c1.memberVariable("Articulo", {"stock_"}, {"?"}, {false}, "Revisa el enunciado respecto a los atributos que deben estar en cada clase.");
+        	c1.memberVariable("ArticuloAlmacenable", {"stock_"}, {"noconst"}, {true}, "Revisa el enunciado respecto a los atributos que deben estar en cada clase.");
+	        c1.virtualMethod({"~Articulo"},{{}},"Articulo",{"noconst"}, "Contempla crear un destructor apropiado para esta clase.");
+        	c1.functionWithReferencedMethod({"operator<<"},{{"class std::basic_ostream<char> &","const class Articulo &"}},{"impresion_especifica"},{{"class std::basic_ostream<char> &"}},"Articulo",{"const"},"Incluya impresion_especifica en el operador de extracción");
+	        c1.methodWithReferencedMemberVariable({"impresion_especifica"}, {{"class std::basic_ostream<char> &"}}, "Libro", {"const"}, {"n_pag_"}, "Revisa qué debe imprimir la definición del método impresion_especifica en cada clase.");
+        	c1.methodWithReferencedMemberVariable({"impresion_especifica"}, {{"class std::basic_ostream<char> &"}}, "Libro", {"const"}, {"stock_"},"Revisa qué debe imprimir la definición del método impresion_especifica en cada clase.");
+	        c1.methodWithReferencedMemberVariable({"impresion_especifica"}, {{"class std::basic_ostream<char> &"}}, "Cederron", {"const"}, {"tam_"},"Revisa qué debe imprimir la definición del método impresion_especifica en cada clase.");
+        	c1.methodWithReferencedMemberVariable({"impresion_especifica"}, {{"class std::basic_ostream<char> &"}}, "Cederron", {"const"}, {"stock_"},"Revisa qué debe imprimir la definición del método impresion_especifica en cada clase.");
+	        c1.methodWithReferencedMemberVariable({"impresion_especifica"}, {{"class std::basic_ostream<char> &"}}, "LibroDigital", {"const"}, {"f_expir_"},"Revisa qué debe imprimir la definición del método impresion_especifica en cada clase.");
+        	c1.method({"nombre","apellidos","direccion"}, {{},{},{}}, "Autor", {"const","const","const"}, "Revisa el uso de métodos constantes.");
+        	c1.noExceptMethod({"nombre","apellidos","direccion"},{{},{},{}}, "Autor", {"const","const","const"}, "Revisa el enunciado respecto a las excepciones.");
+	
+		c1.check();
 
-        }else{
-                llvm::outs()<<"No se ha encontrado la clase 'Articulo'"<<"\n";
-        }
+    	}else{
+        	llvm::outs()<<"No se han encontrado las clases 'Articulo', 'ArticuloAlmacenable', 'Autor', 'Libro', 'Cederron' y/o 'LibroDigital'\n";
+	}
 
         checkCode c2(argc, argv, "tarjeta.cpp", "");
 
@@ -39,11 +52,11 @@ int main(int argc, const char **argv){
         c2.setIncorrectMessage("REVISA LOS ERRORES DE TARJETA.");
 
         if(c2.findClass({"Tarjeta"})){
+                
+		 llvm::outs() << "* tarjeta.cpp:\n";
 
-		llvm::outs() << "* tarjeta.cpp:\n";
-
-                c2.invocationsFromHeaders(functionNames, headerName, true, "Revisa de dónde son tomadas las funciones de la biblioteca estándar como strlen, strcpy...");
-
+		c2.invocationsFromHeaders(functionNames, headerName, true, "Revisa de dónde son tomadas las funciones de la biblioteca estándar como strlen, strcpy...");
+	
 		c2.allPrivateVariableMember("Tarjeta", "Revisa el acceso a los atributos.");
 
 		c2.notFriendMember("Tarjeta", "Revisa por qué es necesario incluir 'friend'.");
@@ -69,24 +82,24 @@ int main(int argc, const char **argv){
         c3.setIncorrectMessage("REVISA LOS ERRORES DE USUARIO.");
 
         if(c3.findClass({"Usuario"})){
-
+	
 	        llvm::outs() << "* usuario.cpp:\n";
 
-		c3.invocationsFromHeaders(functionNames, headerName, true, "Revisa de dónde son tomadas las funciones de la biblioteca estándar como strlen, strcpy...");
+		c3.invocationsFromHeaders(functionNames, headerName, true, "Revisa de dónde son tomadas las funciones de la biblioteca estándar como strlen, strcpy...");                
 
 		c3.allPrivateVariableMember("Usuario", "Revisa el acceso a los atributos.");
-
+	
                 //Constructor copia y de asignación
-                c3.deletedMethod({"Usuario", "operator="}, {{"const class Usuario &"}, {"const class Usuario &"}}, "Usuario", {"noconst", "noconst"}, "Revisa el enunciado respecto a la copia de objetos.");
+                c3.deletedMethod({"Usuario", "operator="}, {{"const class Usuario &"}, {"const class Usuario &"}}, "Usuario", {"noconst", "noconst"}, "Revisa el enunciado respecto a la copia de objetos.");	
 
 		c3.numberOfConstructors("Usuario", 1, false, "Revisa el enunciado respecto a los constructores en esta clase.");
-
+	
 		c3.friendFunction({"operator<<"}, {{"?"}}, "Usuario", "Revisa si existen funciones que deben ser marcadas como amigas de la clase.");
 		vector<string> methodNames = {"id", "nombre", "apellidos"};
 		vector<vector<string> > parametersMethods = {{},{},{}};
 		c3.inlineMethod(methodNames, parametersMethods, "Usuario", {"const", "const", "const"}, "Sugerencia: incluir marca 'inline' a aquellos métodos con pocas instrucciones, como 'id()', 'nombre()' o 'apellidos()'.");
 
-		c3.guardClauses("usuario.hpp", "Recuerda añadir las guardas de inclusión.");
+		c3.guardClauses("usuario.hpp", "Recuerda añadir las guardas de inclusión.");	
 
                 c3.check();
 
@@ -94,7 +107,6 @@ int main(int argc, const char **argv){
                 llvm::outs()<<"No se ha encontrado la clase 'Usuario'"<<"\n";
         }
 
-	//Pedido-check
         checkCode c4(argc, argv,"pedido.cpp", "");
 
         c4.setCorrectMessage("Verificación correcta de la clase Pedido.");
@@ -104,8 +116,8 @@ int main(int argc, const char **argv){
 
 	        llvm::outs() << "* pedido.cpp:\n";
 
-		c4.invocationsFromHeaders(functionNames, headerName, true, "Revisa de dónde son tomadas las funciones de la biblioteca estándar como strlen, strcpy...");
-
+		c4.invocationsFromHeaders(functionNames, headerName, true, "Revisa de dónde son tomadas las funciones de la biblioteca estándar como strlen, strcpy...");        
+ 
 		c4.allPrivateVariableMember("Pedido", "Revisa el acceso a los atributos.");
 
                 c4.numberOfConstructors("Pedido", 1, false, "Revisa el enunciado respecto a la construcción de objetos.");
@@ -114,11 +126,15 @@ int main(int argc, const char **argv){
 
                 c4.listInitializerConstructor("Pedido", {"?"}, {"int", "const class Tarjeta *", "class Fecha", "double"}, "Revisa la lista de inicialización del constructor."); //Ponemos ? como lista de parámetros porque solo debe haber un constructor. La regla funcionará cualquiera sea el orden en el que se pongan los inicializadores en el constructor
 
-		c4.function({"operator<<"}, {{"class std::basic_ostream<char> &", "const class Pedido &"}}, "Revisa el enunciado respecto al operador de extracción.");
+		c4.function({"operator<<"},{{"class std::basic_ostream<char> &", "const class Pedido &"}}, "Revisa el enunciado respecto al operador de extracción.");
 
                 c4.memberVariable("Pedido", {"tarjeta_"}, {"const"}, {true}, "Revisa el enunciado respecto al atributo de la tarjeta de pago.");
 
                 c4.guardClauses("pedido.hpp", "Recuerda añadir las guardas de inclusión");
+
+		//Catalogo-check
+		c4.methodWithDynamicCast("Pedido", {}, "Pedido", "noconst", "class Articulo *", "class ArticuloAlmacenable *", "Es necesario que emplees el operador de molde apropiado en el constructor de la clase.\n");
+                c4.methodWithDynamicCast("Pedido", {}, "Pedido", "noconst", "class Articulo *", "class LibroDigital *", "Es necesario que emplees el operador de molde apropiado en el constructor de la clase.\n");
 
                 c4.check();
         }else{
@@ -141,7 +157,7 @@ int main(int argc, const char **argv){
                 vector<string> params = {"double", "unsigned int"};
                 vector<vector<string> > methodsParams;
                 methodsParams = {params};
-
+                
 		c5.defaultArgumentsInMethod({"LineaPedido"}, methodsParams, "LineaPedido", {"?"}, {1}, {{"1.*"}}, "Revisa el enunciado respecto a la construcción de objetos.");
 
                 c5.explicitSpecifiedConstructor("LineaPedido", params, "Revisa el enunciado respecto a conversiones implícitas.");
@@ -149,7 +165,7 @@ int main(int argc, const char **argv){
                 c5.function({"operator<<"}, {{"class std::basic_ostream<char> &", "const class LineaPedido &"}}, "Revisa el lugar de la declaración de los operadores.");
 
                 //'pedir' sobrecargado puede hacerse mediante la busqueda de dos métodos con diferentes parametros.
-                c5.method({"pedir","pedir"},{{"class Pedido &", "class Articulo &", "double", "unsigned int"}
+		c5.method({"pedir","pedir"},{{"class Pedido &", "class Articulo &", "double", "unsigned int"}
                                     ,{"class Articulo &", "class Pedido &", "double", "unsigned int"}},
                                     "Pedido_Articulo", {"noconst","noconst"}, "Se sugiere la sobrecarga del método 'pedir'");
 
@@ -167,13 +183,16 @@ int main(int argc, const char **argv){
 
         if(c6.findClass({"Usuario_Pedido"})){
 
-	        llvm::outs() << "* usuario-pedido.hpp:\n";
+		llvm::outs() << "* usuario-pedido.hpp:\n";
 
                 c6.invocationsFromHeaders(functionNames, headerName, true, "Revisa de dónde son tomadas las funciones de la biblioteca estándar como strlen, strcpy...");
 
 		c6.allPrivateVariableMember("Usuario_Pedido", "Revisa el acceso a los atributos.");
 
                 c6.guardClauses("usuario-pedido.hpp", "Recuerda añadir las guardas de inclusión");
+
+		//Catalogo-check
+		c6.notFriendMember("Usuario_Pedido","Revisa por qué no es necesario incluir friend.");
 
                 c6.check();
 

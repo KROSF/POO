@@ -1,6 +1,8 @@
 # $Id: Make_check.mk 416 2018-04-23 08:38:49Z u44965478 $
-# © 2014-17 Pedro Delgado y los profesores de POO
-# LIBRERÍA - P3
+# Comprobaciones de código para P4
+# ©2015 Pedro Delgado, para POO
+# 2017 - Simplificación - Gerardo
+#
 
 # Directorio donde está el código compartido del DSL
 DIR=../dsl-comprobaciones/
@@ -16,11 +18,11 @@ CXXFLAGS    := -std=c++14
 LDFLAGS     := # -static
 LLVMLDFLAGS := $(shell llvm-config --libs) $(LDFLAGS)
 COMMONSRCS  := $(DIR)caclibrary.cpp $(DIR)execute.cpp $(DIR)matchers.cpp
-SOURCES     := pedido_check.cpp ${COMMONSRCS}
+SOURCES     := catalogo_check.cpp ${COMMONSRCS}
 COMMONHDRS  := $(COMMONSRCS:.cpp=.h) $(DIR)info.h
 COMMONOBJS  := $(COMMONSRCS:.cpp=.o)
 OBJECTS     := $(SOURCES:.cpp=.o)
-EXES        := pedido_check
+EXES        := catalogo_check
 CLANGLIBS   := -lclangFrontend -lclangSerialization -lclangDriver \
 		-lclangTooling -lclangParse -lclangSema -lclangAnalysis \
 		-lclangEdit -lclangAST -lclangASTMatchers -lclangLex \
@@ -30,20 +32,19 @@ CLANGLIBS   := -lclangFrontend -lclangSerialization -lclangDriver \
 all: $(EXES)
 
 ${EXES}: $(OBJECTS)
-	@echo "(LINK) pedido_check.o"
+	@echo "(LINK) catalogo_check.o"
 	@$(CXX) -o $@ $^ $(CLANGLIBS) $(LLVMLDFLAGS)
 
-pedido_check.o: $(COMMONHDRS)
+catalogo_check.o: $(COMMONHDRS)
 
-check_pedido: ${EXES}
+check_catalogo: ${EXES}
 	@echo Verificando los fuentes ...
 	@./${EXES} -extra-arg-before="-I../P1" -extra-arg="-std=c++14" \
 		articulo.cpp usuario.cpp tarjeta.cpp pedido.cpp \
 		pedido-articulo.cpp usuario-pedido.hpp -- 2> /dev/null
 
-check: check_pedido
+check: check_catalogo
 
 clean:
 	@echo "Limpiando."
 	@${RM} $(EXES) $(OBJECTS)
-
