@@ -53,7 +53,7 @@ STD = c++14
 # -g         : para poder depurar, si hay que hacerlo
 # -pedantic  : para que se ajuste sin desvíos del estándar empleado
 # -Wall      : para que dé todo tipo de avisos, no solo los normales
-CXXFLAGS = -std=${STD} -g -pedantic -Wall
+CXXFLAGS = -std=${STD} -g -pedantic -Wall -Wextra -Wfloat-equal -Wundef -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual
 
 # Opciones del preprocesador. No las quite.
 # -I : directorio donde buscar cabeceras adicionales (#include "...")
@@ -69,7 +69,7 @@ VPATH     = .:${DIRTESTS}:${DIRFECHACADENA}:${DIRLUHN}
 
 # Estos son los ficheros que tiene que hacer el alumno. El resto se le da.
 # NOTA IMPORTANTE: usuario-pedido.cpp no hace falta si se hacen los métodos
-# de Usuario_Pedido inline, pero si se definen normales en usuario-pedido.cpp, 
+# de Usuario_Pedido inline, pero si se definen normales en usuario-pedido.cpp,
 # añádase a OWN_SRCS y quítese usuario-pedido.hpp de OWN_HDRS.
 
 OWN_SRCS  = usuario.cpp tarjeta.cpp articulo.cpp pedido-articulo.cpp pedido.cpp
@@ -98,7 +98,7 @@ HDRS      = $(OWN_HDRS) $(TEST_HDRS)
 NOMBRETAR = ../../${NOMBREALUMNO}.tar.gz
 D = ${NOMBREALUMNO}/${NOMBREPRACTICA}
 
-## OBJETIVOS PRINCIPALES ## 
+## OBJETIVOS PRINCIPALES ##
 
 # Construye los programas de prueba
 all: ${MAIN_EXE} ${TEST_EXE}
@@ -124,7 +124,7 @@ valgrind: ${MAIN_EXE} ${TEST_EXE}
 	valgrind --quiet ./${TEST_EXE} --logger=minimal
 	valgrind --quiet ./${MAIN_EXE}
 
-## Compilación ## 
+## Compilación ##
 
 # Construye el programa de prueba de consola
 ${MAIN_EXE}: ${MAIN_OBJS} ${OWN_OBJS} ${LOCALLIBS}
@@ -152,20 +152,20 @@ fecha.o : ${DIRFECHACADENA}/fecha.hpp
 # Por si se cambia algo en los tests automáticos
 ${TESTS_OBJS}: ${TESTS_SRCS} ${TESTS_HDRS}
 
-## Cobertura / Perfilado 
+## Cobertura / Perfilado
 
-# Descomentando estas dos líneas de CXXFLAGS y LDFLAGS se activa el soporte 
-# para las pruebas de cobertura y el perfilado de los programas. 
-# Una vez tenemos esto y recompilamos por completo (generando una serie de 
-# ficheros .gcno para gcov), podemos ejecutar el programa de la forma usual, 
-# y se generarán gmon.out (para gprof) y un .gcda (para gcov) para cada .cpp 
+# Descomentando estas dos líneas de CXXFLAGS y LDFLAGS se activa el soporte
+# para las pruebas de cobertura y el perfilado de los programas.
+# Una vez tenemos esto y recompilamos por completo (generando una serie de
+# ficheros .gcno para gcov), podemos ejecutar el programa de la forma usual,
+# y se generarán gmon.out (para gprof) y un .gcda (para gcov) para cada .cpp
 # y .hpp del programa ejecutado.
 #
 # Desde el directorio donde está gmon.out, podremos hacer:
 #
 # gprof ejecutable
 #
-# para ver en la salida estándar qué funciones han consumido más tiempo. 
+# para ver en la salida estándar qué funciones han consumido más tiempo.
 # Y podremos usar:
 #
 # gcov fichero.cpp
