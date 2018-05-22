@@ -15,9 +15,9 @@
 class Autor{
 public:
     Autor(const Cadena&,const Cadena&,const Cadena&);
-    const Cadena& nombre()    const { return nom_; }
-    const Cadena& apellidos() const { return ape_; }
-    const Cadena& direccion() const { return dir_; }
+    const Cadena& nombre()    const noexcept { return nom_; }
+    const Cadena& apellidos() const noexcept { return ape_; }
+    const Cadena& direccion() const noexcept { return dir_; }
 private:
     Cadena nom_,ape_,dir_;
 };
@@ -52,10 +52,10 @@ class ArticuloAlmacenable : public Articulo{
 public:
     ArticuloAlmacenable(Autores,const Cadena&,const Cadena&,
                         const Fecha&,double,unsigned s = 0);
-    unsigned stock() const;
-    unsigned& stock();
+    unsigned stock() const { return stock_; }
+    unsigned& stock() { return stock_; }
     virtual ~ArticuloAlmacenable(){}
-private:
+protected:
     unsigned stock_;
 };
 
@@ -64,7 +64,10 @@ public:
     Libro(Autores,const Cadena&,const Cadena&,const Fecha&,
                                     double,unsigned,unsigned s = 0);
     unsigned n_pag() const { return n_pag_; }
-    virtual void impresion_especifica(std::ostream& os) const noexcept;
+    virtual void impresion_especifica(std::ostream& os) const noexcept
+    {
+        os <<"\t"<< n_pag_ << " págs., " << stock_ << " unidades.";
+    }
 private:
     unsigned n_pag_;
 };
@@ -73,10 +76,13 @@ class LibroDigital: public Articulo{
 public:
     LibroDigital(Autores,const Cadena&,const Cadena&,const Fecha&,
                                                 double,const Fecha&);
-    const Fecha& f_expir() const;
-    virtual void impresion_especifica(std::ostream& os) const noexcept;
+    const Fecha& f_expir() const { return f_expir_; }
+    virtual void impresion_especifica(std::ostream& os) const noexcept
+    {
+        os << "\tA la venta hasta el " << f_expir_ << '.';
+    }
 private:
-    Fecha expira_;
+    Fecha f_expir_;
 };
 
 class Cederron: public ArticuloAlmacenable{
@@ -84,9 +90,12 @@ public:
     Cederron(Autores,const Cadena&,const Cadena&,const Fecha&,
                                         double,unsigned,unsigned s = 0);
 
-    unsigned tam() const { return size_; }
-    virtual void impresion_especifica(std::ostream& os) const noexcept;
+    unsigned tam() const { return tam_; }
+    virtual void impresion_especifica(std::ostream& os) const noexcept
+    {
+        os <<"\t" <<tam_ << " MB, "<< stock_ << " unidades.";
+    }
 private:
-    unsigned size_;
+    unsigned tam_;
 };
 #endif
