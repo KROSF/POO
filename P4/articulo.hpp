@@ -66,7 +66,7 @@ public:
     unsigned n_pag() const { return n_pag_; }
     virtual void impresion_especifica(std::ostream& os) const noexcept
     {
-        os <<"\t"<< n_pag_ << " págs., " << stock_ << " unidades.";
+        os << n_pag_ << " págs., " << stock_ << " unidades.";
     }
 private:
     unsigned n_pag_;
@@ -79,7 +79,7 @@ public:
     const Fecha& f_expir() const { return f_expir_; }
     virtual void impresion_especifica(std::ostream& os) const noexcept
     {
-        os << "\tA la venta hasta el " << f_expir_ << '.';
+        os << "A la venta hasta el " << f_expir_ << '.';
     }
 private:
     Fecha f_expir_;
@@ -93,7 +93,7 @@ public:
     unsigned tam() const { return tam_; }
     virtual void impresion_especifica(std::ostream& os) const noexcept
     {
-        os <<"\t" <<tam_ << " MB, "<< stock_ << " unidades.";
+        os <<tam_ << " MB, "<< stock_ << " unidades.";
     }
 private:
     unsigned tam_;
