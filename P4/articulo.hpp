@@ -7,25 +7,86 @@
 */
 #ifndef ARTICULO_HPP
 #define ARTICULO_HPP
+#include <set>
+#include <map>
 #include "../P1/fecha.hpp"
 #include "../P1/cadena.hpp"
+
+class Autor{
+public:
+    Autor(const Cadena&,const Cadena&,const Cadena&);
+    const Cadena& nombre()    const { return nom_; }
+    const Cadena& apellidos() const { return ape_; }
+    const Cadena& direccion() const { return dir_; }
+private:
+    Cadena nom_,ape_,dir_;
+};
+
 class Articulo{
 public:
-  /* Constructor */
-  explicit Articulo(const Cadena&,const Cadena&,const Fecha&,double,unsigned);
-  /* Metodos */
-  Cadena referencia() const;
-  Cadena titulo() const;
-  Fecha f_publi() const;
-  double precio() const;
-  double& precio();
-  unsigned stock() const;
-  unsigned& stock();
-private:
-  Cadena cod_ref_,titulo_;
-  Fecha publicacion_;
-  double precio_;
-  unsigned num_artcls;
+    typedef std::set<Autor*> Autores;
+
+    class Autores_vacios{};
+
+    Articulo(Autores,const Cadena&,const Cadena&,const Fecha&,double);
+
+    const Autores& autores() const;
+    const Cadena& referencia() const;
+    const Cadena& titulo() const;
+    const Fecha& f_publi() const;
+    double precio() const;
+    double& precio();
+
+    virtual void impresion_especifica(std::ostream& os) const noexcept = 0;
+    virtual ~Articulo(){}
+protected:
+    Autores autores_;
+    Cadena cod_ref_,titulo_;
+    Fecha publicacion_;
+    double precio_;
 };
-std::ostream& operator <<(std::ostream& os,const Articulo& artcl);
+
+std::ostream& operator<<(std::ostream& os, const Articulo& art) noexcept;
+
+class ArticuloAlmacenable : public Articulo{
+public:
+    ArticuloAlmacenable(Autores,const Cadena&,const Cadena&,
+                        const Fecha&,double,unsigned s = 0);
+    unsigned stock() const;
+    unsigned& stock();
+    virtual ~ArticuloAlmacenable(){}
+private:
+    unsigned stock_;
+};
+
+class Libro: public ArticuloAlmacenable{
+public:
+    Libro(Autores,const Cadena&,const Cadena&,const Fecha&,
+                                    double,unsigned,unsigned s = 0);
+    unsigned n_pag() const { return n_pag_; }
+    virtual void impresion_especifica(std::ostream& os) const noexcept;
+private:
+    unsigned n_pag_;
+};
+
+class LibroDigital: public Articulo{
+public:
+    LibroDigital(Autores,const Cadena&,const Cadena&,const Fecha&,
+                                                double,const Fecha&);
+    const Fecha& f_expir() const;
+    virtual void impresion_especifica(std::ostream& os) const noexcept;
+private:
+    Fecha expira_;
+};
+
+class Cederron: public ArticuloAlmacenable{
+public:
+    Cederron(Autores,const Cadena&,const Cadena&,const Fecha&,
+                                        double,unsigned,unsigned s = 0);
+
+    unsigned tam() const { return size_; }
+    virtual void impresion_especifica(std::ostream& os) const noexcept;
+private:
+    unsigned size_;
+};
 #endif

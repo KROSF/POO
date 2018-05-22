@@ -24,19 +24,35 @@ Pedido::Pedido(Usuario_Pedido& u_p,
     // typeof c = pair<Articulo*,unsigned>
     // typeof c.first = Articulo*
     // typeof c.second = unsigned
+    std::set<Articulo*> expirados;
     for(auto c : u.compra())
-        if(c.first->stock()<c.second)
-        {   //no hay articulos.
+    {
+        if (auto* libroDig = dynamic_cast<LibroDigital*>(c.first))
+        {
+            if (libroDig->f_expir() < Fecha())
+                expirados.insert(c.first);
+        }
+        else if(dynamic_cast<ArticuloAlmacenable*>(c.first)->stock() < c.second)
+        {
             const_cast<Usuario::Articulos&>(u.compra()).clear();
             throw Pedido::SinStock(c.first);
         }
+    }
+
+    for (auto art : expirados)
+            u.compra(*art, 0);
+
+    if (!u.compra().size()) throw Vacio(&u);
+
     Usuario::Articulos carro = u.compra();
+
     for(auto c : carro)
     {
         Articulo* pa = c.first;
         unsigned int cantidad = c.second;
         double precio = pa->precio();
-        pa->stock() -= cantidad;
+        if(auto* Artalm = dynamic_cast<ArticuloAlmacenable*>(pa))
+            Artalm->stock() -= cantidad;
         p_a.pedir(*this,*pa,precio,cantidad);
         total_+= precio * cantidad;
         u.compra(*pa,0);
