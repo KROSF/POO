@@ -13,32 +13,40 @@
 
 Cadena::Cadena(size_t tam, const char c) : s_(new char[tam+1]),tam_(tam)
 {
-  for (unsigned i = 0; i < tam; ++i) s_[i] = c;
-  s_[tam_]='\0';
+    for (unsigned i = 0; i < tam; ++i) s_[i] = c;
+    s_[tam_]='\0';
 }
 
-Cadena::Cadena(const char * cc) : s_(new char[strlen(cc)+1]),tam_(std::strlen(cc)) {std::strcpy(s_, cc);}
+Cadena::Cadena(const char * cc):
+s_(new char[std::strlen(cc)+1]),tam_(std::strlen(cc))
+{
+    std::strcpy(s_, cc);
+}
 
-Cadena::Cadena(const Cadena &cad ) : s_(new char[cad.tam_+1]),tam_(cad.tam_) {std::strcpy(s_, cad.s_);}
+Cadena::Cadena(const Cadena &cad ) : s_(new char[cad.tam_+1]),tam_(cad.tam_)
+{
+    std::strcpy(s_, cad.s_);
+}
 
 Cadena::Cadena(Cadena&& cad ):s_(cad.s_),tam_(cad.tam_)
 {
-  cad.tam_ = 0;
-  cad.s_= nullptr;
+    cad.tam_ = 0;
+    cad.s_= nullptr;
 }
 
 /* METODOS */
 
 Cadena Cadena::substr(size_t begindex, size_t len) const
 {
-  if (begindex >= this->length() || begindex + len > this->length() || begindex + len < begindex)
-      throw std::out_of_range("Error de rango");
-  char* tmp = new char[len+1];
-  std::strncpy(tmp, s_+begindex,len);
-  tmp[len]='\0';
-  Cadena ctmp(tmp);
-  delete [] tmp;
-  return ctmp;
+    if (begindex >= this->length() || begindex + len > this->length() ||
+        begindex + len < begindex)
+            throw std::out_of_range("Error de rango");
+    char* tmp = new char[len+1];
+    std::strncpy(tmp, s_+begindex,len);
+    tmp[len]='\0';
+    Cadena ctmp(tmp);
+    delete [] tmp;
+    return ctmp;
 }
 
 inline size_t Cadena::length() const noexcept { return tam_; }
@@ -112,7 +120,10 @@ Cadena& Cadena::operator = (const char* cad)
 
 /* OPERADOR ARIMETICO */
 
-Cadena operator + (const Cadena& cad1, const Cadena& cad2) {return Cadena(cad1) += cad2;}
+Cadena operator + (const Cadena& cad1, const Cadena& cad2)
+{
+    return Cadena(cad1) += cad2;
+}
 
 /* OPERADORES DE COMPARACIÓN */
 
@@ -121,18 +132,30 @@ bool operator == (const Cadena& cad1, const Cadena& cad2) noexcept
     return (std::strcmp(cad1.c_str(), cad2.c_str()) == 0);
 }
 
-bool operator != (const Cadena& cad1, const Cadena& cad2) noexcept { return !(cad1==cad2);}
+bool operator != (const Cadena& cad1, const Cadena& cad2) noexcept
+{
+    return !(cad1==cad2);
+}
 
 bool operator > (const Cadena& cad1, const Cadena& cad2) noexcept
-{ return (std::strcmp(cad1.c_str(),cad2.c_str()) > 0 ); }
+{
+    return (std::strcmp(cad1.c_str(),cad2.c_str()) > 0 );
+}
 
 bool operator < (const Cadena& cad1, const Cadena& cad2) noexcept
-{ return !(cad1 == cad2) && !(cad1 > cad2);}
+{
+    return !(cad1 == cad2) && !(cad1 > cad2);
+}
 
-bool operator <= (const Cadena& cad1, const Cadena& cad2) noexcept { return !(cad1 > cad2);}
+bool operator <= (const Cadena& cad1, const Cadena& cad2) noexcept
+{
+     return !(cad1 > cad2);
+ }
 
 bool operator >= (const Cadena& cad1, const Cadena& cad2) noexcept
-{ return (cad1 == cad2) || (cad1 > cad2); }
+{
+    return (cad1 == cad2) || (cad1 > cad2);
+}
 
 /* OPERADORES DE FLUJO */
 
@@ -144,19 +167,22 @@ std::ostream& operator << (std::ostream& os, const Cadena& cad) noexcept
 
 std::istream &operator>>(std::istream& is,Cadena& cad) noexcept
 {
-  char* tmp = new char[33];
-  int i = 0;
-  char aux;
-  while(isspace(is.get()) && is.good()){}
-  is.unget();
-  while (i < 32 && !isspace(is.peek()) && is.good() && is.peek() != '\n' && is.peek()!='\0') {
-    aux=is.get();
-    if(is.good()) tmp[i++]=aux;
-  }
-  tmp[i]='\0';
-  cad = tmp;
-  delete[] tmp;
-  return is;
+    char* tmp = new char[33];
+    int i = 0;
+    char aux;
+    while(isspace(is.get()) && is.good()){}
+    is.unget();
+    while (i < 32 && !isspace(is.peek()) && is.good() &&
+           is.peek() != '\n' && is.peek()!='\0')
+    {
+        aux=is.get();
+        if(is.good())
+            tmp[i++]=aux;
+    }
+    tmp[i]='\0';
+    cad = tmp;
+    delete[] tmp;
+    return is;
 }
 
 /* DESTRUCTOR */

@@ -9,6 +9,7 @@
 #define CADENA_H
 #include <iostream>
 #include <functional>
+
 class Cadena {
 public:
     /* CONSTRUCTORES */
@@ -45,23 +46,31 @@ public:
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    iterator begin() noexcept{return s_;};
-    const_iterator begin() const noexcept{return s_;};
-    const_iterator cbegin() const noexcept{return s_;};
-    reverse_iterator rbegin() noexcept{return reverse_iterator(end());};
+    iterator begin() noexcept { return s_; }
+    const_iterator begin() const noexcept { return s_; }
+    const_iterator cbegin() const noexcept { return s_; }
+    reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
     const_reverse_iterator rbegin() const noexcept
-    {return const_reverse_iterator(end());}
+    {
+        return const_reverse_iterator(end());
+    }
     const_reverse_iterator crbegin() const noexcept
-    {return const_reverse_iterator(end());}
+    {
+        return const_reverse_iterator(end());
+    }
 
-    iterator end() noexcept{return s_ + tam_;};
-    const_iterator end() const noexcept{return s_ + tam_;};
-    const_iterator cend() const noexcept{return s_ + tam_;};
-    reverse_iterator rend() noexcept{return reverse_iterator(begin());}
+    iterator end() noexcept { return s_ + tam_; }
+    const_iterator end() const noexcept { return s_ + tam_; }
+    const_iterator cend() const noexcept { return s_ + tam_; }
+    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
     const_reverse_iterator rend() const noexcept
-    {return const_reverse_iterator(begin());};
+    {
+        return const_reverse_iterator(begin());
+    }
     const_reverse_iterator crend() const noexcept
-    {return const_reverse_iterator(begin());};
+    {
+        return const_reverse_iterator(begin());
+    }
 
 private:
     char * s_;
@@ -81,9 +90,12 @@ std::ostream& operator << (std::ostream& os, const Cadena& cad) noexcept;
 std::istream& operator >> (std::istream& is, Cadena& cad)noexcept;
 /* HASH */
 namespace std {
-  template <> struct hash<Cadena> {
-    size_t operator()(const Cadena& cad) const
-    {return hash<std::string>{}(cad.c_str());}
-  };
+    template <> struct hash<Cadena>
+    {
+        size_t operator()(const Cadena& cad) const
+        {
+            return hash<std::string>{}(cad.c_str());
+        }
+    };
 }
 #endif
