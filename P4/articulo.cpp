@@ -47,7 +47,7 @@ std::ostream& operator <<(std::ostream& os,const Articulo& artcl) noexcept
         os << ", " << (*autor)->apellidos();
     os << ". ";
     os << artcl.f_publi().anno()<< ". " << std::fixed << std::setprecision(2)
-    << artcl.precio() << " \u20AC\n\t";
+    << artcl.precio() << " €\n\t";
     artcl.impresion_especifica(os);
     return os;
 }

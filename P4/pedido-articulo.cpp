@@ -55,7 +55,7 @@ std::ostream& Pedido_Articulo::mostrarDetallePedidos(std::ostream& os)
         tmp_total += obj.first->total();
     }
     return os << std::fixed << "\nTOTAL VENTAS:\t"
-              << std::setprecision(2) << tmp_total << " \u20AC" << std::endl;
+              << std::setprecision(2) << tmp_total << " €" << std::endl;
 }
 
 std::ostream& Pedido_Articulo::mostrarVentasArticulos(std::ostream& os)
@@ -75,7 +75,7 @@ std::ostream& Pedido_Articulo::mostrarVentasArticulos(std::ostream& os)
 std::ostream& operator << (std::ostream& os, const LineaPedido& li_pe)
 {
     return os << std::fixed << std::setprecision(2) << li_pe.precio_venta()
-              << " \u20AC\t" << li_pe.cantidad();
+              << " €\t" << li_pe.cantidad();
 }
 
 std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::ItemsPedido& items)
@@ -95,7 +95,7 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::ItemsPedido& i
     }
     os << Cadena(80,'=') << std::endl
        << "Total\t" << std::fixed<< std::setprecision(2)
-       << tmp_total << " \u20AC\n" << std::endl;
+       << tmp_total << " €\n" << std::endl;
     return os;
 }
 
@@ -117,6 +117,6 @@ std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedid
         tmp_cantidad += p.second.cantidad();
     }
     os << Cadena(80,'=') << std::endl << std::fixed
-    << std::setprecision(2) << tmp_total << " \u20AC\t" << tmp_cantidad <<std::endl;
+    << std::setprecision(2) << tmp_total << " €\t" << tmp_cantidad <<std::endl;
     return os;
 }

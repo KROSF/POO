@@ -39,7 +39,7 @@ public:
 
     virtual void impresion_especifica(std::ostream& os) const noexcept = 0;
     virtual ~Articulo(){}
-protected:
+private:
     Autores autores_;
     Cadena cod_ref_,titulo_;
     Fecha publicacion_;
@@ -93,7 +93,7 @@ public:
     unsigned tam() const { return tam_; }
     virtual void impresion_especifica(std::ostream& os) const noexcept
     {
-        os <<tam_ << " MB, "<< stock_ << " unidades.";
+        os << tam_ << " MB, "<< stock_ << " unidades.";
     }
 private:
     unsigned tam_;
