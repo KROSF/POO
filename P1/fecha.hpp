@@ -25,7 +25,7 @@ public:
     /* CLASE PARA OBTENER LA HORA DEL SISTEMA */
     class Hrsys {
     public:
-      Hrsys(): t1(std::time(nullptr)),t2(new std::tm(*std::localtime(&t1)))
+      Hrsys(): t1(std::time(nullptr)),t2(new std::tm(*std::gmtime(&t1)))
       { std::setlocale(LC_TIME, "es_ES.UTF-8");}
       Hrsys(int d,int m,int a,int n = 0): t1(std::time(nullptr)),t2(new std::tm{0})
       {

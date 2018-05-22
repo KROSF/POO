@@ -8,9 +8,10 @@
 #include "pedido.hpp"
 #include "usuario-pedido.hpp"
 #include "pedido-articulo.hpp"
-
+// Incializacion variable estatica
 int Pedido::n_pedidos_ = 0;
 
+//Constructor
 Pedido::Pedido(Usuario_Pedido& u_p,
                Pedido_Articulo& p_a,
                Usuario& u,
@@ -61,21 +62,21 @@ Pedido::Pedido(Usuario_Pedido& u_p,
     ++n_pedidos_;
 }
 
+//Metodo que devuelve el total de peidos del programa
 int Pedido::n_total_pedidos() noexcept
 {
 	return n_pedidos_;
 }
 
+
+//Operador de Flujo
 std::ostream& operator << (std::ostream& os ,const Pedido& pe)
 {
     return os
     << std::left << std::setw(13) << "Núm. pedido: " << pe.numero() << std::endl
-
     << std::left << std::setw(13) << "Fecha:" << pe.fecha() << std::endl
-
     << std::left << std::setw(13) << "Pagado con:" << pe.tarjeta()->tipo()
     <<" n.º: "<<pe.tarjeta()->numero()<< std::endl
-
     << std::left << std::setw(13) << "Importe:" << std::fixed
-    << std::setprecision(2) << pe.total() << " €"<< std::endl;
+    << std::setprecision(2) << pe.total() << " \u20AC"<< std::endl;
 }
