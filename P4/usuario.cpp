@@ -131,8 +131,8 @@ std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
     // typeof i.second = unsigned
     for (auto i : user.compra())
     {
-        os << std::setw(4) << i.second << "   "<< *i.first;
-        os << "[" << i.first->referencia() << "] \"" << i.first->titulo()
+        os << std::setw(4) << i.second << "   "
+        << "[" << i.first->referencia() << "] \"" << i.first->titulo()
         << "\", " << i.first->f_publi().anno()       << ". " << std::fixed
         << std::setprecision(2) << i.first->precio() << " €" << std::endl;
     }
