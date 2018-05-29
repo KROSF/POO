@@ -1,10 +1,13 @@
 os:
-  - linux
+    - linux
 language:
-  - cpp
+    - cpp
+before_script:
+    - sudo apt-get install valgrind
 script:
-  - cd P4/
-  - make tests
+    - cd P4/
+    - make tests
+    - make valgrind
 compiler:
-  - clang
-  - gcc
+    - clang
+    - gcc
