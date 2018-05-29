@@ -39,7 +39,7 @@ double& Articulo::precio() {return precio_;}
 
 std::ostream& operator <<(std::ostream& os,const Articulo& artcl) noexcept
 {
-   os << "[" << artcl.referencia() << "] \""
+    os << "[" << artcl.referencia() << "] \""
     << artcl.titulo() << "\", de ";
     auto autor = artcl.autores().begin();
     os << (*autor)->apellidos();
