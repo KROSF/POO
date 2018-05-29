@@ -22,42 +22,41 @@ Pedido::Pedido(Usuario_Pedido& u_p,
     if( u.n_articulos() == 0) throw Pedido::Vacio(&u);
     if(t.titular() != &u) throw Pedido::Impostor(&u);
     if(t.caducidad() < fecha) throw Tarjeta::Caducada(t.caducidad());
+    Usuario::Articulos carro = u.compra();
+    bool pedido_vacio = true;
     // typeof c = pair<Articulo*,unsigned>
     // typeof c.first = Articulo*
     // typeof c.second = unsigned
-    std::set<Articulo*> expirados;
-    for(auto c : u.compra())
+    for(auto c : carro)
     {
         if (auto* libroDig = dynamic_cast<LibroDigital*>(c.first))
         {
             if (libroDig->f_expir() < Fecha())
-                expirados.insert(c.first);
+                u.compra(*c.first, 0);
+            else
+            {
+                p_a.pedir(*this,*libroDig,c.first->precio(),c.second);
+                total_+= c.first->precio() * c.second;
+                u.compra(*c.first,0);
+                pedido_vacio = false;
+            }
         }
-        else if(dynamic_cast<ArticuloAlmacenable*>(c.first)->stock() < c.second)
+        else if(auto* artAlmc = dynamic_cast<ArticuloAlmacenable*>(c.first))
         {
-            const_cast<Usuario::Articulos&>(u.compra()).clear();
-            throw Pedido::SinStock(c.first);
+            if(artAlmc->stock() < c.second )
+            {
+                const_cast<Usuario::Articulos&>(u.compra()).clear();
+                throw Pedido::SinStock(c.first);
+            }
+            artAlmc->stock() -= c.second;
+            p_a.pedir(*this,*artAlmc,c.first->precio(),c.second);
+            total_+= c.first->precio() * c.second;
+            u.compra(*c.first,0);
+            pedido_vacio = false;
         }
+        else throw std::logic_error("Error, Articulo Desconocido");
     }
-
-    for (auto art : expirados)
-            u.compra(*art, 0);
-
-    if (!u.compra().size()) throw Vacio(&u);
-
-    Usuario::Articulos carro = u.compra();
-
-    for(auto c : carro)
-    {
-        Articulo* pa = c.first;
-        unsigned int cantidad = c.second;
-        double precio = pa->precio();
-        if(auto* Artalm = dynamic_cast<ArticuloAlmacenable*>(pa))
-            Artalm->stock() -= cantidad;
-        p_a.pedir(*this,*pa,precio,cantidad);
-        total_+= precio * cantidad;
-        u.compra(*pa,0);
-    }
+    if (pedido_vacio) throw Vacio(&u);
     u_p.asocia(u,*this);
     ++n_pedidos_;
 }

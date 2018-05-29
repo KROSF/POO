@@ -40,7 +40,7 @@ public:
     virtual void impresion_especifica(std::ostream& os) const noexcept = 0;
     virtual ~Articulo(){}
 private:
-    Autores autores_;
+    const Autores autores_;
     Cadena cod_ref_,titulo_;
     Fecha publicacion_;
     double precio_;
@@ -69,7 +69,7 @@ public:
         os << n_pag_ << " págs., " << stock_ << " unidades.";
     }
 private:
-    unsigned n_pag_;
+    const unsigned n_pag_;
 };
 
 class LibroDigital: public Articulo{
@@ -96,6 +96,6 @@ public:
         os << tam_ << " MB, "<< stock_ << " unidades.";
     }
 private:
-    unsigned tam_;
+    const unsigned tam_;
 };
 #endif
