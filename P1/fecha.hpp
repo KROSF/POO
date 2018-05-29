@@ -35,7 +35,7 @@ public:
 
     const char * toString() const noexcept
     {
-      static char s[40];
+        static char s[40];
         std::strftime(s, 40, "%A %d de %B de %Y", t2);
         return s;
     }
