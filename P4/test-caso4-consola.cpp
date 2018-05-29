@@ -24,8 +24,8 @@ using std::endl;
 
 int main()
 {
-  cout.imbue(std::locale(""));
-  // std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  //cout.imbue(std::locale(""));
+  //std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
   // Constructor de usuario: id, nombre, apellidos, dirección, clave
   Usuario
     lucas("lucas", "Lucas", "Grijánder",
