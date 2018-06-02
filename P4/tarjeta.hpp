@@ -3,7 +3,6 @@
 * @author Carlos Rodrigo Sanabria Flores
 * @date 27 Apr 2018
 * @copyright 2018 Carlos Rodrigo Sanabria Flores
-* @brief Declaracion de constructores y metodos de las clases Numero y Tarjeta.
 */
 #ifndef TARJETA_HPP
 #define TARJETA_HPP
@@ -13,30 +12,17 @@
 #include "../P1/fecha.hpp"
 #include "../P1/cadena.hpp"
 #include "usuario.hpp"
-// Macros para evitar lineas muy largas
-#define ULTIMA std::remove_if(num.begin(),num.end(),\
-        [](unsigned char x){return std::isspace(x);})
-#define FIN std::find_if(num.begin(), num.end(),std::not1(EsDigito()))
-/*******************************  NUMERO **********************************/
+
 class Numero{
 public:
-
     /* Razones De Execpcion */
-
     enum Razon {LONGITUD,DIGITOS,NO_VALIDO};
-
     /* CONSTRUCTOR */
-
     Numero(Cadena);
-
     /* Operador de Conversion a cadena de caracteres */
-
     operator const char*() const;
-
     /* Amigos de la clase */
-
     friend bool operator < (const Numero& num,const Numero& num2);
-
     /* Funcion unaria con operador objeto*/
     struct EsDigito : public std::unary_function<const unsigned char, bool> {
         bool operator()(const unsigned char& x) const {return std::isdigit(x);}
@@ -57,37 +43,24 @@ private:
 //Declaracion anticipada.
 class Usuario;
 
-/******************************** TARJETA ********************************/
-
 class Tarjeta{
 public:
-
     /* Tipo de Tarjetas */
-
     enum Tipo {VISA,Mastercard, Maestro, JCB, AmericanExpress};
-
     /* CONSTRUCTOR */
-
     Tarjeta(Tipo t,const Numero& n,Usuario& u,const Fecha& f);
-
     /* No se puede copiar una tarjeta */
-
     Tarjeta(const Tarjeta& ) = delete;
     Tarjeta& operator= (const Tarjeta &) = delete;
-
     /* METODOS */
-
     Tipo tipo() const;
     Numero numero() const;
     const Usuario* titular() const;
     Fecha caducidad() const;
     Cadena titular_facial() const;
     void anula_titular();
-
     /* DESTRUCTOR */
-
     ~Tarjeta();
-
     /* Clase Execpcion Tarjeta */
 
     class Caducada{

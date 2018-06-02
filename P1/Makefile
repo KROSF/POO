@@ -5,12 +5,15 @@
 # @copyright 2018 Carlos Rodrigo Sanabria Flores  #
 # # # # # # # # # # # # # # # # # # # # # # # # # #
 CXX = clang++
-STD = c++11
-CXXFLAGS = -std=${STD} -g -pedantic -Wall
+STD = c++14
+CXXFLAGS = -std=${STD} -g -pedantic -Wall -Wextra -Wfloat-equal -Wundef\
+	-Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls\
+	-Wshadow -Woverloaded-virtual
 CPPFLAGS = -DP1 -I../Tests-auto -I.
 VPATH = ../Tests-auto:.
 RM = rm -f
-SRCPP = fecha.cpp cadena.cpp test-caso0-fecha-auto.cpp test-caso0-cadena-auto.cpp test-auto.cpp test-P1-consola.cpp
+SRCPP = fecha.cpp cadena.cpp test-caso0-fecha-auto.cpp\
+	test-caso0-cadena-auto.cpp test-auto.cpp test-P1-consola.cpp
 OBJS := $(SRCPP:.cpp=.o)
 MAIN_EXE = test-P1-consola
 TEST_EXE = test-P1-auto
@@ -34,7 +37,8 @@ ${MAIN_EXE}: test-P1-consola.o fecha.o cadena.o
 	@echo "Enlazando Objetos test-P1-consola"
 	@$(CXX) $(CXXFLAGS) $^ -o $@
 
-${TEST_EXE}: test-caso0-fecha-auto.o test-caso0-cadena-auto.o test-auto.o cadena.o fecha.o
+${TEST_EXE}: test-caso0-fecha-auto.o test-caso0-cadena-auto.o\
+	test-auto.o cadena.o fecha.o
 	@echo "Enazando Objetos test-P1-auto"
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)  $^ -o $@
 

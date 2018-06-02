@@ -3,7 +3,6 @@
 * @author Carlos Rodrigo Sanabria Flores
 * @date 27 Apr 2018
 * @copyright 2018 Carlos Rodrigo Sanabria Flores
-* @brief  Definicion de constructores y metodos de las clases Clave y Usuario.
 */
 extern "C"{
   #include <unistd.h>
@@ -25,9 +24,8 @@ Clave::Clave(const char * pass)
 
     static std::random_device rd;
     static std::uniform_int_distribution<std::size_t> dis(0, 63);
-    static const char *const cv = CHARS;
+    static const char *const cv = CHARS;//CHARS en linea 16
     const char salt[] = { cv[dis(rd)], cv[dis(rd)] };
-
     if(const char* const encrypt = crypt(pass, salt))
         password = encrypt;
     else throw Incorrecta(Razon::ERROR_CRYPT);

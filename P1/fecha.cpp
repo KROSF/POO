@@ -70,7 +70,8 @@ const char* Fecha::cadena() const
 Fecha& Fecha::operator+=(int n) {
     if(n != 0)
     {
-        Hrsys nhrsys(this->_d,this->_m,this->_a,n);//Obejeto con la suma de ndias a una fecha
+        //Objeto con la suma de n-dias a una fecha
+        Hrsys nhrsys(this->_d,this->_m,this->_a,n);
         this->_d = nhrsys.dia();
         this->_m = nhrsys.mes();
         this->_a = nhrsys.anio();
@@ -79,7 +80,7 @@ Fecha& Fecha::operator+=(int n) {
     return *this;
 }
 
-Fecha& Fecha::operator-=(int n) { return *this += (-n);}
+Fecha& Fecha::operator -= (int n) { return *this += (-n);}
 
 /* OPERADORES ARIMETICOS */
 
@@ -112,9 +113,9 @@ Fecha Fecha::operator -- (int) {
 /* OPERADORES DE COMPARACIÓN */
 
 bool operator == (const Fecha& fecha1,const Fecha& fecha2) noexcept {
-  return (fecha1.dia()==fecha2.dia())
-      && (fecha1.mes()==fecha2.mes())
-      && (fecha1.anno()==fecha2.anno());
+  return (fecha1.dia()==fecha2.dia()) &&
+         (fecha1.mes()==fecha2.mes()) &&
+         (fecha1.anno()==fecha2.anno());
 }
 bool operator != (const Fecha& fecha1, const Fecha& fecha2) noexcept
 {
@@ -156,7 +157,8 @@ std::istream& operator >>(std::istream& is, Fecha& fecha)
     }
     catch(const Fecha::Invalida& e)
     {
-        is.setstate(std::ios_base::failbit);//marcamos el flujo como fail
+        //marcamos el flujo como fail
+        is.setstate(std::ios_base::failbit);
         throw;//Relanzamos la exepcion.
     }
     return is;

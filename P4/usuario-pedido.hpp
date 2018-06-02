@@ -13,24 +13,18 @@ class Usuario_Pedido{
 public:
 
     /* Dedinicion del tipo Pedidos*/
-
     typedef std::set<Pedido*> Pedidos;
-
     /* Asociaciones */
-
     void asocia(Usuario& us, Pedido& pe)
     {
         usuario_pedidos_[&us].insert(&pe);
         pedido_usuario_[&pe] = &us;
     }
-
     void asocia(Pedido& pe, Usuario& us)
     {
         asocia(us, pe);
     }
-
     /* Observadores de la Asociacion*/
-
     Pedidos pedidos(Usuario& us)
     {
         return usuario_pedidos_[&us];

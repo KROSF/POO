@@ -3,7 +3,6 @@
 * @author Carlos Rodrigo Sanabria Flores
 * @date 27 Apr 2018
 * @copyright 2018 Carlos Rodrigo Sanabria Flores
-* @brief Declaracion de constructores y metodos de la clase Articulo.
 */
 #ifndef ARTICULO_HPP
 #define ARTICULO_HPP

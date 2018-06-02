@@ -53,7 +53,9 @@ STD = c++14
 # -g         : para poder depurar, si hay que hacerlo
 # -pedantic  : para que se ajuste sin desvíos del estándar empleado
 # -Wall      : para que dé todo tipo de avisos, no solo los normales
-CXXFLAGS = -std=${STD} -g -pedantic -Wall -Wextra -Wfloat-equal -Wundef -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual
+CXXFLAGS = -std=${STD} -g -pedantic -Wall -Wextra -Wfloat-equal -Wundef\
+	-Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls\
+	-Wshadow -Woverloaded-virtual
 
 # Opciones del preprocesador. No las quite.
 # -I : directorio donde buscar cabeceras adicionales (#include "...")

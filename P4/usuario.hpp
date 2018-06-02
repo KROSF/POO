@@ -3,7 +3,6 @@
 * @author Carlos Rodrigo Sanabria Flores
 * @date 27 Apr 2018
 * @copyright 2018 Carlos Rodrigo Sanabria Flores
-* @brief Declaracion de constructores y metodos de las clases Clave y Usuario.
 */
 #ifndef USUARIOS_HPP
 #define  USUARIOS_HPP
@@ -70,11 +69,9 @@ public:
     const Articulos& compra()  const { return artcls_;}
 
     /* Amigos de la clase */
-
     friend std::ostream& operator << (std::ostream& os,const Usuario& user);
 
     /* Destructor*/
-
     ~Usuario();
 
     /* Clase Execpcion */

@@ -3,15 +3,20 @@
 * @author Carlos Rodrigo Sanabria Flores
 * @date 27 Apr 2018
 * @copyright 2018 Carlos Rodrigo Sanabria Flores
-* @brief Definicion de constructores y metodos de las clases Numero y Tarjeta.
 */
 #include <algorithm>
 #include <iomanip>
 #include "tarjeta.hpp"
+// Macros para evitar lineas muy largas
+// Quitar caracteres espaciadores de la cadena num.
+#define ULTIMA std::remove_if(num.begin(),num.end(),\
+        [](unsigned char x){return std::isspace(x);})
+//Ver si un caracteres es de tipo no numerico.
+#define FIN std::find_if(num.begin(), num.end(),std::not1(EsDigito()))
 //> Declaracion anticipada de luhn.
 bool luhn(const Cadena& numero);
-/*******************************  NUMERO **********************************/
-//> Cosntructor.
+
+//> Constructor.
 Numero::Numero(Cadena num)
 {
     if (num.length() == 0)
@@ -19,17 +24,17 @@ Numero::Numero(Cadena num)
 
     // La funcion find if no quita el ultimo espacio
     // Lo quitamos con una subcadena.
-    // ULTIMA Macro para quitar los espacios ver en tarjeta.hpp
+    // ULTIMA Macro para quitar los espacios ver en linea 12-13
     num = num.substr(0,ULTIMA - num.begin());
 
-    //FIN Macro que busca los caractres no numericos ver en tarjeta.hpp
+    //FIN Macro que busca los caractres no numericos ver en linea 15
     if(FIN != num.end())
         throw Incorrecto(Razon::DIGITOS);
-    if( num.length()< 13 || num.length() > 19   )
+    if( num.length()< 13 || num.length() > 19 )
         throw Incorrecto(Razon::LONGITUD);
     if(!luhn(num))
         throw Incorrecto(Razon::NO_VALIDO);
-    //Asignamos la cadena cuado cumplel todas las condiciones.
+    //Asignamos la cadena cuado cumple todas las condiciones.
     num_ = num;
 }
 
@@ -71,7 +76,7 @@ inline Cadena Tarjeta::titular_facial() const { return titular_facial_; }
 
 //> Relacion Tarjeta
 
-void Tarjeta::anula_titular() { titular_= nullptr; }
+void Tarjeta::anula_titular() { titular_ = nullptr; }
 
 //> Destructor.
 Tarjeta::~Tarjeta()
@@ -95,7 +100,8 @@ bool operator< (const Tarjeta& card,const Tarjeta& card2)
 
 std::ostream& operator <<(std::ostream& os,const Tarjeta::Tipo&  tipo)
 {
-    switch (tipo) {
+    switch (tipo)
+    {
         case Tarjeta::Tipo::VISA:	         os << "VISA";           break;
 		case Tarjeta::Tipo::Mastercard:      os << "Mastercard";     break;
 		case Tarjeta::Tipo::Maestro:         os << "Maestro";        break;
@@ -106,10 +112,9 @@ std::ostream& operator <<(std::ostream& os,const Tarjeta::Tipo&  tipo)
 }
 std::ostream& operator <<(std::ostream& os,const Tarjeta& card)
 {
-    os<<card.tipo()<<std::endl
-    << card.numero()<<std::endl
-    << card.titular_facial()<<std::endl
-    << "Caduca: "<< std::setfill('0') << std::setw(2) << card.caducidad().mes()
+    return os << card.tipo() << std::endl
+    << card.numero() << std::endl
+    << card.titular_facial() << std::endl
+    << "Caduca: " << std::setfill('0') << std::setw(2) << card.caducidad().mes()
     << '/' << std::setw(2) << (card.caducidad().anno() % 100);
-  return os;
 }

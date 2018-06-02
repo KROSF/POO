@@ -8,9 +8,9 @@
 #include "pedido-articulo.hpp"
 
 LineaPedido::LineaPedido(double precio,unsigned cantidad):
-precio_(precio),cantidad_(cantidad){}
+    precio_(precio),cantidad_(cantidad){}
 
-/* Operadores de ordenacion*/
+/* Objetos Operadores para la ordenacion*/
 
 bool OrdenaArticulos::operator()(const Articulo* pa,const Articulo* sa) const
 {
@@ -87,7 +87,8 @@ std::ostream& operator << (std::ostream& os, const LineaPedido& li_pe)
               << " €\t" << li_pe.cantidad();
 }
 
-std::ostream& operator<<(std::ostream& os,const Pedido_Articulo::ItemsPedido& items)
+std::ostream& operator<<(std::ostream& os,
+                         const Pedido_Articulo::ItemsPedido& items)
 {
     double tmp_total = 0.0;
     os <<'\n'<<Cadena(80,'=') << std::endl
@@ -108,7 +109,8 @@ std::ostream& operator<<(std::ostream& os,const Pedido_Articulo::ItemsPedido& it
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Pedido_Articulo::Pedidos& pedidos)
+std::ostream& operator<<(std::ostream& os,
+                         const Pedido_Articulo::Pedidos& pedidos)
 {
     unsigned tmp_cantidad = 0;
     double tmp_total = 0.0;

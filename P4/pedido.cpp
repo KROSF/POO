@@ -67,7 +67,6 @@ int Pedido::n_total_pedidos() noexcept
 	return n_pedidos_;
 }
 
-
 //Operador de Flujo
 std::ostream& operator << (std::ostream& os ,const Pedido& pe)
 {

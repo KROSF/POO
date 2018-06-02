@@ -35,13 +35,11 @@ public:
         const Tarjeta& t,const Fecha& fecha = Fecha());
 
     /* Clase de Exepcion Impostor*/
-
     struct Impostor : public Exepcion{
         Impostor(Usuario const * u) : Exepcion(u){}
     };
 
     /* Clase de Exepcion Vacio*/
-
     struct Vacio : public Exepcion{
         Vacio(Usuario const * u) : Exepcion(u){}
     };

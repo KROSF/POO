@@ -3,7 +3,6 @@
 * @author Carlos Rodrigo Sanabria Flores
 * @date 27 Apr 2018
 * @copyright 2018 Carlos Rodrigo Sanabria Flores
-* @brief  Definicion de constructores y metodos de la clase Articulo.
 */
 #include <iomanip>
 #include "articulo.hpp"
