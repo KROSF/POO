@@ -54,7 +54,7 @@ std::ostream& Pedido_Articulo::mostrarDetallePedidos(std::ostream& os)
     // typeof obj = pair(Pedido*,map(Articulo*,LineaPedido))
     // typeof obj.first = Pedido*
     // typeof obj.second = map(Articulo*,LineaPedido)
-    for(auto obj : pedido_articulo_)
+    for(const auto& obj : pedido_articulo_)
     {
         os << "Pedido núm. " << obj.first->numero()
            << "\nCliente: " << obj.first->tarjeta()->titular()->nombre()
@@ -70,7 +70,7 @@ std::ostream& Pedido_Articulo::mostrarVentasArticulos(std::ostream& os)
     // typeof obj = pair(Articulo*,map(Pedido*,LineaPedido))
     // typeof obj.first = Articulo*
     // typeof obj.second = map(Pedido*,LineaPedido)
-    for(auto obj : articulo_pedido_)
+    for(const auto& obj : articulo_pedido_)
     {
         os << "Ventas de [" << obj.first->referencia() << "] \""
            << obj.first->titulo()<< "\"\n"
@@ -97,7 +97,7 @@ std::ostream& operator<<(std::ostream& os,
     // typeof i = std::pair(Articulo*,LineaPedido)
     // typeof i.first = Articulo*
     // typeof i.second = LineaPedido
-    for(auto i : items)
+    for(const auto& i : items)
     {
         os << i.second << "\t\t["<< i.first->referencia() << "] \""
            << i.first->titulo() << "\"" << std::endl;
@@ -121,7 +121,7 @@ std::ostream& operator<<(std::ostream& os,
     // typeof p = std::pair(Pedido*,LineaPedido)
     // typeof p.first = Pedido*
     // typeof p.second = LineaPedido
-    for (auto p : pedidos)
+    for (const auto& p : pedidos)
     {
         os << p.second << "\t\t" << p.first->fecha() << std::endl;
         tmp_total  += p.second.precio_venta() * p.second.cantidad();

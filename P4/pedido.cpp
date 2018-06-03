@@ -27,7 +27,7 @@ Pedido::Pedido(Usuario_Pedido& u_p,
     // typeof c = pair<Articulo*,unsigned>
     // typeof c.first = Articulo*
     // typeof c.second = unsigned
-    for(auto c : carro)
+    for(auto& c : carro)
     {
         if (auto* libroDig = dynamic_cast<LibroDigital*>(c.first))
         {

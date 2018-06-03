@@ -98,7 +98,7 @@ Usuario::~Usuario()
     // typeof i = pair (Numero, Tarjeta*)
     // typeof i.first = Numero
     // typeof i.second = Tarjeta*
-    for(auto i : cards_)
+    for(auto& i : cards_)
         i.second->anula_titular();
     usuarios_.erase(identificador_);
 }
@@ -113,7 +113,7 @@ std::ostream& operator << (std::ostream&os,const Usuario& user)
     // typeof i = pair (Numero, Tarjeta*)
     // typeof i.first = Numero
     // typeof i.second = Tarjeta*
-    for(auto i : user.tarjetas())
+    for(const auto& i : user.tarjetas())
         os << *i.second <<std::endl;
     return os;
 }
@@ -127,7 +127,7 @@ std::ostream& mostrar_carro(std::ostream& os, const Usuario& user)
     // typeof i = pair<Articulo*,unsigned>
     // typeof i.first = Articulo*
     // typeof i.second = unsigned
-    for (auto i : user.compra())
+    for (const auto& i : user.compra())
     {
         os << std::setw(4) << i.second << "   "
         << "[" << i.first->referencia() << "] \"" << i.first->titulo()
