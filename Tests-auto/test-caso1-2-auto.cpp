@@ -195,11 +195,12 @@ FCTMF_FIXTURE_SUITE_BGN(test_p2) {
     fct_chk(rU.tarjetas () == Usuario::Tarjetas());
   }
   FCT_TEST_END();
-  
+  #ifdef __linux
   FCT_TEST_BGN(Usuario - Articulos es unordered_map) {
     fct_chk(pU->compra().bucket_count());
   }
   FCT_TEST_END();
+  #endif
 
   FCT_TEST_BGN(Usuario - identificador repetido) {
     try {

@@ -65,7 +65,13 @@ CPPFLAGS = ${INCLUDES} -D${NOMBREPRACTICA}
 # --- Fin parte configurable
 
 LOCALLIBS = cadena.o fecha.o luhn.o
-EXTLIBS   = -lcrypt
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+    	EXTLIBS   = -lcrypt
+endif
+ifeq ($(UNAME_S),Darwin)
+    	EXTLIBS   = 
+endif
 LIBS      = ${LOCALLIBS} ${EXTLIBS}
 VPATH     = .:${DIRTESTS}:${DIRFECHACADENA}:${DIRLUHN}
 
