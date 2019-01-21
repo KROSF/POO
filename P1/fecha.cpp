@@ -7,7 +7,7 @@
 */
 #include <cstdio>
 #include "fecha.hpp"
-#define BISIESTO _a % 4 == 0 && ( _a % 400 == 0 || _a % 100 != 0)
+#define BISIESTO (_a % 4 == 0 && ( _a % 400 == 0 || _a % 100 != 0)) && _m == 2
 /* CONSTRUCTORES */
 
 Fecha::Fecha(int d, int m, int a) : _d(d),_m(m),_a(a)
