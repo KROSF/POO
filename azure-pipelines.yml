@@ -1,0 +1,23 @@
+# C/C++ with GCC
+# Build your C/C++ project with GCC using make.
+# Add steps that publish test results, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- script: sudo apt-get install valgrind
+  displayName: 'installing valgring'
+
+- script: cd P4/
+  displayName: 'changing directory'
+
+- script: make tests
+  displayName: 'tests'
+
+- script: make valgrind
+  displayName: 'valgrind'
