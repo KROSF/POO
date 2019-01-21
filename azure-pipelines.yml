@@ -13,11 +13,11 @@ steps:
 - script: sudo apt-get install valgrind
   displayName: 'installing valgring'
 
-- script: cd P4/
-  displayName: 'changing directory'
+- script: clang++ --version
+  displayName: 'check clang version'
 
-- script: make tests
+- script: cd P4/ && make tests
   displayName: 'tests'
 
-- script: make valgrind
+- script: cd P4/ && make valgrind
   displayName: 'valgrind'
