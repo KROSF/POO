@@ -24,28 +24,32 @@ using namespace std;
 #ifndef MATCHERS_H
 #define MATCHERS_H
 
-namespace clang{
-	namespace ast_matchers{
+namespace clang
+{
+namespace ast_matchers
+{
 
-		AST_MATCHER(clang::CXXDestructorDecl, isImplicitDestructor) {
-			return Node.isImplicit();
-		}
-
-		AST_MATCHER(clang::CXXRecordDecl, hasCopyConstructorWithConstParam) {
-			return Node.hasCopyConstructorWithConstParam();
-		}
-
-		AST_MATCHER(clang::CXXMethodDecl, isImplicitMethod) {
-			return Node.isImplicit();
-		}
-
-		AST_MATCHER(clang::FunctionDecl, isImplicitFunction) {
-			return Node.isImplicit();
-		}
-	}
+AST_MATCHER(clang::CXXDestructorDecl, isImplicitDestructor)
+{
+	return Node.isImplicit();
 }
 
+AST_MATCHER(clang::CXXRecordDecl, hasCopyConstructorWithConstParam)
+{
+	return Node.hasCopyConstructorWithConstParam();
+}
 
+AST_MATCHER(clang::CXXMethodDecl, isImplicitMethod)
+{
+	return Node.isImplicit();
+}
+
+AST_MATCHER(clang::FunctionDecl, isImplicitFunction)
+{
+	return Node.isImplicit();
+}
+} // namespace ast_matchers
+} // namespace clang
 
 /*
 **
@@ -56,8 +60,6 @@ namespace clang{
 DeclarationMatcher classWithName_Matcher(string className);
 
 DeclarationMatcher dynamic_cast_Matcher(string methodName, string className);
-
-
 
 /*
 **
@@ -86,7 +88,6 @@ DeclarationMatcher numberOfConstructor_Matcher(string className);
 DeclarationMatcher explicitSpecifiedConstructor_Matcher(string className);
 
 DeclarationMatcher takeException_Matcher(string exceptionClass);
-
 
 /*
 **
@@ -142,7 +143,6 @@ DeclarationMatcher defaultedMethod_Matcher(string methodName, string className);
 
 DeclarationMatcher virtualMethod_Matcher(string methodName, string className);
 
-
 /*
 **
 ** OPERATORS
@@ -160,7 +160,6 @@ DeclarationMatcher methodWithReferencedFuntion_Matcher(string mainMethodName, st
 DeclarationMatcher functionWithReferencedMethod_Matcher(string mainFunctionName, string usedMethodName, string usedClassName);
 
 DeclarationMatcher functionName_Matcher(string functionName);
-
 
 /*
 **

@@ -24,18 +24,19 @@
 #ifndef CHECKCODE_H
 #define CHECKCODE_H
 
-class checkCode : public MatchFinder::MatchCallback{
+class checkCode : public MatchFinder::MatchCallback
+{
 
   public:
 	checkCode(int argc, const char **argv, string fileClass = "", string help = "Comando: ./main (*).cpp -- -std=c++11");
 
-/****************************************************************************
+	/****************************************************************************
 **
 ** PUBLIC FUNCTIONS
 **
 ****************************************************************************/
 
-/*
+	/*
 - Method: void setCorrectMessage(string message)
 
 - Utility: Method for setting the message that will be shown at the end of the check when all the checks have passed.
@@ -45,7 +46,7 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void setCorrectMessage(string message);
 
-/*
+	/*
 - Method: void setIncorrectMessage(string message)
 
 - Utility: Method for setting the message that will be shown at the end of the check when at least one check has failed.
@@ -55,23 +56,20 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void setIncorrectMessage(string message);
 
-/*
+	/*
 - Method: void check()
 
 - Utility: Method that has to be called after indicating a set of checks to execute them.
 */
 	void check();
 
-
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** COMMON PARAMETERS
 ** Parameters that are shared for all or several of the available methods.
 **
 ****************************************************************************/
-/*
+	/*
 ---string message: Optionally, you can include a parameter with the message
                    to be shown when the check fails. If this parameter is
                    not included, a default message will be shown.
@@ -86,14 +84,12 @@ class checkCode : public MatchFinder::MatchCallback{
 
 */
 
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** COMMON CONSIDERATIONS
 **
 ****************************************************************************/
-/*
+	/*
 - A particular method is identified by:
   1) the class to which it belongs.
   2) its name.
@@ -137,13 +133,13 @@ class checkCode : public MatchFinder::MatchCallback{
   In the descriptions of the checks in this file, this property is indicated with (*).
 
 */
-/****************************************************************************
+	/****************************************************************************
 **
 ** CLASSES
 ** Checks about classes.
 **
 ****************************************************************************/
-/*
+	/*
 - Method: bool findClass(vector<string> className)
 
 - Utility: Method to check the existence of a class.
@@ -165,9 +161,9 @@ class checkCode : public MatchFinder::MatchCallback{
 		cout << "Class not found."<<endl;
 	}
 */
-      bool findClass(vector<string> className);
+	bool findClass(vector<string> className);
 
-/*
+	/*
 - Method: void classWithName(string className, string message)
 
 - Utility: Method to check the existence of a class. Unlike the check "findClass", this
@@ -185,19 +181,14 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void classWithName(string className, string message = "CLASS NOT FOUND.");
 
-
-
-
-
-
-/*******************************************************************************
+	/*******************************************************************************
 **
 ** CONSTRUCTORS
 ** Checks about constructors in a class.
 **
 *******************************************************************************/
 
-/*
+	/*
 - Method: void defaultConstructor(string className, bool exist, string message)
 
 - Utility: Method to verify that a class has a default constructor defined.
@@ -219,8 +210,7 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void defaultConstructor(string className, bool exist = true, string message = "DEFAULT CONSTRUCTOR NOT FOUND.");
 
-
-/*
+	/*
 - Method: void listInitializerConstructor(string className, vector<string> parameters, vector<string> initializers, string message)
 
 - Utility: Method to verify that a class has a constructor that makes use of an initializer list.
@@ -247,8 +237,7 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void listInitializerConstructor(string className, vector<string> parameters, vector<string> initializers, string message = "CLASS WITH THE SPECIFIED CONSTRUCTOR AND INITIALIZATION LIST NOT FOUND.");
 
-
-/*
+	/*
 - Method: void copyConstructor(string className, bool exist, string message)
 
 - Utility: Method to verify that a class has a copy constructor defined.
@@ -276,8 +265,7 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void copyConstructor(string className, bool exist = true, string message = "COPY CONSTRUCTOR NOT FOUND.");
 
-
-/*
+	/*
 - Method: void moveConstructor(string className, bool exist, string message)
 
 - Utility: Method to verify that a class has a move constructor defined.
@@ -305,8 +293,7 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void moveConstructor(string className, bool exist = true, string message = "MOVE CONSTRUCTOR NOT FOUND.");
 
-
-/*
+	/*
 - Method: void destructor(string className, bool exist, string message)
 
 - Utility: Method to verify that a class has a destructor defined.
@@ -332,8 +319,7 @@ class checkCode : public MatchFinder::MatchCallback{
 */
 	void destructor(string className, bool exist = true, string message = "DESTRUCTOR NOT FOUND.");
 
-
-/*
+	/*
 - Method: void destructorDeleteMember(string className, vector<string> memberNames, string message)
 
 - Utility: Method to verify that a member in the destructor is deleted.
@@ -360,9 +346,9 @@ class checkCode : public MatchFinder::MatchCallback{
 	destructorDeleteMember("A", {"a"}); 	Pass
 
 */
-      void destructorDeleteMember(string className, vector<string> memberNames, string message = "MEMBER VARIABLE NOT DELETED IN DESTRUCTOR.");
+	void destructorDeleteMember(string className, vector<string> memberNames, string message = "MEMBER VARIABLE NOT DELETED IN DESTRUCTOR.");
 
-/*
+	/*
 - Method: void numberOfConstructors(string className, unsigned int constructors, bool lenient, string message)
 
 - Utility: Method to verify that a class has a number of constructors.
@@ -383,9 +369,9 @@ class checkCode : public MatchFinder::MatchCallback{
 	numberOfConstructors("A", 1, true);     Pass
 	numberOfConstructors("A", 1, false);    Fail
 */
-      void numberOfConstructors(string className, unsigned int constructors, bool lenient = false, string message = "INCORRECT NUMBER OF CONSTRUCTORS.");
+	void numberOfConstructors(string className, unsigned int constructors, bool lenient = false, string message = "INCORRECT NUMBER OF CONSTRUCTORS.");
 
-/*
+	/*
 - Method: void methodWithDynamicCast(string methodName, vector<string> parameters, string className, string constant, unsigned int numberdc, bool lenient, string message)
 
 - Utility: Method to verify that a method uses a dynamic cast with an origin and destination types.
@@ -415,9 +401,9 @@ class checkCode : public MatchFinder::MatchCallback{
 	methodWithDynamicCast("method",{"class myType2 *","class myType3 *"},"A","noconst","class myType3 *", "class myType2 *");	Fail
 
 */
-    void methodWithDynamicCast(string methodName, vector<string> parameters, string className, string constant, string originType, string dstType, string message = "INCORRECT NUMBER OF DYNAMIC_CAST");
+	void methodWithDynamicCast(string methodName, vector<string> parameters, string className, string constant, string originType, string dstType, string message = "INCORRECT NUMBER OF DYNAMIC_CAST");
 
-/*
+	/*
 - Method: void explicitSpecifiedConstructor(string className, vector<string> parameters, string message);
 
 - Utility: Method to verify that a constructor is marked as "explicit".
@@ -437,20 +423,16 @@ class checkCode : public MatchFinder::MatchCallback{
 	explicitSpecifiedConstructor("A", {"myType2"}); Pass
 
 */
-      void explicitSpecifiedConstructor(string className, vector<string> parameters, string message = "EXPLICIT CONSTRUCTOR NOT FOUND.");
+	void explicitSpecifiedConstructor(string className, vector<string> parameters, string message = "EXPLICIT CONSTRUCTOR NOT FOUND.");
 
-
-
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** EXCEPTIONS
 ** Checks about exceptions.
 **
 ****************************************************************************/
 
-/*
+	/*
 - Method: void takeException(vector<string> exception, string message);
 
 - Utility: Method to verify if an exceptions is thrown.
@@ -473,21 +455,16 @@ class checkCode : public MatchFinder::MatchCallback{
 	takeException({"Exception2"});	Fail
 
 */
-      void takeException(vector<string> exceptionClasses, string message = "EXCEPTION NOT FOUND");
+	void takeException(vector<string> exceptionClasses, string message = "EXCEPTION NOT FOUND");
 
-
-
-
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** VARIABLES
 ** Checks about members of a class.
 **
 ****************************************************************************/
 
-/*
+	/*
 - Method: void memberVariable(string className, vector<string> memberNames, vector<string> constant, vector<bool> exist, string message)
 
 - Utility: Method to verify if a class has an attribute.
@@ -513,8 +490,7 @@ Parameters:
 */
 	void memberVariable(string className, vector<string> memberNames, vector<string> constant, vector<bool> exist, string message = "MEMBER VARIABLE NOT FOUND.");
 
-
-/*
+	/*
 - Method: void staticVariable(string className, vector<string> variableNames, string message)
 
 - Utility: Method to verify the existence of a static variable in a class.
@@ -539,8 +515,7 @@ Parameters:
 */
 	void staticVariable(string className, vector<string> variableNames, vector<string> constant, string message = "STATIC CONST VARIABLE NOT FOUND.");
 
-
-/*
+	/*
 - Method: void releaseVariable(string message)
 
 - Utility: Method to verify that all the variables created with "new", are later deleted with "delete".
@@ -565,7 +540,7 @@ Parameters:
 */
 	void releaseVariable(string message = "NOT ALL VARIABLES RELEASED.");
 
-/*
+	/*
 - Method: void allPrivateVariableMember(string className, string message)
 
 - Utility: Method to verify that all variable members in a class are private.
@@ -592,9 +567,9 @@ Parameters:
 	allPrivateVariableMember("A"); Fail
 	allPrivateVariableMember("B"); Pass
 */
-      void allPrivateVariableMember(string className, string message = "PUBLIC MEMBER FOUND.");
+	void allPrivateVariableMember(string className, string message = "PUBLIC MEMBER FOUND.");
 
-/*
+	/*
 - Method: void memberVariableAccessLevel(string className, vector<string> memberNames, string level, string message)
 
 - Utility: Method to verify that a class has an attribute with a specific access level.
@@ -628,20 +603,16 @@ Parameters:
 	memberVariableAccessLevel("B", {".*"}, "private");              Pass
 
 */
-        void memberVariableAccessLevel(string className, vector<string> memberNames, string level, string message = "MEMBER VARIABLE WITH THAT ACCESS LEVEL NOT FOUND.");
+	void memberVariableAccessLevel(string className, vector<string> memberNames, string level, string message = "MEMBER VARIABLE WITH THAT ACCESS LEVEL NOT FOUND.");
 
-
-
-
-
-/*****************************************************************************
+	/*****************************************************************************
 **
 ** METHODS
 ** Checks about methods of a class.
 **
 *****************************************************************************/
 
-/*
+	/*
 - Method: void method(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant,string message)
 
 - Utility: Method to verify the existence of a method.
@@ -663,9 +634,9 @@ Parameters:
 	method({"method3"}, {{"?"}}, "A");                                         Fail
 
 */
-	void method(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant = {"?"}, string message="METHOD NOT FOUND.");
+	void method(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, string message = "METHOD NOT FOUND.");
 
-/*
+	/*
 - Method: void methodWithReferencedMemberVariable(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant, string usedVariable, string message)
 
 - Utility: Method to verify that a method references a member variable.
@@ -696,10 +667,9 @@ Parameters:
 	methodWithReferencedMemberVariable({"method2"}, {{"?"}}, "A", {"?"}, {"a"}); Fail
 
 */
-	void methodWithReferencedMemberVariable(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant, vector<string> usedVariables, string message = "METHOD WITH REFERENCED MEMBER VARIABLE NOT FOUND.");
+	void methodWithReferencedMemberVariable(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant, vector<string> usedVariables, string message = "METHOD WITH REFERENCED MEMBER VARIABLE NOT FOUND.");
 
-
-/*
+	/*
 - Method: void methodWithReferencedMethod(tor<string> mainMethodNames, vector<vector<string> > mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedMethodName, vector<vector<string> > usedMethodparameters, string usedClassName, vector<string> usedConstant, string message);
 
 - Utility: Method to verify that a method references another method.
@@ -733,10 +703,9 @@ Parameters:
 	methodWithReferencedMethod({"method2"}, {{"?"}}, "A", {"?"}, {"method3"}, {{"?"}}, "A", {"?"}); Fail
 
 */
-	void methodWithReferencedMethod(vector<string> mainMethodNames, vector<vector<string> > mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedMethodName, vector<vector<string> > usedMethodparameters, string usedClassName, vector<string> usedConstant, string message = "METHOD WITH REFERENCED METHOD NOT FOUND.");
+	void methodWithReferencedMethod(vector<string> mainMethodNames, vector<vector<string>> mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedMethodName, vector<vector<string>> usedMethodparameters, string usedClassName, vector<string> usedConstant, string message = "METHOD WITH REFERENCED METHOD NOT FOUND.");
 
-
-/*
+	/*
 - Method:  void noExceptMethod(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant, string message)
 
 - Utility: Method to verify that a method is marked as "noexcept"
@@ -758,10 +727,9 @@ Parameters:
 	noExceptMethod({"method2"}, {{"?"}}, "A", {"?"}); Pass
 
 */
-      void noExceptMethod(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant = {"?"}, string message = "METHOD NO EXCEPT NOT FOUND.");
+	void noExceptMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, string message = "METHOD NO EXCEPT NOT FOUND.");
 
-
-/*
+	/*
 - Method:  void inlineMethod(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant, string message)
 
 - Utility: Method to verify that a method is marked as "inline"
@@ -789,10 +757,9 @@ Parameters:
 	inlineMethod({"method2", method3"}, {{"?"}, {"?"}}, "A", {"?","?"});       Fail
 
 */
-      void inlineMethod(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant = {"?"}, string message = "INLINE METHODS NOT FOUND.");
+	void inlineMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, string message = "INLINE METHODS NOT FOUND.");
 
-
-/*
+	/*
 - Method:  void defaultArgumentsInMethod(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant, vector<unsigned int> defaultArgs, string message)
 
 - Utility: Method to verify that a method of a class has a number of default arguments.
@@ -818,10 +785,9 @@ Parameters:
 	defaultArgumentsInMethod({"method2"}, {{"Type1", "Type2"}}, "A", {"?"}, {1}, {"?"});   Pass
 
 */
-      void defaultArgumentsInMethod(vector<string> methodNames, vector<vector<string> > parameters, string className, vector<string> constant = {"?"}, vector<unsigned int> numDefaultArgs = {0},  vector<vector<string> > defaultArgs={{"?"}}, string message = "DEFAULT ARGUMENTS IN METHODS NOT FOUND.");
+	void defaultArgumentsInMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, vector<unsigned int> numDefaultArgs = {0}, vector<vector<string>> defaultArgs = {{"?"}}, string message = "DEFAULT ARGUMENTS IN METHODS NOT FOUND.");
 
-
-/*
+	/*
 - Method:  void deletedMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant, string message);
 
 - Utility: Method to verify that a method of a class is marked as "= delete"
@@ -844,10 +810,9 @@ Parameters:
 
 */
 
-	  void deletedMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, string message = "DELETED METHODS NOT FOUND.");
+	void deletedMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, string message = "DELETED METHODS NOT FOUND.");
 
-
-/*
+	/*
 - Method:  void defaultedMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant, string message);
 
 - Utility: Method to verify that a method of a class is marked as "= default"
@@ -871,7 +836,7 @@ Parameters:
 */
 	void defaultedMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, string message = "DEFAULTED METHODS NOT FOUND.");
 
-/*
+	/*
 - Method:  void virtualMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant, string message);
 
 - Utility: Method to verify that a method of a class is virtual
@@ -896,17 +861,14 @@ Parameters:
 
 	void virtualMethod(vector<string> methodNames, vector<vector<string>> parameters, string className, vector<string> constant = {"?"}, string message = "VIRTUAL METHODS NOT FOUND.");
 
-
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** OPERATORS
 ** Checks about class operators.
 **
 ****************************************************************************/
 
-/*
+	/*
 - Method: void copyAssignmentOperator(string className, bool exist, string message)
 
 - Utility: Method to verify the existence of the copy assignment operator.
@@ -934,8 +896,7 @@ Parameters:
 */
 	void copyAssignmentOperator(string className, bool exist, string message = "COPY ASSIGNMENT OPERATOR NOT FOUND.");
 
-
-/*
+	/*
 - Method: void moveAssignmentOperator(string className, bool exist, string message)
 
 - Utility: Method to verify the existence of the move assignment operator.
@@ -961,14 +922,14 @@ Parameters:
 */
 	void moveAssignmentOperator(string className, bool exist = true, string message = "MOVE ASSIGNMENT OPERATOR NOT FOUND.");
 
-/****************************************************************************
+	/****************************************************************************
 **
 ** FUNCTIONS
 ** Checks about functions.
 **
 ****************************************************************************/
 
-/*
+	/*
 - Method:  void function(vector<string> functionNames, vector<vector<string> > parameters, string message)
 
 - Utility: Method to verify the existence of a function
@@ -990,10 +951,9 @@ Parameters:
 	function({"function2"}, {{"?"}}, {"?"});     Fail ('function2' does not exist)
 
 */
-	void function(vector<string> functionNames, vector<vector<string> > parameters, string message = "FUNCTION NOT FOUND.");
+	void function(vector<string> functionNames, vector<vector<string>> parameters, string message = "FUNCTION NOT FOUND.");
 
-
-/*
+	/*
 - Method: void methodWithReferencedFunction(vector<string> mainMethodNames, vector<vector<string> > mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedFunctionNames, vector<vector<string> > usedFunctionParameters, string message)
 
 - Utility: Method to verify that a method references a function.
@@ -1026,8 +986,8 @@ Parameters:
 
 
 */
-	void methodWithReferencedFunction(vector<string> mainMethodNames, vector<vector<string> > mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedFunctionNames, vector<vector<string> > usedFunctionParameters, string message = "FUNCTION WITH REFERENCED FUNCTION NOT FOUND.");
-/*
+	void methodWithReferencedFunction(vector<string> mainMethodNames, vector<vector<string>> mainMethodparameters, string mainClassName, vector<string> mainConstant, vector<string> usedFunctionNames, vector<vector<string>> usedFunctionParameters, string message = "FUNCTION WITH REFERENCED FUNCTION NOT FOUND.");
+	/*
 - Method: void functionWithReferencedMethod(vector<string> mainFunctionNames, vector<vector<string> > mainFunctionParameters, vector<string> usedMethodNames, vector<vector<string> > usedMethodparameters, string usedClassName, vector<string> usedConstant,  string message)
 
 - Utility: Method to verify that a function is referenced by a method.
@@ -1060,9 +1020,9 @@ Parameters:
 
 
 */
-	void functionWithReferencedMethod(vector<string> mainFunctionNames, vector<vector<string> > mainFunctionParameters, vector<string> usedMethodNames, vector<vector<string> > usedMethodparameters, string usedClassName, vector<string> usedConstant, string message = "FUNCTION WITH REFERENCED METHOD NOT FOUND.");
+	void functionWithReferencedMethod(vector<string> mainFunctionNames, vector<vector<string>> mainFunctionParameters, vector<string> usedMethodNames, vector<vector<string>> usedMethodparameters, string usedClassName, vector<string> usedConstant, string message = "FUNCTION WITH REFERENCED METHOD NOT FOUND.");
 
-/*
+	/*
 - Method: void functionWithReferencedFunction(vector<string> mainFunctionNames, vector<vector<string> > mainFunctionParameters, vector<string> usedFunctionNames, vector<vector<string> > usedFunctionParameters, string message)
 
 - Utility: Method to verify that a function is referenced by a function.
@@ -1093,19 +1053,15 @@ Parameters:
 
 
 */
-	void functionWithReferencedFunction(vector<string> mainFunctionNames, vector<vector<string> > mainFunctionParameters, vector<string> usedFunctionNames, vector<vector<string> > usedFunctionParameters, string message = "FUNCTION WITH REFERENCED FUNCTION NOT FOUND.");
+	void functionWithReferencedFunction(vector<string> mainFunctionNames, vector<vector<string>> mainFunctionParameters, vector<string> usedFunctionNames, vector<vector<string>> usedFunctionParameters, string message = "FUNCTION WITH REFERENCED FUNCTION NOT FOUND.");
 
-
-
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** HEADERS
 ** Checks about the correct inclusion of headers.
 **
 ****************************************************************************/
-/*
+	/*
 - Method:  void invocationsFromHeaders(vector<string> functionNames, string headerName, bool exist, string message);
 
 - Utility: Method to verify whether the correct header has been included when certain functions are referenced.
@@ -1137,8 +1093,7 @@ Parameters:
 */
 	void invocationsFromHeaders(vector<string> functionNames, string headerName, bool exist = true, string message = "A PROBLEM WITH THE INCLUDED HEADERS WAS FOUND.");
 
-
-/*
+	/*
 - Method:  void fileIncludedHeader(string headerName, vector<string> fileNames, string message);
 
 - Utility: Method to verify that a header has been included in any of the indicated files.
@@ -1161,10 +1116,9 @@ Parameters:
 	fileIncludedHeader("header2.h", {"file1.cpp", "file3.cpp"}); Fail
 
 */
-      void fileIncludedHeader(string headerName, vector<string> fileNames, string message = "HEADER IS NOT INCLUDED IN ANY OF THE FILES");
+	void fileIncludedHeader(string headerName, vector<string> fileNames, string message = "HEADER IS NOT INCLUDED IN ANY OF THE FILES");
 
-
-/*
+	/*
 - Method: void guardClauses(string fileName, string message)
 
 - Utility: Method to verify that the guard clause is included.
@@ -1187,17 +1141,15 @@ Parameters:
 	guardClauses("code2.h"); Pass
 
 */
-      void guardClauses(string fileName, string message="THE GUARD CLAUSE IS NOT FOUND IN THE FILE");
+	void guardClauses(string fileName, string message = "THE GUARD CLAUSE IS NOT FOUND IN THE FILE");
 
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** FRIEND MEMBERS
 ** Checks about the existence of friends members in a class.
 **
 ****************************************************************************/
-/*
+	/*
 - Method:  void notFriendMember(string className, string message);
 
 - Utility: Method to verify that there not exist any friend member in a class.
@@ -1232,8 +1184,7 @@ Parameters:
 */
 	void notFriendMember(string className, string message = "FRIEND MEMBER IS NOT FOUND.");
 
-
-/*
+	/*
 - Method: void friendFunction(vector<string> functionNames, vector<vector<string> > parameters, string className, string message)
 
 - Utility: Method to verify that a function has been marked as friend of a class.
@@ -1261,10 +1212,9 @@ Parameters:
 	friendFunction({"function"}, {{"?"}}, "B", {"?"}); Pass
 
 */
-	void friendFunction(vector<string> functionNames, vector<vector<string> > parameters, string className, string message="FRIEND FUNCTION NOT FOUND.");
+	void friendFunction(vector<string> functionNames, vector<vector<string>> parameters, string className, string message = "FRIEND FUNCTION NOT FOUND.");
 
-
-/*
+	/*
 - Method: void friendClass(string className, vector<string> friendClassesNames, string message)
 
 - Utility: Method to verify that a class has been marked as friend of another one.
@@ -1288,33 +1238,27 @@ Parameters:
 
 */
 
-	void friendClass(string className, vector<string> friendClassesName, string message="FRIEND CLASS NOT FOUND");
+	void friendClass(string className, vector<string> friendClassesName, string message = "FRIEND CLASS NOT FOUND");
 
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** PRIVATE FUNCTIONS
 **
 ****************************************************************************/
-   private:
+  private:
+	//Auxiliary
+	void apply_class(const MatchFinder::MatchResult &Result);
+	list<string> getListSources(int argc, const char **argv);
+	bool foundClass();
+	string getHelper();
+	string setFunctions(vector<string> functionNames);
+	void setHelper(string help);
 
-      //Auxiliary
-      void apply_class(const MatchFinder::MatchResult &Result);
-      list<string> getListSources(int argc, const char **argv);
-      bool foundClass();
-      string getHelper();
-      string setFunctions(vector<string> functionNames);
-      void setHelper(string help);
+	//Clang
+	virtual void run(const MatchFinder::MatchResult &Result);
+	MatchFinder getFinder();
 
-
-      //Clang
-      virtual void run(const MatchFinder::MatchResult &Result);
-      MatchFinder getFinder();
-
-
-
-/****************************************************************************
+	/****************************************************************************
 **
 ** PRIVATE MEMBERS
 **
@@ -1342,17 +1286,13 @@ Parameters:
 	list<string> listSources;
 	list<string>::iterator it;
 	vector<string> p;
-
 };
-
-
-
 
 /****************************************************************************
 **
 ** ADDITIONAL FUNCTION
 **
 ****************************************************************************/
- list<string> headers_read(string file_name, string command);
+list<string> headers_read(string file_name, string command);
 
 #endif //CONTROL_H

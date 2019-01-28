@@ -9,39 +9,40 @@
 #include <iostream>
 #include <functional>
 
-class Cadena {
-public:
+class Cadena
+{
+  public:
     /* CONSTRUCTORES */
-    explicit Cadena(size_t t = 0, char c = ' ');//
-    Cadena( const char * cad );
+    explicit Cadena(size_t t = 0, char c = ' '); //
+    Cadena(const char *cad);
     // Constructor de copia.
-    Cadena(const Cadena& cad);
+    Cadena(const Cadena &cad);
     // Constructor de movimiento.
-    Cadena(Cadena&& cad);
+    Cadena(Cadena &&cad);
     /* METODOS */
     // Metodo para obtener una subcadena.
     Cadena substr(size_t begindex, size_t len) const;
     // Metodo para obtener la logitud de una cadena.
     size_t length() const noexcept;
     // Metodo para convertir una "Cadena" a "const char*".
-    const char * c_str() const noexcept;
+    const char *c_str() const noexcept;
     /* OPERADORES */
     // Operadores indice que no producen exepciones.
-    char operator [] (size_t j) const noexcept;
-    char& operator [] (size_t j) noexcept;
+    char operator[](size_t j) const noexcept;
+    char &operator[](size_t j) noexcept;
     // Operadores indice que producen exepciones.
     char at(size_t i) const;
-    char& at(size_t i);
+    char &at(size_t i);
     // Operadores de asignación.
-    Cadena& operator += (const Cadena& cad);
-    Cadena& operator = (const Cadena& cad);
-    Cadena& operator = (const char * cad);
-    Cadena& operator = ( Cadena&& cad );
+    Cadena &operator+=(const Cadena &cad);
+    Cadena &operator=(const Cadena &cad);
+    Cadena &operator=(const char *cad);
+    Cadena &operator=(Cadena &&cad);
     /* DESTRUCTOR */
     ~Cadena();
     /* ITERADORES */
-    typedef char* iterator;
-    typedef char const * const_iterator;
+    typedef char *iterator;
+    typedef char const *const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -71,30 +72,32 @@ public:
         return const_reverse_iterator(begin());
     }
 
-private:
-    char * s_;
+  private:
+    char *s_;
     size_t tam_;
 };
 // Concatenación con el operador +
-Cadena operator + (const Cadena& cad1, const Cadena& cad2);
+Cadena operator+(const Cadena &cad1, const Cadena &cad2);
 /* OPERADORES DE COMPARACIÓN */
-bool operator == (const Cadena& cad1, const Cadena& cad2) noexcept;
-bool operator != (const Cadena& cad1, const Cadena& cad2) noexcept;
-bool operator >  (const Cadena& cad1, const Cadena& cad2) noexcept;
-bool operator <  (const Cadena& cad1, const Cadena& cad2) noexcept;
-bool operator <= (const Cadena& cad1, const Cadena& cad2) noexcept;
-bool operator >= (const Cadena& cad1, const Cadena& cad2) noexcept;
+bool operator==(const Cadena &cad1, const Cadena &cad2) noexcept;
+bool operator!=(const Cadena &cad1, const Cadena &cad2) noexcept;
+bool operator>(const Cadena &cad1, const Cadena &cad2) noexcept;
+bool operator<(const Cadena &cad1, const Cadena &cad2) noexcept;
+bool operator<=(const Cadena &cad1, const Cadena &cad2) noexcept;
+bool operator>=(const Cadena &cad1, const Cadena &cad2) noexcept;
 /* OPERADORES DE FLUJO */
-std::ostream& operator << (std::ostream& os, const Cadena& cad) noexcept;
-std::istream& operator >> (std::istream& is, Cadena& cad)noexcept;
+std::ostream &operator<<(std::ostream &os, const Cadena &cad) noexcept;
+std::istream &operator>>(std::istream &is, Cadena &cad) noexcept;
 /* HASH */
-namespace std {
-    template <> struct hash<Cadena>
+namespace std
+{
+template <>
+struct hash<Cadena>
+{
+    size_t operator()(const Cadena &cad) const
     {
-        size_t operator()(const Cadena& cad) const
-        {
-            return hash<std::string>{}(cad.c_str());
-        }
-    };
-}
+        return hash<std::string>{}(cad.c_str());
+    }
+};
+} // namespace std
 #endif

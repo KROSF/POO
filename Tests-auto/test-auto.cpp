@@ -14,11 +14,12 @@
   Incluye también varias funciones de utilidad para las pruebas.
   V. comentarios sobre las funciones en test-auto.hpp .
 */
-using namespace std;		// Esto también resulta más cómodo.
+using namespace std; // Esto también resulta más cómodo.
 
 #ifdef P4
-Articulo::Autores crea_autores(Autor& autor) {
-  Articulo::Autores autores { &autor };
+Articulo::Autores crea_autores(Autor &autor)
+{
+  Articulo::Autores autores{&autor};
   return autores;
 }
 #endif
@@ -27,7 +28,8 @@ Articulo::Autores crea_autores(Autor& autor) {
    Convierte un número de coma flotante de doble precisión a una
    cantidad de euros, con dos dígitos decimales.
 */
-string toEuros(double cantidad) {
+string toEuros(double cantidad)
+{
   ostringstream os;
   os.imbue(locale(locale("es_ES.UTF-8"), new sin_separador()));
   os << fixed << setprecision(2) << cantidad << " €";
@@ -35,7 +37,8 @@ string toEuros(double cantidad) {
 }
 
 #ifndef CPP11REGEX
-regoff_t find_regex(const char* regex, const char* text) noexcept(false) {
+regoff_t find_regex(const char *regex, const char *text) noexcept(false)
+{
   regex_t reg;
   if (regcomp(&reg, regex, REG_EXTENDED) != 0)
     throw BadRegex(regex);
@@ -49,7 +52,8 @@ regoff_t find_regex(const char* regex, const char* text) noexcept(false) {
 
 /***** CUERPO PRINCIPAL *****/
 
-FCT_BGN() {
+FCT_BGN()
+{
 
   /**
      Establecemos la localización por omisión a la española de España
@@ -57,13 +61,15 @@ FCT_BGN() {
      deben. Si no, se mezclarán los separadores decimales ingleses
      ('.') y españoles (',').
   */
-  try {
+  try
+  {
     locale::global(locale("es_ES.UTF-8"));
   }
-  catch(const runtime_error& e) {
+  catch (const runtime_error &e)
+  {
     cerr << "Parece que no tienes la localización española "
-      "\"es_ES.UTF-8\". Instálala antes. El mensaje de error es:\n"
-	 << e.what() << "\nFin del programa" << endl;
+            "\"es_ES.UTF-8\". Instálala antes. El mensaje de error es:\n"
+         << e.what() << "\nFin del programa" << endl;
     return 1;
   }
   // Establecemos la zona horaria a UTC para evitar cosas raras

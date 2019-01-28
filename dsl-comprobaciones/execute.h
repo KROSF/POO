@@ -25,527 +25,508 @@
 
 #include "matchers.h"
 
-
 #ifndef EXECUTE_H
 #define EXECUTE_H
 
-class execute : public MatchFinder::MatchCallback, public ASTConsumer, public RecursiveASTVisitor<execute>{
+class execute : public MatchFinder::MatchCallback, public ASTConsumer, public RecursiveASTVisitor<execute>
+{
 
-// ----------------------- General ---------------------
-	public:
-		virtual void run(const MatchFinder::MatchResult &Result);
-		void postRun();
-		bool check_same_decl_canonical(const Decl *c1, const Decl *c2);
+	// ----------------------- General ---------------------
+  public:
+	virtual void run(const MatchFinder::MatchResult &Result);
+	void postRun();
+	bool check_same_decl_canonical(const Decl *c1, const Decl *c2);
 
-	private:
-		ASTContext *Context;
-		Rewriter Rewrite;
-		typedef std::multimap<string, Info> A;
-		typedef A::iterator AI;
+  private:
+	ASTContext *Context;
+	Rewriter Rewrite;
+	typedef std::multimap<string, Info> A;
+	typedef A::iterator AI;
 
-/*
+	/*
 **
 ** GENERAL METHODS
 **
 */
 
-	public:
-		bool foundAll(A a);
-		bool foundAny(A a);
-		bool anyFoundAndInvalid(A a);
-		bool allFoundAndValid(A a);
-		void getMessagesOfNotFound(A a);
-		void getMessagesOfNotFoundOrInvalid(A a);
-		void getMessagesOfFound(A a);
-		void getMessagesCheckingExplicitSpecified(A a);
-		bool existClass(const CXXRecordDecl *foundClass);
-		bool existConstructor(const CXXConstructorDecl *foundConstructor);
-		bool existDestructor(const CXXDestructorDecl *foundDestructor);
-		bool existDeleteExpression(const CXXDeleteExpr *foundDeleteExpression);
-		bool existMethod(const CXXMethodDecl *foundMethod);
-		bool existFunction(const FunctionDecl *foundFunction);
-		bool existMember(const FieldDecl *foundMember);
-		bool existVariable(const VarDecl *foundVariable);
+  public:
+	bool foundAll(A a);
+	bool foundAny(A a);
+	bool anyFoundAndInvalid(A a);
+	bool allFoundAndValid(A a);
+	void getMessagesOfNotFound(A a);
+	void getMessagesOfNotFoundOrInvalid(A a);
+	void getMessagesOfFound(A a);
+	void getMessagesCheckingExplicitSpecified(A a);
+	bool existClass(const CXXRecordDecl *foundClass);
+	bool existConstructor(const CXXConstructorDecl *foundConstructor);
+	bool existDestructor(const CXXDestructorDecl *foundDestructor);
+	bool existDeleteExpression(const CXXDeleteExpr *foundDeleteExpression);
+	bool existMethod(const CXXMethodDecl *foundMethod);
+	bool existFunction(const FunctionDecl *foundFunction);
+	bool existMember(const FieldDecl *foundMember);
+	bool existVariable(const VarDecl *foundVariable);
 
-/*
+	/*
 **
 ** GENERAL CHECK PARAMS
 **
 */
 
-	public:
-		bool checkInitializersConstructor(const CXXConstructorDecl *foundConstructor, vector<string> parameters);
-		bool checkParams(const FunctionDecl *foundFunction, vector<string> parameters);
-		bool checkParamsFunction(const FunctionDecl *foundFunction, vector<string> parameters);
-		bool checkWithoutParams(vector<string> params);
-		bool markedConst(string c1, bool c2);
-		bool markedDefault(string c1, bool c2);
-		bool checkDefArgs(const FunctionDecl* function, unsigned int numDefArgs, vector<string> defArgs);
-		bool checkRegularExpresion(string str1, string str2);
+  public:
+	bool checkInitializersConstructor(const CXXConstructorDecl *foundConstructor, vector<string> parameters);
+	bool checkParams(const FunctionDecl *foundFunction, vector<string> parameters);
+	bool checkParamsFunction(const FunctionDecl *foundFunction, vector<string> parameters);
+	bool checkWithoutParams(vector<string> params);
+	bool markedConst(string c1, bool c2);
+	bool markedDefault(string c1, bool c2);
+	bool checkDefArgs(const FunctionDecl *function, unsigned int numDefArgs, vector<string> defArgs);
+	bool checkRegularExpresion(string str1, string str2);
 
-/*
+	/*
 **
 ** CLASSES
 **
 */
 
+	// ----------------------- CLASSES ---------------------
+  public:
+	void setClasses(string className, string message);
 
-// ----------------------- CLASSES ---------------------
-	public:
-		void setClasses(string className, string message);
+  private:
+	void classWithName(const MatchFinder::MatchResult &Result);
+	void hasClass();
+	A classes;
 
-	private:
-		void classWithName(const MatchFinder::MatchResult &Result);
-		void hasClass();
-		A classes;
-
-/*
+	/*
 **
 ** CONSTRUCTORS
 **
 */
 
+	// ----------------------- DEFAULT CONSTRUCTOR ---------------------
 
+  public:
+	void setDefaultConstructors(string className, bool exist, string notFoundMessage);
 
+  private:
+	void classWithDefaultConstructor(const MatchFinder::MatchResult &Result);
+	void hasDefaultConstructor();
+	A defaultConstructors;
 
-// ----------------------- DEFAULT CONSTRUCTOR ---------------------
+	// ----------------------- COPY CONSTRUCTOR ---------------------
 
-	public:
-		void setDefaultConstructors(string className, bool exist, string notFoundMessage);
+  public:
+	void setCopyConstructors(string className, bool exist, string notFoundMessage);
 
-	private:
-		void classWithDefaultConstructor(const MatchFinder::MatchResult &Result);
-		void hasDefaultConstructor();
-		A defaultConstructors;
+  private:
+	void classWithCopyConstructor(const MatchFinder::MatchResult &Result);
+	void hasCopyConstructor();
+	A copyConstructors;
 
-// ----------------------- COPY CONSTRUCTOR ---------------------
+	// ----------------------- MOVE CONSTRUCTORS ---------------------
 
-	public:
-		void setCopyConstructors(string className, bool exist, string notFoundMessage);
+  public:
+	void setMoveConstructors(string className, bool exist, string notFoundMessage);
 
-	private:
-		void classWithCopyConstructor(const MatchFinder::MatchResult &Result);
-		void hasCopyConstructor();
-		A copyConstructors;
+  private:
+	void classWithMoveConstructor(const MatchFinder::MatchResult &Result);
+	void hasMoveConstructor();
+	A moveConstructors;
 
-// ----------------------- MOVE CONSTRUCTORS ---------------------
+	// ----------------------- DESTRUCTOR ---------------------
 
-	public:
-		void setMoveConstructors(string className, bool exist, string notFoundMessage);
+  public:
+	void setDestructors(string className, bool exist, string message);
 
-	private:
-		void classWithMoveConstructor(const MatchFinder::MatchResult &Result);
-		void hasMoveConstructor();
-		A moveConstructors;
+  private:
+	void classWithDestructor(const MatchFinder::MatchResult &Result);
+	void hasDestructor();
+	A destructors;
 
-// ----------------------- DESTRUCTOR ---------------------
+	// ----------------------- DELETE MEMBERS ---------------------
 
-	public:
-		void setDestructors(string className, bool exist, string message);
+  public:
+	void setDeleteMembers(string className, string memberName, string message);
 
-	private:
-		void classWithDestructor(const MatchFinder::MatchResult &Result);
-		void hasDestructor();
-		A destructors;
+  private:
+	void deleteMember(const MatchFinder::MatchResult &Result);
+	void hasDeleteMember();
+	A deleteMembers;
 
-// ----------------------- DELETE MEMBERS ---------------------
+	// ----------------------- CLASS WITH CONSTRUCTOR WITH INITIALIZERS ---------------------
 
-	public:
-		void setDeleteMembers(string className, string memberName, string message);
+  public:
+	void setInitializers(string className, vector<string> parameters, vector<string> inits, string message);
 
-	private:
-		void deleteMember(const MatchFinder::MatchResult &Result);
-		void hasDeleteMember();
-		A deleteMembers;
+  private:
+	void classWithListInitializerConstructor(const MatchFinder::MatchResult &Result);
+	A initializers;
+	void hasInitializer();
 
-// ----------------------- CLASS WITH CONSTRUCTOR WITH INITIALIZERS ---------------------
+	// ----------------------- NUMBER OF CONSTRUCTORS ---------------------
 
-	public:
-		void setInitializers(string className, vector<string> parameters, vector<string> inits, string message);
+  public:
+	void setConstructors(string className, unsigned int constructors, bool lenient, string message);
 
-	private:
-		void classWithListInitializerConstructor(const MatchFinder::MatchResult &Result);
-		A initializers;
-		void hasInitializer();
+  private:
+	void numberOfConstructor(const MatchFinder::MatchResult &Result);
+	void howManyConstructors();
+	A constructors;
 
-// ----------------------- NUMBER OF CONSTRUCTORS ---------------------
+	// ----------------------- EXPLICIT SPECIFIED CONSTRUCTORS ---------------------
 
-	public:
-		void setConstructors(string className, unsigned int constructors, bool lenient, string message);
+  public:
+	void setExplicitSpecifiedConstructors(string className, vector<string> parameters, string message);
 
-	private:
-		void numberOfConstructor(const MatchFinder::MatchResult &Result);
-		void howManyConstructors();
-		A constructors;
+  private:
+	void explicitSpecifiedConstructor(const MatchFinder::MatchResult &Result);
+	void hasExplicitSpecifiedConstructor();
+	A explicitSpecifiedConstructors;
 
-// ----------------------- EXPLICIT SPECIFIED CONSTRUCTORS ---------------------
+	// ----------------------- CATCHING EXCEPTIONS ---------------------
 
-	public:
-		void setExplicitSpecifiedConstructors(string className, vector<string> parameters, string message);
+  public:
+	void setTakeExceptions(string exceptionClass, string message);
 
-	private:
-		void explicitSpecifiedConstructor(const MatchFinder::MatchResult &Result);
-		void hasExplicitSpecifiedConstructor();
-		A explicitSpecifiedConstructors;
+  private:
+	void takeException(const MatchFinder::MatchResult &Result);
+	void hasTakeException();
+	A takeExceptions;
 
-// ----------------------- CATCHING EXCEPTIONS ---------------------
-
-	public:
-		void setTakeExceptions(string exceptionClass, string message);
-
-	private:
-		void takeException(const MatchFinder::MatchResult &Result);
-		void hasTakeException();
-		A takeExceptions;
-
-
-
-
-/*
+	/*
 **
 ** VARIABLES
 **
 */
 
-// ----------------------- MEMBER ---------------------
+	// ----------------------- MEMBER ---------------------
 
-	public:
-		void setMembers(string className, string memberName, string constant, bool exist, string message);
+  public:
+	void setMembers(string className, string memberName, string constant, bool exist, string message);
 
-	private:
-		void classWithMember(const MatchFinder::MatchResult &Result);
-		A members;
-		void hasMember();
+  private:
+	void classWithMember(const MatchFinder::MatchResult &Result);
+	A members;
+	void hasMember();
 
-// ----------------------- STATIC VARIABLE ---------------------
+	// ----------------------- STATIC VARIABLE ---------------------
 
-	public:
-		void setStaticVariables(string className, string variableName, string constant, string message);
+  public:
+	void setStaticVariables(string className, string variableName, string constant, string message);
 
-	private:
-		void classWithStaticVariable(const MatchFinder::MatchResult &Result);
-		A staticVariables;
-		void hasStaticVariable();
+  private:
+	void classWithStaticVariable(const MatchFinder::MatchResult &Result);
+	A staticVariables;
+	void hasStaticVariable();
 
-// ----------------------- RELEASED VARIABLE ---------------------
+	// ----------------------- RELEASED VARIABLE ---------------------
 
-	public:
-		void setReleasedVariables(string message);
-		bool allReleasedVariables();
+  public:
+	void setReleasedVariables(string message);
+	bool allReleasedVariables();
 
-	private:
-		void releaseVariable(const MatchFinder::MatchResult &Result);
-		map<const VarDecl*, bool> variables_new;
-		string releasedVariableMessage;
-		void hasReleasedVariable();
+  private:
+	void releaseVariable(const MatchFinder::MatchResult &Result);
+	map<const VarDecl *, bool> variables_new;
+	string releasedVariableMessage;
+	void hasReleasedVariable();
 
-// ----------------------- PRIVATE MEMBERS ---------------------
+	// ----------------------- PRIVATE MEMBERS ---------------------
 
-	public:
-		void setClassWithAllPrivateMembers(string className, string message);
+  public:
+	void setClassWithAllPrivateMembers(string className, string message);
 
-	private:
-		void classWithAllPrivateMember(const MatchFinder::MatchResult &Result);
-		void hasAllPrivateMember();
-		A classWithAllPrivateMembers;
+  private:
+	void classWithAllPrivateMember(const MatchFinder::MatchResult &Result);
+	void hasAllPrivateMember();
+	A classWithAllPrivateMembers;
 
-// ----------------------- ACCESS LEVEL VARIABLE MEMBERS ----------
+	// ----------------------- ACCESS LEVEL VARIABLE MEMBERS ----------
 
-	public:
-                void setMembersAccessLevel(string className, string memberName, string level, string message);
+  public:
+	void setMembersAccessLevel(string className, string memberName, string level, string message);
 
-        private:
-                void classWithVariableMembersAccessLevel(const MatchFinder::MatchResult &Result);
-                void hasVariableMembersAccessLevel();
-                A variableMembersAccessLevel;
+  private:
+	void classWithVariableMembersAccessLevel(const MatchFinder::MatchResult &Result);
+	void hasVariableMembersAccessLevel();
+	A variableMembersAccessLevel;
 
-
-
-
-/*
+	/*
 **
 ** METHODS
 **
 */
 
-// ----------------------- METHODS WITH NAME---------------------
+	// ----------------------- METHODS WITH NAME---------------------
 
-	public:
-		void setMethodsWithName(string methodName, string className, vector<string> params, string constant, string message);
+  public:
+	void setMethodsWithName(string methodName, string className, vector<string> params, string constant, string message);
 
-	private:
-		void methodWithName(const MatchFinder::MatchResult &Result);
-		A methodsWithName;
-		void hasMethodWithName();
+  private:
+	void methodWithName(const MatchFinder::MatchResult &Result);
+	A methodsWithName;
+	void hasMethodWithName();
 
-// -------------------- METHODS WITH DEFAULT ARG------------------
+	// -------------------- METHODS WITH DEFAULT ARG------------------
 
-	public:
-		void setMethodsWithDefaultArg(string methodName, string className, vector<string> params, vector<string> defaults, string constant, string message);
+  public:
+	void setMethodsWithDefaultArg(string methodName, string className, vector<string> params, vector<string> defaults, string constant, string message);
 
-	private:
-		void methodWithDefaultArg(const MatchFinder::MatchResult &Result);
-		A methodsWithDefaultArg;
-		void hasMethodWithDefaultArg();
+  private:
+	void methodWithDefaultArg(const MatchFinder::MatchResult &Result);
+	A methodsWithDefaultArg;
+	void hasMethodWithDefaultArg();
 
-// ----------------------- METHODS WITH REFERENCED VARIABLE---------------------
+	// ----------------------- METHODS WITH REFERENCED VARIABLE---------------------
 
-	public:
-		void setMethodsWithReferencedVariable(string methodName, string className, vector<string> params, string constant, string memberVariable, string message);
+  public:
+	void setMethodsWithReferencedVariable(string methodName, string className, vector<string> params, string constant, string memberVariable, string message);
 
-	private:
-		void methodWithReferencedVariable(const MatchFinder::MatchResult &Result);
-		A methodsWithReferencedVariable;
-		void hasMethodWithReferencedVariable();
+  private:
+	void methodWithReferencedVariable(const MatchFinder::MatchResult &Result);
+	A methodsWithReferencedVariable;
+	void hasMethodWithReferencedVariable();
 
-// ----------------------- METHODS WITH REFERENCED METHOD---------------------
+	// ----------------------- METHODS WITH REFERENCED METHOD---------------------
 
-	public:
-		void setMethodsWithReferencedMethod(string mainMethodName, vector<string> mainMethodParams, string mainClassName, string mainConstant, string usedMethodName, vector<string> usedMethodParams, string usedClasName, string usedConstant, string message);
+  public:
+	void setMethodsWithReferencedMethod(string mainMethodName, vector<string> mainMethodParams, string mainClassName, string mainConstant, string usedMethodName, vector<string> usedMethodParams, string usedClasName, string usedConstant, string message);
 
-	private:
-		void methodWithReferencedMethod(const MatchFinder::MatchResult &Result);
-		A methodsWithReferencedMethod;
-		void hasMethodWithReferencedMethod();
+  private:
+	void methodWithReferencedMethod(const MatchFinder::MatchResult &Result);
+	A methodsWithReferencedMethod;
+	void hasMethodWithReferencedMethod();
 
-// ----------------------- METHODS NO EXCEPT---------------------
+	// ----------------------- METHODS NO EXCEPT---------------------
 
-	public:
-		void setNoExceptMethods(string methodName, vector<string> params, string className, string constant, string message);
+  public:
+	void setNoExceptMethods(string methodName, vector<string> params, string className, string constant, string message);
 
-	private:
-		void noExceptMethod(const MatchFinder::MatchResult &Result);
-		A noExceptMethods;
-		void hasNoExceptMethod();
+  private:
+	void noExceptMethod(const MatchFinder::MatchResult &Result);
+	A noExceptMethods;
+	void hasNoExceptMethod();
 
-// ----------------------- METHODS INLINE---------------------
+	// ----------------------- METHODS INLINE---------------------
 
-	public:
-		void setInlineMethods(string methodName, vector<string> params, string className, string constant, string message);
+  public:
+	void setInlineMethods(string methodName, vector<string> params, string className, string constant, string message);
 
-	private:
-		void inlineMethod(const MatchFinder::MatchResult &Result);
-		A inlineMethods;
-		void hasInlineMethod();
+  private:
+	void inlineMethod(const MatchFinder::MatchResult &Result);
+	A inlineMethods;
+	void hasInlineMethod();
 
+	// ----------------------- DEFAULT ARGUMENTS IN METHODS ---------------------
 
-// ----------------------- DEFAULT ARGUMENTS IN METHODS ---------------------
+  public:
+	void setDefaultArgumentsInMethod(string methodName, vector<string> params, string className, string constant, unsigned int numDefaultArgs, vector<string> defaultArgs, string message);
 
-	public:
-		void setDefaultArgumentsInMethod(string methodName, vector<string> params, string className, string constant, unsigned int numDefaultArgs, vector<string> defaultArgs, string message);
+  private:
+	void defaultArgumentsInMethod(const MatchFinder::MatchResult &Result);
+	A defaultArgumentsInMethods;
+	void hasDefaultArgumentsInMethod();
 
-	private:
-		void defaultArgumentsInMethod(const MatchFinder::MatchResult &Result);
-		A defaultArgumentsInMethods;
-		void hasDefaultArgumentsInMethod();
+	// ----------------------- METHODS DELETED ---------------------
 
+  public:
+	void setDeletedMethods(string methodName, string className, vector<string> params, string constant, string message);
 
-// ----------------------- METHODS DELETED ---------------------
+  private:
+	void deletedMethod(const MatchFinder::MatchResult &Result);
+	void hasDeletedMethod();
+	A deletedMethods;
 
-	public:
-		void setDeletedMethods(string methodName, string className, vector<string> params, string constant, string message);
-	private:
-		void deletedMethod(const MatchFinder::MatchResult &Result);
-		void hasDeletedMethod();
-		A deletedMethods;
+	// ----------------------- METHODS DEFAULT ---------------------
 
-// ----------------------- METHODS DEFAULT ---------------------
+  public:
+	void setDefaultedMethods(string methodName, string className, vector<string> params, string constant, string message);
 
-	public:
-		void setDefaultedMethods(string methodName, string className, vector<string> params, string constant, string message);
-	private:
-		void defaultedMethod(const MatchFinder::MatchResult &Result);
-		void hasDefaultedMethod();
-		A defaultedMethods;
+  private:
+	void defaultedMethod(const MatchFinder::MatchResult &Result);
+	void hasDefaultedMethod();
+	A defaultedMethods;
 
+	// ----------------------- METHODS VIRTUAL ---------------------
+  public:
+	void setVirtualMethods(string methodName, string className, vector<string> params, string constant, string message);
 
-// ----------------------- METHODS VIRTUAL ---------------------
-	public:
-		void setVirtualMethods(string methodName, string className, vector<string> params, string constant, string message);
-	private:
-		void virtualMethod(const MatchFinder::MatchResult &Result);
-		void hasVirtualMethod();
-		A virtualMethods;
+  private:
+	void virtualMethod(const MatchFinder::MatchResult &Result);
+	void hasVirtualMethod();
+	A virtualMethods;
 
-/*
+	/*
 **
 ** OPERATORS
 **
 */
 
-// ----------------------- COPY ASSIGNMENT OPERATOR ---------------------
+	// ----------------------- COPY ASSIGNMENT OPERATOR ---------------------
 
-	public:
-		void setCopyAssignmentOperators(string className, bool exist, string message);
+  public:
+	void setCopyAssignmentOperators(string className, bool exist, string message);
 
-	private:
-		void classWithCopyAssignmentOperator(const MatchFinder::MatchResult &Result);
-		void hasCopyAssignmentOperator();
-		A copyAssignmentOperators;
+  private:
+	void classWithCopyAssignmentOperator(const MatchFinder::MatchResult &Result);
+	void hasCopyAssignmentOperator();
+	A copyAssignmentOperators;
 
-// ----------------------- MOVE ASSIGNMENT OPERATOR ---------------------
+	// ----------------------- MOVE ASSIGNMENT OPERATOR ---------------------
 
-	public:
-		void setMoveAssignmentOperators(string className, bool exist, string message);
+  public:
+	void setMoveAssignmentOperators(string className, bool exist, string message);
 
-	private:
-		void classWithMoveAssignmentOperator(const MatchFinder::MatchResult &Result);
-		void hasMoveAssignmentOperator();
-		A moveAssignmentOperators;
+  private:
+	void classWithMoveAssignmentOperator(const MatchFinder::MatchResult &Result);
+	void hasMoveAssignmentOperator();
+	A moveAssignmentOperators;
 
-// ----------------------- FUNCTIONS WITH REFERENCED FUNCTIONS ---------------------
+	// ----------------------- FUNCTIONS WITH REFERENCED FUNCTIONS ---------------------
 
-	public:
-		void setFunctionsWithReferencedFunction(string mainFunctionName, vector<string> mainFunctionParameters, string usedFuncionName, vector<string> usedFunctionParameters, string message);
+  public:
+	void setFunctionsWithReferencedFunction(string mainFunctionName, vector<string> mainFunctionParameters, string usedFuncionName, vector<string> usedFunctionParameters, string message);
 
-	private:
-		void functionWithReferencedFunction(const MatchFinder::MatchResult &Result);
-		A functionsWithReferencedFunction;
-		void hasFunctionWithReferencedFunction();
+  private:
+	void functionWithReferencedFunction(const MatchFinder::MatchResult &Result);
+	A functionsWithReferencedFunction;
+	void hasFunctionWithReferencedFunction();
 
-// ----------------------- METHODS WITH REFERENCED FUNCTIONS ---------------------
+	// ----------------------- METHODS WITH REFERENCED FUNCTIONS ---------------------
 
-	public:
-		void setMethodsWithReferencedFunction(string mainMethodName, vector<string> mainMethodParameters, string mainClassName, string mainConstant, string usedFuncionName, vector<string> usedFunctionParameters, string message);
+  public:
+	void setMethodsWithReferencedFunction(string mainMethodName, vector<string> mainMethodParameters, string mainClassName, string mainConstant, string usedFuncionName, vector<string> usedFunctionParameters, string message);
 
-	private:
-		void methodWithReferencedFunction(const MatchFinder::MatchResult &Result);
-		A methodsWithReferencedFunction;
-		void hasMethodWithReferencedFunction();
+  private:
+	void methodWithReferencedFunction(const MatchFinder::MatchResult &Result);
+	A methodsWithReferencedFunction;
+	void hasMethodWithReferencedFunction();
 
-// ----------------------- FUNCTIONS WITH REFERENCED METHODS ---------------------
+	// ----------------------- FUNCTIONS WITH REFERENCED METHODS ---------------------
 
-	public:
-		void setFunctionsWithReferencedMethod(string mainFunctionName, vector<string> mainFunctionParameters, string usedMethodName, vector<string> usedMethodParameters, string usedConstant, string usedClass, string message);
+  public:
+	void setFunctionsWithReferencedMethod(string mainFunctionName, vector<string> mainFunctionParameters, string usedMethodName, vector<string> usedMethodParameters, string usedConstant, string usedClass, string message);
 
-	private:
-		void functionWithReferencedMethod(const MatchFinder::MatchResult &Result);
-		A functionsWithReferencedMethod;
-		void hasFunctionWithReferencedMethod();
+  private:
+	void functionWithReferencedMethod(const MatchFinder::MatchResult &Result);
+	A functionsWithReferencedMethod;
+	void hasFunctionWithReferencedMethod();
 
-// ----------------------- FUNCTIONS WITH NAME ---------------------
+	// ----------------------- FUNCTIONS WITH NAME ---------------------
 
-	public:
-		void setFunctionsWithName(string functionName, vector<string> params, string message);
+  public:
+	void setFunctionsWithName(string functionName, vector<string> params, string message);
 
-	private:
-		void functionWithName(const MatchFinder::MatchResult &Result);
-		void hasFunctionWithName();
-		A functionsWithName;
+  private:
+	void functionWithName(const MatchFinder::MatchResult &Result);
+	void hasFunctionWithName();
+	A functionsWithName;
 
-
-
-
-
-/*
+	/*
 **
 ** HEADERS
 **
 */
 
-// ----------------------- INCLUDED HEADER---------------------
+	// ----------------------- INCLUDED HEADER---------------------
 
-	public:
-		void setInvocationsFromHeader(string functionNames, string headerName, bool exist, string message);
+  public:
+	void setInvocationsFromHeader(string functionNames, string headerName, bool exist, string message);
 
-	private:
-		void invocationsFromHeader(const MatchFinder::MatchResult &Result);
-		A invocationsFromHeaders;
-		void hasInvocationsFromHeader();
+  private:
+	void invocationsFromHeader(const MatchFinder::MatchResult &Result);
+	A invocationsFromHeaders;
+	void hasInvocationsFromHeader();
 
-// --------------------- FILE INCLUDE HEADER ------------------
-	public:
-		void setFileIncludeHeader(vector<string> fileName, string headerName, string message);
-	private:
-		A fileIncludedHeader;
-		void hasFileIncludedHeader();
+	// --------------------- FILE INCLUDE HEADER ------------------
+  public:
+	void setFileIncludeHeader(vector<string> fileName, string headerName, string message);
 
-/*
+  private:
+	A fileIncludedHeader;
+	void hasFileIncludedHeader();
+
+	/*
 **
 ** PREPROCESSOR
 **
 */
 
-// ----------------------- PREPROCESSOR ---------------------
-	public:
-		void setGuardClauses(string fileName, string message);
-	private:
-		A guardClauses;
-		void hasGuardClauses();
+	// ----------------------- PREPROCESSOR ---------------------
+  public:
+	void setGuardClauses(string fileName, string message);
 
+  private:
+	A guardClauses;
+	void hasGuardClauses();
 
-
-/*
+	/*
 **
 ** FRIEND MEMBERS
 **
 */
 
-// ----------------------- NOT FRIEND MEMBERS---------------------
+	// ----------------------- NOT FRIEND MEMBERS---------------------
 
-	public:
-		void setNotFriendMembers(string className, string message);
+  public:
+	void setNotFriendMembers(string className, string message);
 
-	private:
-		void classWithNotFriendMember(const MatchFinder::MatchResult &Result);
-		A notFriendMembers;
-		void hasNotFriendMember();
+  private:
+	void classWithNotFriendMember(const MatchFinder::MatchResult &Result);
+	A notFriendMembers;
+	void hasNotFriendMember();
 
+	// ----------------------- FRIEND FUNCTION ------------------------
 
-// ----------------------- FRIEND FUNCTION ------------------------
+  public:
+	void setFriendFunction(string functionName, string className, vector<string> params, string message);
 
-	public:
-		void setFriendFunction(string functionName, string className, vector<string> params, string message);
+  private:
+	void classWithFriendFunction(const MatchFinder::MatchResult &Result);
+	A friendFunctions;
+	void hasFriendFunction();
 
-	private:
-		void classWithFriendFunction(const MatchFinder::MatchResult &Result);
-		A friendFunctions;
-		void hasFriendFunction();
+	//------------------------ FRIEND CLASS --------------------------
 
+  public:
+	void setFriendClass(string className, string friendClassName, string message);
 
-//------------------------ FRIEND CLASS --------------------------
+  private:
+	void classWithFriendClass(const MatchFinder::MatchResult &Result);
+	A friendClasses;
+	void hasFriendClass();
+	bool friend_class(const CXXRecordDecl *c1, string c2);
 
-        public:
-                void setFriendClass(string className, string friendClassName, string message);
+	//------------------------ DYNAMIC CAST --------------------------
+  public:
+	void setDynamicCast(string methodName, vector<string> parameters, string constant, string className, string originType, string dstType, string message);
 
-        private:
-                void classWithFriendClass(const MatchFinder::MatchResult &Result);
-                A friendClasses;
-                void hasFriendClass();
-		bool friend_class(const CXXRecordDecl* c1, string c2);
+  private:
+	void methodWithDynamicCast(const MatchFinder::MatchResult &Result);
+	A dynamicCast;
+	void hasDynamicCast();
 
-//------------------------ DYNAMIC CAST --------------------------
-	public:
-		void setDynamicCast(string methodName, vector<string> parameters, string constant, string className, string originType, string dstType, string message);
-	private:
-		void methodWithDynamicCast(const MatchFinder::MatchResult &Result);
-		A dynamicCast;
-		void hasDynamicCast();
-
-
-
-/*
+	/*
 **
 ** FINAL CHECK
 **
 */
 
-// ----------------------- FINAL CHECK ---------------------
+	// ----------------------- FINAL CHECK ---------------------
 
-	public:
-		void setCorrectMessage(string message);
-		string getCorrectMessage();
-		void setIncorrectMessage(string message);
-		string getIncorrectMessage();
+  public:
+	void setCorrectMessage(string message);
+	string getCorrectMessage();
+	void setIncorrectMessage(string message);
+	string getIncorrectMessage();
 
-	private:
-		bool correct = true;
-		string correctMessage, incorrectMessage;
-		void isCorrect();
-		void showMessages();
-		set<string> messages;
+  private:
+	bool correct = true;
+	string correctMessage, incorrectMessage;
+	void isCorrect();
+	void showMessages();
+	set<string> messages;
 };
-
-
 
 #endif //EXECUTE_H

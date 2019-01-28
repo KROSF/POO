@@ -5,222 +5,266 @@ using namespace std;
 #ifndef INFO_H
 #define INFO_H
 
-class Info{
-	public:
-		//CONSTRUCTOR
-  		explicit Info(string n, string m, bool f, bool exist=true):name(n), message(m), found(f), exist(exist) {}
-  		
-  		/*
+class Info
+{
+  public:
+	//CONSTRUCTOR
+	explicit Info(string n, string m, bool f, bool exist = true) : name(n), message(m), found(f), exist(exist) {}
+
+	/*
   		**
 		** SET METHODS
 		**
 		*/
-		//General set methods
-		void setName(string n){
-			name = n;
-		}
-		void setClass(string c){
-			ofClass = c;
-		}
-		void setMessage(string m){
-			message = m;
-		}
-		void setFound(bool f){
-			found = f;
-		}
-		void setValid(bool v){
-			valid = v;
-		}
-		void setExist(bool e){
-			exist = e;
-		}
+	//General set methods
+	void setName(string n)
+	{
+		name = n;
+	}
+	void setClass(string c)
+	{
+		ofClass = c;
+	}
+	void setMessage(string m)
+	{
+		message = m;
+	}
+	void setFound(bool f)
+	{
+		found = f;
+	}
+	void setValid(bool v)
+	{
+		valid = v;
+	}
+	void setExist(bool e)
+	{
+		exist = e;
+	}
 
-		//Number of constructors set methods
-		void setNumberOfConstructors(unsigned int c){
-			numberOfConstructors = c;
-		}
-		void setExpectedConstructors(unsigned int c){
-			expectedConstructors = c;
-		}
-		void setLenient(bool b){
-			lenient = b;
-		}
+	//Number of constructors set methods
+	void setNumberOfConstructors(unsigned int c)
+	{
+		numberOfConstructors = c;
+	}
+	void setExpectedConstructors(unsigned int c)
+	{
+		expectedConstructors = c;
+	}
+	void setLenient(bool b)
+	{
+		lenient = b;
+	}
 
-		//Cons or no const methods set methods
-		void setConstant(string c){
-			constant = c;
-		}
+	//Cons or no const methods set methods
+	void setConstant(string c)
+	{
+		constant = c;
+	}
 
-		void setUsedConstant(string c){
-			usedConstant = c;
-		}
+	void setUsedConstant(string c)
+	{
+		usedConstant = c;
+	}
 
-		//Searching methods set methods
-		void setParameters(vector<string> p){
-			parameters = p;
-		}
+	//Searching methods set methods
+	void setParameters(vector<string> p)
+	{
+		parameters = p;
+	}
 
-		void setDefaultParams(vector<string> p){
-			defaultParams=p;
-		}
+	void setDefaultParams(vector<string> p)
+	{
+		defaultParams = p;
+	}
 
-		void setUsedParameters(vector<string> p){
-			usedParameters = p;
-		}
+	void setUsedParameters(vector<string> p)
+	{
+		usedParameters = p;
+	}
 
-		void setInitializers(vector<string> i){
-			initializers = i;
-		}
+	void setInitializers(vector<string> i)
+	{
+		initializers = i;
+	}
 
-		void setUsedFunction(string usedF){
-			usedFunction = usedF;
-		}
+	void setUsedFunction(string usedF)
+	{
+		usedFunction = usedF;
+	}
 
-		void setUsedClass(string usedC){
-			usedClass = usedC;
-		}
+	void setUsedClass(string usedC)
+	{
+		usedClass = usedC;
+	}
 
-		void setFriendClass(string friendC){
-			friendClass = friendC;
-		}
+	void setFriendClass(string friendC)
+	{
+		friendClass = friendC;
+	}
 
-		void setLevel(string l){
-			level = l;
-		}
+	void setLevel(string l)
+	{
+		level = l;
+	}
 
-		void setNumDefaultArguments(unsigned int num){
-			numDefaultArguments = num;
-		}
+	void setNumDefaultArguments(unsigned int num)
+	{
+		numDefaultArguments = num;
+	}
 
-		void setDefaultArguments(vector<string> dfargs){
-			defaultArguments = dfargs;
-		}
+	void setDefaultArguments(vector<string> dfargs)
+	{
+		defaultArguments = dfargs;
+	}
 
-		void setMemberVariable(string variable){
-			memberVariable = variable;
-		}
+	void setMemberVariable(string variable)
+	{
+		memberVariable = variable;
+	}
 
-		/*
+	/*
 		**
 		** GET METHODS
 		**
 		*/
-		//General get methods
-		string getName(){
-			return name;
-		}
-		string getClass(){
-			return ofClass;
-		}
-		string getMessage(){
-			return message;
-		}
-		bool getFound(){
-			return found;
-		}
-		bool getValid(){
-			return valid;
-		}
-		bool getExist(){
-			return exist;
-		}
+	//General get methods
+	string getName()
+	{
+		return name;
+	}
+	string getClass()
+	{
+		return ofClass;
+	}
+	string getMessage()
+	{
+		return message;
+	}
+	bool getFound()
+	{
+		return found;
+	}
+	bool getValid()
+	{
+		return valid;
+	}
+	bool getExist()
+	{
+		return exist;
+	}
 
-		//Number of constructors get methods
-		unsigned int getNumberOfConstructors(){
-			return numberOfConstructors;
-		}
-		unsigned int getExpectedConstructors(){
-			return expectedConstructors;
-		}
-		bool getLenient(){
-			return lenient;
-		}
+	//Number of constructors get methods
+	unsigned int getNumberOfConstructors()
+	{
+		return numberOfConstructors;
+	}
+	unsigned int getExpectedConstructors()
+	{
+		return expectedConstructors;
+	}
+	bool getLenient()
+	{
+		return lenient;
+	}
 
-		
-		//Const or no const methods get methods
-		string getConstant(){
-			return constant;
-		}
-	
-		string getUsedConstant(){
-			return usedConstant;
-		}
+	//Const or no const methods get methods
+	string getConstant()
+	{
+		return constant;
+	}
 
-		//Searching methods get methods
-		vector<string> getParameters(){
-			return parameters;
-		}
+	string getUsedConstant()
+	{
+		return usedConstant;
+	}
 
-		vector<string> getDefaultParams(){
-			return defaultParams;
-		}
+	//Searching methods get methods
+	vector<string> getParameters()
+	{
+		return parameters;
+	}
 
-		vector<string> getUsedParameters(){
-			return usedParameters;
-		}		
+	vector<string> getDefaultParams()
+	{
+		return defaultParams;
+	}
 
-		vector<string> getInitializers(){
-			return initializers;
-		}
+	vector<string> getUsedParameters()
+	{
+		return usedParameters;
+	}
 
-		string getUsedFunction(){
-			return usedFunction;
-		}
+	vector<string> getInitializers()
+	{
+		return initializers;
+	}
 
-		string getUsedClass(){
-			return usedClass;
-		}
+	string getUsedFunction()
+	{
+		return usedFunction;
+	}
 
-		string getFriendClass(){
-			return friendClass;
-		}
+	string getUsedClass()
+	{
+		return usedClass;
+	}
 
-		string getLevel(){
-			return level;
-		}
+	string getFriendClass()
+	{
+		return friendClass;
+	}
 
-		unsigned int getNumDefaultArguments(){
-			return numDefaultArguments;
-		}
+	string getLevel()
+	{
+		return level;
+	}
 
-		vector<string> getDefaultArguments(){
-			return defaultArguments;
-		}
+	unsigned int getNumDefaultArguments()
+	{
+		return numDefaultArguments;
+	}
 
-		string getMemberVariable(){
-			return memberVariable;
-		}
+	vector<string> getDefaultArguments()
+	{
+		return defaultArguments;
+	}
 
-	private:
-		//General members
-		string name;
-		string ofClass;
-		string message;
-		bool found = false;
-		bool valid = false;
-		bool exist = true;
+	string getMemberVariable()
+	{
+		return memberVariable;
+	}
 
-		//Number of constructors members
-		unsigned int numberOfConstructors = 0, expectedConstructors = 0;
-		bool lenient = false;
+  private:
+	//General members
+	string name;
+	string ofClass;
+	string message;
+	bool found = false;
+	bool valid = false;
+	bool exist = true;
 
-		//Searching methods.
-		vector<string> parameters;
-		vector<string> defaultParams;
-		vector<string> usedParameters;
-		vector<string> initializers;
-		string usedFunction;
-		string constant;
-		string usedConstant;
-		string usedClass;
+	//Number of constructors members
+	unsigned int numberOfConstructors = 0, expectedConstructors = 0;
+	bool lenient = false;
 
-		string friendClass;
-		string level;
+	//Searching methods.
+	vector<string> parameters;
+	vector<string> defaultParams;
+	vector<string> usedParameters;
+	vector<string> initializers;
+	string usedFunction;
+	string constant;
+	string usedConstant;
+	string usedClass;
 
-		string memberVariable;
+	string friendClass;
+	string level;
 
-		unsigned int numDefaultArguments;
-		vector<string> defaultArguments;
+	string memberVariable;
+
+	unsigned int numDefaultArguments;
+	vector<string> defaultArguments;
 };
 
 #endif //INFO_H

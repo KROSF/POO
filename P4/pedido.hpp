@@ -13,53 +13,60 @@
 class Usuario_Pedido;
 class Pedido_Articulo;
 
-class Pedido{
-private:
+class Pedido
+{
+  private:
     int num_;
-    const Tarjeta* tarjeta_;
+    const Tarjeta *tarjeta_;
     Fecha date_;
     double total_;
     static int n_pedidos_;
     /* Exepcion Base*/
-    class Exepcion{
-    public:
-        Exepcion(Usuario const* u) : user_(u) {}
-        const Usuario & usuario() const noexcept { return *user_ ; }
-    private:
-        Usuario const* user_;
-    };
-public:
+    class Exepcion
+    {
+      public:
+        Exepcion(Usuario const *u) : user_(u) {}
+        const Usuario &usuario() const noexcept { return *user_; }
 
+      private:
+        Usuario const *user_;
+    };
+
+  public:
     /* Constructor*/
-    Pedido(Usuario_Pedido& u_p,Pedido_Articulo& p_a,Usuario& u,
-        const Tarjeta& t,const Fecha& fecha = Fecha());
+    Pedido(Usuario_Pedido &u_p, Pedido_Articulo &p_a, Usuario &u,
+           const Tarjeta &t, const Fecha &fecha = Fecha());
 
     /* Clase de Exepcion Impostor*/
-    struct Impostor : public Exepcion{
-        Impostor(Usuario const * u) : Exepcion(u){}
+    struct Impostor : public Exepcion
+    {
+        Impostor(Usuario const *u) : Exepcion(u) {}
     };
 
     /* Clase de Exepcion Vacio*/
-    struct Vacio : public Exepcion{
-        Vacio(Usuario const * u) : Exepcion(u){}
+    struct Vacio : public Exepcion
+    {
+        Vacio(Usuario const *u) : Exepcion(u) {}
     };
 
     /* Clase de Exepcion SinStock */
-    class SinStock{
-    public:
-        SinStock(Articulo const* a) : sinstock_(a) {}
-        const Articulo& articulo() const noexcept { return *sinstock_; }
-    private:
-        Articulo const* sinstock_;
+    class SinStock
+    {
+      public:
+        SinStock(Articulo const *a) : sinstock_(a) {}
+        const Articulo &articulo() const noexcept { return *sinstock_; }
+
+      private:
+        Articulo const *sinstock_;
     };
 
     /* Observadores */
     int numero() const noexcept { return num_; }
-    Tarjeta const* tarjeta() const noexcept{ return tarjeta_; }
+    Tarjeta const *tarjeta() const noexcept { return tarjeta_; }
     Fecha fecha() const noexcept { return date_; }
     double total() const noexcept { return total_; }
     static int n_total_pedidos() noexcept;
 };
 /* Operador de  flujo */
-std::ostream& operator << (std::ostream& os,const Pedido& pe);
+std::ostream &operator<<(std::ostream &os, const Pedido &pe);
 #endif

@@ -9,33 +9,34 @@
 #include <set>
 #include "pedido.hpp"
 
-class Usuario_Pedido{
-public:
-
+class Usuario_Pedido
+{
+  public:
     /* Dedinicion del tipo Pedidos*/
-    typedef std::set<Pedido*> Pedidos;
+    typedef std::set<Pedido *> Pedidos;
     /* Asociaciones */
-    void asocia(Usuario& us, Pedido& pe)
+    void asocia(Usuario &us, Pedido &pe)
     {
         usuario_pedidos_[&us].insert(&pe);
         pedido_usuario_[&pe] = &us;
     }
-    void asocia(Pedido& pe, Usuario& us)
+    void asocia(Pedido &pe, Usuario &us)
     {
         asocia(us, pe);
     }
     /* Observadores de la Asociacion*/
-    Pedidos pedidos(Usuario& us)
+    Pedidos pedidos(Usuario &us)
     {
         return usuario_pedidos_[&us];
     }
 
-    Usuario* cliente(Pedido& pedido)
+    Usuario *cliente(Pedido &pedido)
     {
         return pedido_usuario_[&pedido];
     }
-private:
-    std::map<Usuario*, Pedidos> usuario_pedidos_;
-    std::map<Pedido*, Usuario*> pedido_usuario_;
+
+  private:
+    std::map<Usuario *, Pedidos> usuario_pedidos_;
+    std::map<Pedido *, Usuario *> pedido_usuario_;
 };
 #endif
