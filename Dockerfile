@@ -1,7 +1,7 @@
 FROM ubuntu:bionic
 
 RUN apt update && \
-apt install -y wget git gnupg && \
+apt install -y wget git gnupg make locales locales-all valgrind && \
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
 echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-7 main" >> /etc/apt/sources.list && \
 apt update && \

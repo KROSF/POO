@@ -76,7 +76,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
+P4/test-P4-auto
+P4/test-caso4-consola
+.vscode
 
 # End of https://www.gitignore.io/api/linux,c++,osx
 test-P1-consola
