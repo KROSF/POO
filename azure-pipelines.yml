@@ -1,0 +1,9 @@
+trigger:
+- P4
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- script: docker run -t --rm -v ${Build.Repository.LocalPath}:/root/POO krosf/poo sh -c "cd /root/POO/P4 && make tests && make check && make valgrind"
+  displayName: 'build run test'
