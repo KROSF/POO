@@ -78,6 +78,7 @@ Temporary Items
 .apdisk
 P4/test-P4-auto
 P4/test-caso4-consola
+P4/catalogo_check
 .vscode
 
 # End of https://www.gitignore.io/api/linux,c++,osx
