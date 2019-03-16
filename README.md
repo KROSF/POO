@@ -1,4 +1,4 @@
-# POO [![Build Status](https://dev.azure.com/rodrigosanabria22/krosf/_apis/build/status/krosf-university.POO?branchName=P4)](https://dev.azure.com/rodrigosanabria22/krosf/_build/latest?definitionId=14&branchName=P4)
+# POO [![Build Status](https://dev.azure.com/krosf/krosf/_apis/build/status/krosf-university.POO?branchName=P4)](https://dev.azure.com/krosf/krosf/_build/latest?definitionId=14&branchName=P4)
 
 # Run
 
