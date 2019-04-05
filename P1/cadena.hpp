@@ -22,9 +22,9 @@ class Cadena {
   // Metodo para obtener una subcadena.
   Cadena substr(size_t begindex, size_t len) const;
   // Metodo para obtener la logitud de una cadena.
-  size_t length() const noexcept;
+  size_t length() const noexcept { return tam_; }
   // Metodo para convertir una "Cadena" a "const char*".
-  const char *c_str() const noexcept;
+  const char *c_str() const noexcept { return s_; }
   /* OPERADORES */
   // Operadores indice que no producen exepciones.
   char operator[](size_t j) const noexcept;

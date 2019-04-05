@@ -40,11 +40,6 @@ Cadena Cadena::substr(size_t begindex, size_t len) const {
   ctmp.s_[len] = '\0';
   return ctmp;
 }
-
-inline size_t Cadena::length() const noexcept { return tam_; }
-
-inline const char *Cadena::c_str() const noexcept { return s_; }
-
 /* OPERADORES  DE ACCESO */
 
 char Cadena::operator[](size_t i) const noexcept { return s_[i]; }
