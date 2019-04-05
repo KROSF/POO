@@ -4,7 +4,7 @@
 // http://en.wikipedia.org/wiki/Luhn_algorithm
 //
 #include <cstddef>
-#include "P1/cadena.hpp"
+#include "cadena.hpp"
 bool luhn(const Cadena &numero) {
   size_t n = numero.length();
   size_t suma = 0;

@@ -8,8 +8,8 @@
 #define ARTICULO_HPP
 #include <map>
 #include <set>
-#include "../P1/cadena.hpp"
-#include "../P1/fecha.hpp"
+#include "cadena.hpp"
+#include "fecha.hpp"
 
 class Autor {
  public:

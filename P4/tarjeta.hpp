@@ -9,8 +9,8 @@
 #include <cctype>
 #include <functional>
 #include <ostream>
-#include "../P1/cadena.hpp"
-#include "../P1/fecha.hpp"
+#include "cadena.hpp"
+#include "fecha.hpp"
 #include "usuario.hpp"
 
 class Numero {
