@@ -16,19 +16,19 @@
 #error Debe definir Px siendo x | 0 ≤ x ≤ 4 el n.º de la práctica a probar
 #endif
 
-#include <ctime>
 #include <cstdlib>
-#include <string>
-#include <iostream>
-#include <sstream>
+#include <ctime>
 #include <iomanip>
-#include <stdexcept>
-#include <memory>
-#include <type_traits>
+#include <iostream>
 #include <locale>
+#include <memory>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <type_traits>
 /**
    Lamentablemente, aún <regex>, de la biblioteca estándar de C++11,
-   no funciona bien en algunas versiones: muy mal en GCC C++ 4.8 y 
+   no funciona bien en algunas versiones: muy mal en GCC C++ 4.8 y
    algo menos, pero no bien, en GCC C++ 4.9. A partir de la versión 5 ya
    funciona bien. En cuanto a CLang, usa la misma biblioteca que GCC de
    forma predeterminada. El problema no es tanto del compilador como de
@@ -43,53 +43,52 @@
 
 #include "fct.h"
 
-#include "fecha.hpp"
 #include "cadena.hpp"
+#include "fecha.hpp"
 #if defined(P2) || defined(P3) || defined(P4)
 #include "articulo.hpp"
 #include "tarjeta.hpp"
 #include "usuario.hpp"
 #endif
 #if defined(P3) || defined(P4)
-#include "pedido.hpp"
 #include "pedido-articulo.hpp"
+#include "pedido.hpp"
 #include "usuario-pedido.hpp"
 #endif
 
 /*********************** COMPROBACIONES *********************/
 
-#define chk_incl_str(haystack, needle)                       \
-  fct_xchk(strstr(haystack.c_str(), needle.c_str()) != NULL, \
-           "failed chk_incl_str:\n'%s' not in '%s'",         \
-           needle.c_str(), haystack.c_str())
+#define chk_incl_str(haystack, needle)                               \
+  fct_xchk(strstr(haystack.c_str(), needle.c_str()) != NULL,         \
+           "failed chk_incl_str:\n'%s' not in '%s'", needle.c_str(), \
+           haystack.c_str())
 
-#define chk_incl_cstr(haystack, needle)               \
-  fct_xchk(strstr(haystack.c_str(), needle) != NULL,  \
-           "failed chk_incl_cstr:\n'%s' not in '%s'", \
-           (const char *)needle, haystack.c_str())
+#define chk_incl_cstr(haystack, needle)                                     \
+  fct_xchk(strstr(haystack.c_str(), needle) != NULL,                        \
+           "failed chk_incl_cstr:\n'%s' not in '%s'", (const char *)needle, \
+           haystack.c_str())
 
-#define chk_eq_str(haystack, needle)                      \
-  fct_xchk(strcmp(haystack.c_str(), needle.c_str()) == 0, \
-           "failed chk_eq_str:\n'%s' != '%s'",            \
-           needle.c_str(), haystack.c_str())
+#define chk_eq_str(haystack, needle)                           \
+  fct_xchk(strcmp(haystack.c_str(), needle.c_str()) == 0,      \
+           "failed chk_eq_str:\n'%s' != '%s'", needle.c_str(), \
+           haystack.c_str())
 
-#define chk_eq_cstr(haystack, needle)             \
-  fct_xchk(strcmp(haystack.c_str(), needle) == 0, \
-           "failed chk_eq_cstr:\n'%s' != '%s'",   \
-           (const char *)needle, haystack.c_str())
+#define chk_eq_cstr(haystack, needle)                                 \
+  fct_xchk(strcmp(haystack.c_str(), needle) == 0,                     \
+           "failed chk_eq_cstr:\n'%s' != '%s'", (const char *)needle, \
+           haystack.c_str())
 
 /************************ CLASES ****************************/
 #ifndef CPP11REGEX
 /**
    Clase de excepción para expresiones regulares no válidas.
 */
-class BadRegex : public std::exception
-{
-public:
+class BadRegex : public std::exception {
+ public:
   BadRegex(const char *regex) : regex_(regex) {}
   const char *regex() const { return regex_; }
 
-private:
+ private:
   const char *regex_;
 };
 #endif
@@ -104,31 +103,28 @@ private:
 
    a == b ssi < es orden total y !(a < b) y !(b < a)
 */
-inline bool operator==(const Numero &a, const Numero &b)
-{
+inline bool operator==(const Numero &a, const Numero &b) {
   return !(a < b) && !(b < a);
 }
 #endif
 
 /**
    Elimina el separador de decimales, porque da problemas con
-   algunas localizaciones españolas, que incorrectamente ponen el ".". 
+   algunas localizaciones españolas, que incorrectamente ponen el ".".
    También, de paso, fijamos el separador de decimales a la coma.
 */
-struct sin_separador : std::numpunct<char>
-{
-protected:
+struct sin_separador : std::numpunct<char> {
+ protected:
   virtual string_type do_grouping() const { return "\000"; }
   virtual char_type do_decimal_point() const { return ','; }
 };
 
 /**
-   Plantilla de función de utilidad para convertir algo a cadena (string), 
+   Plantilla de función de utilidad para convertir algo a cadena (string),
    aprovechando su operador de inserción en flujo.
 */
 template <typename T>
-std::string toString(const T &o)
-{
+std::string toString(const T &o) {
   std::ostringstream os;
   os.imbue(std::locale(std::locale("es_ES.UTF-8"), new sin_separador()));
   os << o;
@@ -152,8 +148,8 @@ Articulo::Autores crea_autores(Autor &autor);
 #ifndef CPP11REGEX
 /**
    Función que busca una expresión regular dentro de una cadena y
-   devuelve la posición del comienzo de la primera coincidencia. 
-   Devuelve -1 cuando no encuentra ninguna. Lanza la excepción 
+   devuelve la posición del comienzo de la primera coincidencia.
+   Devuelve -1 cuando no encuentra ninguna. Lanza la excepción
    BadRegex cuando la expresion regular no es válida.
 */
 regoff_t find_regex(const char *regex, const char *text) noexcept(false);

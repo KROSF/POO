@@ -1,5 +1,5 @@
 /* $Id: test-caso0-fecha-auto.cpp 344 2016-04-29 20:20:13Z gerardo $
- * 
+ *
  * Pruebas unitarias automáticas para la clase Fecha (P0-P1)
  *
  * ©2014 Antonio G.ª Dguez.
@@ -16,23 +16,19 @@ using namespace std;
 
 #define fecha_is_eq(f, d, m, a) (f.anno() == a && f.mes() == m && f.dia() == d)
 
-#define chk_eq_fecha(f, d, m, a)                                  \
-  fct_xchk(                                                       \
-      fecha_is_eq(f, d, m, a),                                    \
-      "failed chk_eq_fecha:\n<%02d/%02d/%04d>!=<%02d/%02d/%04d>", \
-      f.dia(), f.mes(), f.anno(), d, m, a)
+#define chk_eq_fecha(f, d, m, a)                                       \
+  fct_xchk(fecha_is_eq(f, d, m, a),                                    \
+           "failed chk_eq_fecha:\n<%02d/%02d/%04d>!=<%02d/%02d/%04d>", \
+           f.dia(), f.mes(), f.anno(), d, m, a)
 #define Fecha_chk_eq chk_eq_fecha
 
-namespace
-{
+namespace {
 int annoSistema, mesSistema, diaSistema;
 bool bPrimera = true;
-} // namespace
+}  // namespace
 
-FCTMF_FIXTURE_SUITE_BGN(test_fecha)
-{
-  if (bPrimera)
-  {
+FCTMF_FIXTURE_SUITE_BGN(test_fecha) {
+  if (bPrimera) {
     bPrimera = false;
     cerr <<
 #ifdef P0
@@ -43,8 +39,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
          << endl;
   }
 
-  FCT_SETUP_BGN()
-  {
+  FCT_SETUP_BGN() {
     // 1.º establecemos la zona horaria a UTC para evitar cosas raras
     setenv("TZ", "", 1);
     tzset();
@@ -57,123 +52,90 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_SETUP_END();
 
-  FCT_TEARDOWN_BGN()
-  {
+  FCT_TEARDOWN_BGN() {
     // Nothing to do here.
   }
   FCT_TEARDOWN_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia - mes - anyo;
-               no ceros)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia - mes - anyo; no ceros) {
     const Fecha f(18, 7, 1936);
     Fecha_chk_eq(f, 18, 7, 1936);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia - mes;
-               no ceros)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia - mes; no ceros) {
     const Fecha f(17, 7);
     Fecha_chk_eq(f, 17, 7, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia - mes - anno cero)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia - mes - anno cero) {
     const Fecha f(3, 7, 0);
     Fecha_chk_eq(f, 3, 7, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia;
-               no cero)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia; no cero) {
     const Fecha f(1);
     Fecha_chk_eq(f, 1, mesSistema, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia;
-               no conversion implicita)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia; no conversion implicita) {
     bool conversion_implicita = is_convertible<int, Fecha>::value;
     fct_chk(!conversion_implicita);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia - cero)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia - cero) {
     const Fecha f(2, 0);
     Fecha_chk_eq(f, 2, mesSistema, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia - cero - cero)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia - cero - cero) {
     const Fecha f(2, 0, 0);
     Fecha_chk_eq(f, 2, mesSistema, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia - cero - anno)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia - cero - anno) {
     const Fecha f(3, 0, 2010);
     Fecha_chk_eq(f, 3, mesSistema, 2010);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cero - cero - anno)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cero - cero - anno) {
     const Fecha f(0, 0, 2012);
     Fecha_chk_eq(f, diaSistema, mesSistema, 2012);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cero - mes - anno)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cero - mes - anno) {
     const Fecha f(0, 3, 2000);
     Fecha_chk_eq(f, diaSistema, 3, 2000);
   }
   FCT_TEST_END();
-  FCT_TEST_BGN(Fecha - Ctor.
-               : predeterminado)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : predeterminado) {
     const Fecha hoy;
     Fecha_chk_eq(hoy, diaSistema, mesSistema, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cero - cero - cero)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cero - cero - cero) {
     const Fecha f(0, 0, 0);
     Fecha_chk_eq(f, diaSistema, mesSistema, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : copia)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : copia) {
     const Fecha f(2, 3, 2000);
     const Fecha g(f);
     Fecha_chk_eq(f, g.dia(), g.mes(), g.anno());
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : copia trivial)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : copia trivial) {
 #if __GLIBCXX__ >= 20160301
     fct_chk(is_trivially_copy_constructible<Fecha>::value);
 #endif
@@ -181,157 +143,115 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena dd / mm / aaaa)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena dd / mm / aaaa) {
     const Fecha f("11/09/2001");
     Fecha_chk_eq(f, 11, 9, 2001);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena d / m / aaaa)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena d / m / aaaa) {
     const Fecha f = "1/5/2010";
     Fecha_chk_eq(f, 1, 5, 2010);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena d / m / 0)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena d / m / 0) {
     const Fecha f = "1/5/0";
     Fecha_chk_eq(f, 1, 5, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena d / 0 / aaaa)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena d / 0 / aaaa) {
     const Fecha f = "1/0/2010";
     Fecha_chk_eq(f, 1, mesSistema, 2010);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena 0 / mm / aaaa)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena 0 / mm / aaaa) {
     const Fecha f = "0/10/2010";
     Fecha_chk_eq(f, diaSistema, 10, 2010);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena dd / 0 / 0)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena dd / 0 / 0) {
     const Fecha f = "01/0/0";
     Fecha_chk_eq(f, 1, mesSistema, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena 0 / 0 / 0)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena 0 / 0 / 0) {
     const Fecha f = "0/0/0";
     Fecha_chk_eq(f, diaSistema, mesSistema, annoSistema);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena 0 / 0 / aaaa)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena 0 / 0 / aaaa) {
     const Fecha f = "0/0/2012";
     Fecha_chk_eq(f, diaSistema, mesSistema, 2012);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena formato incorrecto)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena formato incorrecto) {
     fct_chk_ex(Fecha::Invalida, Fecha("22/03"));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : cadena sobran caracteres no numericos)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : cadena sobran caracteres no numericos) {
     const Fecha f("11/09/2001)&...");
     Fecha_chk_eq(f, 11, 9, 2001);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia no valido)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia no valido) {
     fct_chk_ex(Fecha::Invalida, Fecha(31, 4));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia valido para bisiesto)
-  {
-    try
-    {
+  FCT_TEST_BGN(Fecha - Ctor. : dia valido para bisiesto) {
+    try {
       const Fecha f(29, 2, 2004);
       Fecha_chk_eq(f, 29, 2, 2004);
-    }
-    catch (Fecha::Invalida)
-    {
+    } catch (Fecha::Invalida) {
       fct_chk(!"No se esperaba una excepción Fecha::Invalida");
     }
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : dia no valido ni para bisiesto)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : dia no valido ni para bisiesto) {
     fct_chk_ex(Fecha::Invalida, Fecha(29, 2, 2003));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : mes no valido)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : mes no valido) {
     fct_chk_ex(Fecha::Invalida, Fecha(31, 33));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.
-               : anno no valido)
-  {
+  FCT_TEST_BGN(Fecha - Ctor. : anno no valido) {
     fct_chk_ex(Fecha::Invalida, Fecha(2, 5, 1808));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.cadena
-               : dia invalido y Fecha::Invalida::por_que)
-  try
-  {
+  FCT_TEST_BGN(Fecha - Ctor.cadena : dia invalido y Fecha::Invalida::por_que)
+  try {
     Fecha f("29/2/2015");
     fct_chk(!"Se esperaba una excepción Fecha::Invalida");
-  }
-  catch (const Fecha::Invalida &e)
-  {
+  } catch (const Fecha::Invalida &e) {
     fct_chk(e.por_que());
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.cadena
-               : mes no valido)
-  {
+  FCT_TEST_BGN(Fecha - Ctor.cadena : mes no valido) {
     fct_chk_ex(Fecha::Invalida, Fecha("1/-1/2028"));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Ctor.cadena
-               : anno no valido)
-  {
+  FCT_TEST_BGN(Fecha - Ctor.cadena : anno no valido) {
     fct_chk_ex(Fecha::Invalida, Fecha("1/1/-1"));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Preincremento)
-  {
+  FCT_TEST_BGN(Fecha - Preincremento) {
     Fecha f(31, 3, 2010);
     const Fecha g(++f);
     Fecha_chk_eq(f, 1, 4, 2010);
@@ -339,8 +259,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Preincremento - asociatividad)
-  {
+  FCT_TEST_BGN(Fecha - Preincremento - asociatividad) {
     Fecha f(31, 3, 2010);
     const Fecha g(++++f);
     Fecha_chk_eq(f, 2, 4, 2010);
@@ -348,14 +267,12 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Preincremento - fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Preincremento - fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, Fecha f(31, 12, Fecha::AnnoMaximo); ++f);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Postincremento)
-  {
+  FCT_TEST_BGN(Fecha - Postincremento) {
     Fecha f(31, 3, 2010);
     const Fecha g(f++);
     Fecha_chk_eq(f, 1, 4, 2010);
@@ -363,14 +280,12 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Postincremento - fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Postincremento - fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, Fecha f(31, 12, Fecha::AnnoMaximo); f++);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Predecremento)
-  {
+  FCT_TEST_BGN(Fecha - Predecremento) {
     Fecha f(1, 1, 2010);
     const Fecha g(--f);
     Fecha_chk_eq(f, 31, 12, 2009);
@@ -378,8 +293,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Predecremento - asociatividad)
-  {
+  FCT_TEST_BGN(Fecha - Predecremento - asociatividad) {
     Fecha f(1, 1, 2010);
     const Fecha g(----f);
     Fecha_chk_eq(f, 30, 12, 2009);
@@ -387,14 +301,12 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Predecremento - fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Predecremento - fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, Fecha f(1, 1, Fecha::AnnoMinimo); --f);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Postdecremento)
-  {
+  FCT_TEST_BGN(Fecha - Postdecremento) {
     Fecha f(1, 1, 2010);
     const Fecha g(f--);
     Fecha_chk_eq(f, 31, 12, 2009);
@@ -402,89 +314,75 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Postdecremento - fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Postdecremento - fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, Fecha f(1, 1, Fecha::AnnoMinimo); f--);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Suma de dias - fecha + dias)
-  {
+  FCT_TEST_BGN(Fecha - Suma de dias - fecha + dias) {
     const Fecha f(30, 4, 2003);
     const Fecha g(f + 10);
     Fecha_chk_eq(g, 10, 5, 2003);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Suma de dias - fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Suma de dias - fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, const Fecha f(31, 12, Fecha::AnnoMaximo);
                f + 7);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Resta de dias - fecha - dias)
-  {
+  FCT_TEST_BGN(Fecha - Resta de dias - fecha - dias) {
     const Fecha f(1, 4, 2008);
     const Fecha g(f - 10);
     Fecha_chk_eq(g, 22, 3, 2008);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Resta de dias - fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Resta de dias - fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, Fecha f(1, 1, Fecha::AnnoMinimo); f - 3);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Suma con asignacion)
-  {
+  FCT_TEST_BGN(Fecha - Suma con asignacion) {
     Fecha f(5, 5, 2005);
     f += 3;
     Fecha_chk_eq(f, 8, 5, 2005);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Suma con asignacion - asociatividad)
-  {
+  FCT_TEST_BGN(Fecha - Suma con asignacion - asociatividad) {
     Fecha f(5, 5, 2005);
     (f += 3) += 2;
     Fecha_chk_eq(f, 10, 5, 2005);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Suma con asignacion
-               : fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Suma con asignacion : fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, Fecha f(31, 12, Fecha::AnnoMaximo); f += 2);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Resta con asignacion)
-  {
+  FCT_TEST_BGN(Fecha - Resta con asignacion) {
     Fecha f(2, 1, 2010);
     f -= 2;
     Fecha_chk_eq(f, 31, 12, 2009);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Resta con asignacion - asociatividad)
-  {
+  FCT_TEST_BGN(Fecha - Resta con asignacion - asociatividad) {
     Fecha f(2, 7, 2010);
     (f -= 2) -= 5;
     Fecha_chk_eq(f, 25, 6, 2010);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Resta con asignacion
-               : fecha fuera de rango)
-  {
+  FCT_TEST_BGN(Fecha - Resta con asignacion : fecha fuera de rango) {
     fct_chk_ex(Fecha::Invalida, Fecha f(1, 1, Fecha::AnnoMinimo); f -= 2);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Asignacion entre fechas)
-  {
+  FCT_TEST_BGN(Fecha - Asignacion entre fechas) {
     const Fecha f(1, 1, 2001);
     Fecha g(3, 4, 2005);
     g = f;
@@ -492,8 +390,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Asignacion trivial entre fechas)
-  {
+  FCT_TEST_BGN(Fecha - Asignacion trivial entre fechas) {
 #if __GLIBCXX__ >= 20160301
     fct_chk(is_trivially_copy_assignable<Fecha>::value);
 #endif
@@ -501,8 +398,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Asignacion entre fechas - asociatividad)
-  {
+  FCT_TEST_BGN(Fecha - Asignacion entre fechas - asociatividad) {
     const Fecha f(1, 1, 2001);
     Fecha g(3, 4, 2005);
     Fecha h(g);
@@ -511,8 +407,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Observadores dia - mes - anno)
-  {
+  FCT_TEST_BGN(Fecha - Observadores dia - mes - anno) {
     const Fecha f(29, 2, 2000);
     fct_chk_eq_int(f.dia(), 29);
     fct_chk_eq_int(2, f.mes());
@@ -521,11 +416,9 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   FCT_TEST_END();
 
 #ifdef P0
-  FCT_TEST_BGN(Fecha - Conversion implicita a cadena)
-  {
+  FCT_TEST_BGN(Fecha - Conversion implicita a cadena) {
 #else
-  FCT_TEST_BGN(Fecha - Funcion cadena)
-  {
+  FCT_TEST_BGN(Fecha - Funcion cadena) {
 #endif
     const Fecha f(2, 4, 2006);
 #ifdef P0
@@ -550,9 +443,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Comparacion
-               : igualdad)
-  {
+  FCT_TEST_BGN(Fecha - Comparacion : igualdad) {
     const Fecha f(1, 2, 2000);
     const Fecha g(f);
     const Fecha h(2, 3, 2001);
@@ -565,9 +456,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Comparacion
-               : desigualdad)
-  {
+  FCT_TEST_BGN(Fecha - Comparacion : desigualdad) {
     const Fecha f(1, 2, 2000);
     const Fecha g(f);
     const Fecha h(2, 3, 2001);
@@ -580,9 +469,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Comparacion
-               : mayor)
-  {
+  FCT_TEST_BGN(Fecha - Comparacion : mayor) {
     const Fecha f(10, 2, 2000);
     const Fecha g(9, 2, 2001);
     const Fecha h(20, 1, 2000);
@@ -602,9 +489,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Comparacion
-               : mayor o igual)
-  {
+  FCT_TEST_BGN(Fecha - Comparacion : mayor o igual) {
     const Fecha f(10, 2, 2000);
     const Fecha g(9, 2, 2001);
     const Fecha h(20, 1, 2000);
@@ -624,9 +509,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Comparacion
-               : menor)
-  {
+  FCT_TEST_BGN(Fecha - Comparacion : menor) {
     const Fecha f(10, 2, 2000);
     const Fecha g(15, 2, 2000);
     const Fecha h(20, 1, 2000);
@@ -646,9 +529,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Comparacion
-               : menor o igual)
-  {
+  FCT_TEST_BGN(Fecha - Comparacion : menor o igual) {
     const Fecha f(10, 2, 2000);
     const Fecha g(15, 2, 2000);
     const Fecha h(20, 1, 2000);
@@ -671,9 +552,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
 #ifndef P0
   // P1 - E/S
 
-  FCT_TEST_BGN(Fecha - Extraccion
-               : fecha valida)
-  {
+  FCT_TEST_BGN(Fecha - Extraccion : fecha valida) {
     istringstream is("01/01/2001");
     Fecha f;
     is >> f;
@@ -681,18 +560,13 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Extraccion
-               : fecha no valida)
-  {
+  FCT_TEST_BGN(Fecha - Extraccion : fecha no valida) {
     istringstream is("90/20/4000");
     Fecha f;
-    try
-    {
+    try {
       is >> f;
       fct_chk(!"Se esperaba una excepción Fecha::Invalida");
-    }
-    catch (Fecha::Invalida)
-    {
+    } catch (Fecha::Invalida) {
       fct_chk(is.fail());
       is.clear();
     }
@@ -700,18 +574,13 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Extraccion
-               : entrada no valida)
-  {
+  FCT_TEST_BGN(Fecha - Extraccion : entrada no valida) {
     istringstream is("gomi");
     Fecha f;
-    try
-    {
+    try {
       is >> f;
       fct_chk(!"Se esperaba una excepción Fecha::Invalida");
-    }
-    catch (Fecha::Invalida)
-    {
+    } catch (Fecha::Invalida) {
       fct_chk(is.fail());
       is.clear();
     }
@@ -719,18 +588,13 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Extraccion
-               : desbordamiento)
-  {
+  FCT_TEST_BGN(Fecha - Extraccion : desbordamiento) {
     istringstream is("007/007/1997");
     Fecha f;
-    try
-    {
+    try {
       is >> f;
       fct_chk(!"Se esperaba una excepción Fecha::Invalida");
-    }
-    catch (Fecha::Invalida)
-    {
+    } catch (Fecha::Invalida) {
       fct_chk(is.fail());
       is.clear();
     }
@@ -738,8 +602,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_fecha)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Fecha - Insercion)
-  {
+  FCT_TEST_BGN(Fecha - Insercion) {
     const Fecha f("23/09/2015");
     ostringstream os;
     os << f;

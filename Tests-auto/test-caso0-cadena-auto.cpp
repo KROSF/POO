@@ -9,16 +9,12 @@
 
 using namespace std;
 
-namespace
-{
+namespace {
 bool bPrimera = true;
 }
 
-FCTMF_SUITE_BGN(test_cadena)
-{
-
-  if (bPrimera)
-  {
+FCTMF_SUITE_BGN(test_cadena) {
+  if (bPrimera) {
     bPrimera = false;
     cerr <<
 #ifdef P0
@@ -33,33 +29,25 @@ FCTMF_SUITE_BGN(test_cadena)
 #ifdef P0
 #define c_str operator const char *
 #endif
-  FCT_TEST_BGN(Cadena - Ctor
-               : repetir caracter ciertas veces)
-  {
+  FCT_TEST_BGN(Cadena - Ctor : repetir caracter ciertas veces) {
     const Cadena a(5, '*');
     fct_chk(strcmp(a.c_str(), "*****") == 0);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Ctor
-               : entero - repite espacios)
-  {
+  FCT_TEST_BGN(Cadena - Ctor : entero - repite espacios) {
     const Cadena a(10);
     fct_chk(strcmp(a.c_str(), "          ") == 0);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Ctor
-               : sin parametros - vacia)
-  {
+  FCT_TEST_BGN(Cadena - Ctor : sin parametros - vacia) {
     const Cadena a;
     fct_chk_eq_str(a.c_str(), "");
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Ctor
-               : por copia de otra cadena)
-  {
+  FCT_TEST_BGN(Cadena - Ctor : por copia de otra cadena) {
     const Cadena a(3);
     const Cadena b(a);
     fct_chk(is_copy_constructible<Cadena>::value);
@@ -68,9 +56,7 @@ FCTMF_SUITE_BGN(test_cadena)
   FCT_TEST_END();
   // Solo en P1, no se pide en P0
 #ifndef P0
-  FCT_TEST_BGN(Cadena - Ctor
-               : de movimiento)
-  {
+  FCT_TEST_BGN(Cadena - Ctor : de movimiento) {
     Cadena a(3);
     const char *c = a.c_str();
     const Cadena b = move(a);
@@ -84,15 +70,12 @@ FCTMF_SUITE_BGN(test_cadena)
   FCT_TEST_END();
 #endif
 
-  FCT_TEST_BGN(Cadena - Ctor
-               : desde cadena de bajo nivel)
-  {
+  FCT_TEST_BGN(Cadena - Ctor : desde cadena de bajo nivel) {
     const Cadena a("hola");
     fct_chk_eq_str(a.c_str(), "hola");
   }
   FCT_TEST_END();
-  FCT_TEST_BGN(Cadena - Asignar una cadena a otra)
-  {
+  FCT_TEST_BGN(Cadena - Asignar una cadena a otra) {
     Cadena a("adios");
     const Cadena b;
     a = b;
@@ -103,9 +86,7 @@ FCTMF_SUITE_BGN(test_cadena)
 
   // Solo en P1, no se pide en P0
 #ifndef P0
-  FCT_TEST_BGN(Cadena - Asignar una cadena a otra
-               : movimiento)
-  {
+  FCT_TEST_BGN(Cadena - Asignar una cadena a otra : movimiento) {
     Cadena a("hola"), b("adios");
     const char *c = b.c_str();
     a = move(b);
@@ -119,43 +100,34 @@ FCTMF_SUITE_BGN(test_cadena)
   FCT_TEST_END();
 #endif
 
-  FCT_TEST_BGN(Cadena - Asignar una cadena de bajo nivel)
-  {
+  FCT_TEST_BGN(Cadena - Asignar una cadena de bajo nivel) {
     Cadena a;
     a = "lembas";
     fct_chk_eq_str(a.c_str(), "lembas");
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Observadora de longitud
-               : cadena vacia)
-  {
+  FCT_TEST_BGN(Cadena - Observadora de longitud : cadena vacia) {
     const Cadena a;
     fct_chk_eq_int(a.length(), 0);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Observadora de longitud
-               : cadena no vacia)
-  {
+  FCT_TEST_BGN(Cadena - Observadora de longitud : cadena no vacia) {
     const char *s = "Pimienta, sal y cebolla cuando se pone la olla";
     const Cadena a(s);
     fct_chk_eq_int(a.length(), strlen(s));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Concatenacion
-               : con +=)
-  {
+  FCT_TEST_BGN(Cadena - Concatenacion : con +=) {
     Cadena a("Inglés,");
     a += Cadena(" pirata es");
     fct_chk_eq_str(a.c_str(), "Inglés, pirata es");
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Concatenacion
-               : con +)
-  {
+  FCT_TEST_BGN(Cadena - Concatenacion : con +) {
     const Cadena a("Cada cual,"), b(" en su corral");
     Cadena c = a + b;
     fct_chk_eq_str((a + b).c_str(), "Cada cual, en su corral");
@@ -164,9 +136,7 @@ FCTMF_SUITE_BGN(test_cadena)
   FCT_TEST_END();
 
 #ifdef P0
-  FCT_TEST_BGN(Cadena - Comparacion
-               : igualdad)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : igualdad) {
     fct_chk(Cadena("hola") == Cadena("hola"));
     fct_chk(!(Cadena("hola") == Cadena("adios")));
     fct_chk(!(Cadena("hola") == Cadena("holas")));
@@ -174,9 +144,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : desigualdad)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : desigualdad) {
     fct_chk(!(Cadena("hola") != Cadena("hola")));
     fct_chk(Cadena("hola") != Cadena("adios"));
     fct_chk(Cadena("hola") != Cadena("holas"));
@@ -184,9 +152,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : menor que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : menor que) {
     fct_chk(Cadena("") < Cadena("x"));
     fct_chk(Cadena("a") < Cadena("b"));
     fct_chk(!(Cadena("ab") < Cadena("ab")));
@@ -194,9 +160,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : menor o igual que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : menor o igual que) {
     fct_chk(Cadena("") <= Cadena("x"));
     fct_chk(Cadena("a") <= Cadena("b"));
     fct_chk(Cadena("ab") <= Cadena("ab"));
@@ -204,9 +168,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : mayor que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : mayor que) {
     fct_chk(!(Cadena("") > Cadena("x")));
     fct_chk(!(Cadena("a") > Cadena("b")));
     fct_chk(!(Cadena("ab") > Cadena("ab")));
@@ -214,9 +176,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : mayor o igual que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : mayor o igual que) {
     fct_chk(!(Cadena("") >= Cadena("x")));
     fct_chk(!(Cadena("a") >= Cadena("b")));
     fct_chk(Cadena("ab") >= Cadena("ab"));
@@ -224,9 +184,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 #else
-  FCT_TEST_BGN(Cadena - Comparacion
-               : igualdad)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : igualdad) {
     fct_chk(Cadena("hola") == "hola");
     fct_chk(!("hola" == Cadena("adios")));
     fct_chk(!(Cadena("hola") == Cadena("holas")));
@@ -234,9 +192,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : desigualdad)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : desigualdad) {
     fct_chk(!("hola" != Cadena("hola")));
     fct_chk(Cadena("hola") != "adios");
     fct_chk(Cadena("hola") != Cadena("holas"));
@@ -244,9 +200,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : menor que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : menor que) {
     fct_chk(Cadena("") < "x");
     fct_chk("a" < Cadena("b"));
     fct_chk(!(Cadena("ab") < Cadena("ab")));
@@ -254,9 +208,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : menor o igual que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : menor o igual que) {
     fct_chk("" <= Cadena("x"));
     fct_chk(Cadena("a") <= "b");
     fct_chk(Cadena("ab") <= Cadena("ab"));
@@ -264,9 +216,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : mayor que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : mayor que) {
     fct_chk(!(Cadena("") > "x"));
     fct_chk(!("a" > Cadena("b")));
     fct_chk(!(Cadena("ab") > Cadena("ab")));
@@ -274,9 +224,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Comparacion
-               : mayor o igual que)
-  {
+  FCT_TEST_BGN(Cadena - Comparacion : mayor o igual que) {
     fct_chk(!("" >= Cadena("x")));
     fct_chk(!(Cadena("a") >= "b"));
     fct_chk(Cadena("ab") >= Cadena("ab"));
@@ -285,108 +233,82 @@ FCTMF_SUITE_BGN(test_cadena)
   FCT_TEST_END();
 #endif
 
-  FCT_TEST_BGN(Cadena - Leer caracter
-               : [] y posicion valida)
-  {
+  FCT_TEST_BGN(Cadena - Leer caracter : [] y posicion valida) {
     const Cadena a("abcd");
     fct_chk(a.operator[](0) == 'a');
     fct_chk(a.operator[](3) == 'd');
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Leer caracter
-               : [] y posicion no valida)
-  {
+  FCT_TEST_BGN(Cadena - Leer caracter : [] y posicion no valida) {
     const Cadena a;
     fct_chk(a.operator[](0) == 0);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Leer caracter
-               : at y posicion valida)
-  {
+  FCT_TEST_BGN(Cadena - Leer caracter : at y posicion valida) {
     const Cadena a("abcd");
     fct_chk(a.at(0) == 'a');
     fct_chk(a.at(3) == 'd');
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Leer caracter
-               : at y posicion no valida)
-  {
+  FCT_TEST_BGN(Cadena - Leer caracter : at y posicion no valida) {
     const Cadena a;
     fct_chk_ex(out_of_range, a.at(0));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Escribir caracter
-               : [])
-  {
+  FCT_TEST_BGN(Cadena - Escribir caracter : []) {
     Cadena a("pava");
     a.operator[](2) = 'p';
     fct_chk_eq_str(a.c_str(), "papa");
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Escribir caracter
-               : at())
-  {
+  FCT_TEST_BGN(Cadena - Escribir caracter : at()) {
     Cadena a("Papa");
     a.at(2) = 'c';
     fct_chk_eq_str(a.c_str(), "Paca");
   }
   FCT_TEST_END();
-  FCT_TEST_BGN(Cadena - Escribir caracter
-               : at() y posicion no valida)
-  {
+  FCT_TEST_BGN(Cadena - Escribir caracter : at() y posicion no valida) {
     Cadena a("Papa");
     fct_chk_ex(out_of_range, a.at(21) = 'x');
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Subcadena
-               : caso normal)
-  {
+  FCT_TEST_BGN(Cadena - Subcadena : caso normal) {
     const Cadena a("eenie meenie moe");
     fct_chk_eq_str(a.substr(6, 6).c_str(), "meenie");
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Subcadena
-               : posicion inicial mayor que longitud)
-  {
+  FCT_TEST_BGN(Cadena - Subcadena : posicion inicial mayor que longitud) {
     const Cadena a("0123456789");
     fct_chk_ex(out_of_range, a.substr(10, 10));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Subcadena
-               : posicion inicial negativa)
-  {
+  FCT_TEST_BGN(Cadena - Subcadena : posicion inicial negativa) {
     const Cadena a("0123456789");
     fct_chk_ex(out_of_range, a.substr(-1, 10));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Subcadena
-               : tamanno mayor que longitud restante)
-  {
+  FCT_TEST_BGN(Cadena - Subcadena : tamanno mayor que longitud restante) {
     const Cadena a("0123456789");
     fct_chk_ex(out_of_range, a.substr(9, 2));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Subcadena
-               : tamanno negativo)
-  {
+  FCT_TEST_BGN(Cadena - Subcadena : tamanno negativo) {
     const Cadena a("0123456789");
     fct_chk_ex(out_of_range, a.substr(9, -1));
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Subcadena
-               : tamanno excesivo)
-  {
+  FCT_TEST_BGN(Cadena - Subcadena : tamanno excesivo) {
     const Cadena a("0123456789");
     fct_chk_ex(out_of_range, a.substr(9, 1000));
   }
@@ -394,9 +316,7 @@ FCTMF_SUITE_BGN(test_cadena)
 
   // P1 - E/S e iteradores
 #ifndef P0
-  FCT_TEST_BGN(Cadena - Extraccion
-               : entrada vacia)
-  {
+  FCT_TEST_BGN(Cadena - Extraccion : entrada vacia) {
     istringstream is("");
     Cadena c("algo");
     is >> c;
@@ -404,9 +324,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Extraccion
-               : solo espacios)
-  {
+  FCT_TEST_BGN(Cadena - Extraccion : solo espacios) {
     istringstream is(" \t\r\n\v");
     Cadena c("algo");
     is >> c;
@@ -414,9 +332,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Extraccion
-               : hasta fin de entrada)
-  {
+  FCT_TEST_BGN(Cadena - Extraccion : hasta fin de entrada) {
     istringstream is("prueba");
     Cadena c;
     is >> c;
@@ -424,9 +340,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Extraccion
-               : una palabra)
-  {
+  FCT_TEST_BGN(Cadena - Extraccion : una palabra) {
     istringstream is("bueno bonito barato");
     Cadena c;
     is >> c;
@@ -435,9 +349,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Extraccion
-               : una palabra con espaciado inicial)
-  {
+  FCT_TEST_BGN(Cadena - Extraccion : una palabra con espaciado inicial) {
     istringstream is("   hola adiós");
     Cadena c;
     is >> c;
@@ -446,9 +358,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Extraccion
-               : una palabra de mas de 32 caracteres)
-  {
+  FCT_TEST_BGN(Cadena - Extraccion : una palabra de mas de 32 caracteres) {
     istringstream is("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
     Cadena c;
     is >> c;
@@ -457,8 +367,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Insercion)
-  {
+  FCT_TEST_BGN(Cadena - Insercion) {
     ostringstream os;
     const char *s = "probando 1 2 3";
     const Cadena c(s);
@@ -467,8 +376,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Insercion nula)
-  {
+  FCT_TEST_BGN(Cadena - Insercion nula) {
     ostringstream os;
     const Cadena c;
     os << c;
@@ -476,9 +384,7 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Iterador
-               : begin())
-  {
+  FCT_TEST_BGN(Cadena - Iterador : begin()) {
     Cadena a("hola");
     *a.begin() = ' ';
     fct_chk(a.begin() == a.c_str());
@@ -486,60 +392,45 @@ FCTMF_SUITE_BGN(test_cadena)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Iterador
-               : end())
-  {
+  FCT_TEST_BGN(Cadena - Iterador : end()) {
     Cadena a("hola");
     fct_chk(a.end() == a.c_str() + 4);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Iterador
-               : begin() const)
-  {
+  FCT_TEST_BGN(Cadena - Iterador : begin() const) {
     const Cadena a("hola");
     fct_chk(a.begin() == a.c_str());
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Iterador
-               : end() const)
-  {
+  FCT_TEST_BGN(Cadena - Iterador : end() const) {
     const Cadena a("hola");
     fct_chk(a.end() == a.c_str() + 4);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Iterador
-               : rbegin() / rend())
-  {
+  FCT_TEST_BGN(Cadena - Iterador : rbegin() / rend()) {
     Cadena a("hola");
     fct_chk(*a.rbegin() == 'a');
     fct_chk(*a.rend().base() == 'h');
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Iteradores
-               : recorridos directos)
-  {
+  FCT_TEST_BGN(Cadena - Iteradores : recorridos directos) {
     Cadena a("hola");
-    for (Cadena::iterator i = a.begin(); i != a.end(); ++i)
-      (*i)++;
+    for (Cadena::iterator i = a.begin(); i != a.end(); ++i) (*i)++;
     fct_chk(a == "ipmb");
     const Cadena b(a);
     ostringstream os;
-    for (Cadena::const_iterator i = b.begin(); i != b.end(); ++i)
-      os << *i;
+    for (Cadena::const_iterator i = b.begin(); i != b.end(); ++i) os << *i;
     fct_chk(os.str() == "ipmb");
-    for (auto i = a.cbegin(); i != a.cend(); ++i)
-      os << *i;
+    for (auto i = a.cbegin(); i != a.cend(); ++i) os << *i;
     fct_chk(os.str() == "ipmbipmb");
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Cadena - Iteradores
-               : recorridos inversos)
-  {
+  FCT_TEST_BGN(Cadena - Iteradores : recorridos inversos) {
     const Cadena a("hola");
     Cadena b(a);
     ostringstream os;
@@ -549,19 +440,17 @@ FCTMF_SUITE_BGN(test_cadena)
     for (Cadena::const_reverse_iterator r = a.rbegin(); r != a.rend(); ++r)
       os << *r;
     fct_chk(os.str() == "bmpialoh");
-    for (auto r = a.crbegin(); r != a.crend(); ++r)
-      os << *r;
+    for (auto r = a.crbegin(); r != a.crend(); ++r) os << *r;
     fct_chk(os.str() == "bmpialohaloh");
   }
   FCT_TEST_END();
 #endif
 
 #if defined(P2) || defined(P3) || defined(P4)
-  FCT_TEST_BGN(Cadena - hash)
-  {
+  FCT_TEST_BGN(Cadena - hash) {
     hash<Cadena> hc;
-    size_t h = hc("hola"); // operator()
-    fct_chk_neq_int(h, 0); // 4749747280605603126
+    size_t h = hc("hola");  // operator()
+    fct_chk_neq_int(h, 0);  // 4749747280605603126
   }
   FCT_TEST_END();
 #endif

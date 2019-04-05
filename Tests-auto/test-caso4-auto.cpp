@@ -7,11 +7,9 @@
 #include "test-auto.hpp"
 using namespace std;
 
-namespace
-{
+namespace {
 // Para pruebas de Autor
-const Cadena sNombreAutor1 = "Nobuo",
-             sApellidosAutor1 = "Uematsu",
+const Cadena sNombreAutor1 = "Nobuo", sApellidosAutor1 = "Uematsu",
              sDireccionAutor1 = "Tokyo, Japón";
 
 // Para pruebas de Libro
@@ -24,8 +22,7 @@ const double precioLibro = 35.95;
 const unsigned paginasLibro = 650, stockLibro = 100;
 
 // Para pruebas de Cederron
-const Cadena
-    sReferenciaCederron("404"),
+const Cadena sReferenciaCederron("404"),
     sTituloCederron("Ubuntu Hysterical Hyena");
 const Fecha fechaCederron(8, 4, 2005);
 const double precioCederron = 0.01;
@@ -33,8 +30,7 @@ const unsigned tamanyoCederron = 400;
 const unsigned stockCederron = 1000;
 
 // Para pruebas de LibroDigital
-const Cadena sReferencia_eBook("4337"),
-    sTitulo_eBook("Minority Report");
+const Cadena sReferencia_eBook("4337"), sTitulo_eBook("Minority Report");
 const Fecha fecha_eBook(9, 9, 2009);
 const double precio_eBook = 9000;
 
@@ -46,34 +42,26 @@ Tarjeta *pTarjetaPedido;
 Pedido_Articulo pedArt;
 Usuario_Pedido usuPed;
 
-Cederron cdrom(autores, sReferenciaCederron, sTituloCederron,
-               fechaCederron, precioCederron, tamanyoCederron,
-               stockCederron);
-LibroDigital eBookNoExpirado(autores, sReferencia_eBook,
-                             sTitulo_eBook, fecha_eBook,
-                             precio_eBook, Fecha() + 7);
-LibroDigital eBookExpirado(autores, sReferencia_eBook,
-                           sTitulo_eBook, fecha_eBook,
-                           precio_eBook, Fecha() - 7);
+Cederron cdrom(autores, sReferenciaCederron, sTituloCederron, fechaCederron,
+               precioCederron, tamanyoCederron, stockCederron);
+LibroDigital eBookNoExpirado(autores, sReferencia_eBook, sTitulo_eBook,
+                             fecha_eBook, precio_eBook, Fecha() + 7);
+LibroDigital eBookExpirado(autores, sReferencia_eBook, sTitulo_eBook,
+                           fecha_eBook, precio_eBook, Fecha() - 7);
 
 // Parte común
 bool bPrimera = true;
 
 using TIPO = Tarjeta::Tipo;
-} // namespace
+}  // namespace
 
-FCTMF_FIXTURE_SUITE_BGN(test_p4)
-{
-
-  if (bPrimera)
-  {
+FCTMF_FIXTURE_SUITE_BGN(test_p4) {
+  if (bPrimera) {
     bPrimera = false;
-    cerr << "\n---------- PRÁCTICA 4 ----------\n"
-         << endl;
+    cerr << "\n---------- PRÁCTICA 4 ----------\n" << endl;
   }
 
-  FCT_SETUP_BGN()
-  {
+  FCT_SETUP_BGN() {
     pUsuarioPedido = new Usuario("fjord", "Franz", "Jordan",
                                  "Rue del Percebe, 13", Clave("supersecreta"));
     pTarjetaPedido = new Tarjeta(TIPO::VISA, Numero("11234567890126"),
@@ -81,15 +69,13 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_SETUP_END();
 
-  FCT_TEARDOWN_BGN()
-  {
+  FCT_TEARDOWN_BGN() {
     delete pUsuarioPedido;
     delete pTarjetaPedido;
   }
   FCT_TEARDOWN_END();
 
-  FCT_TEST_BGN(Autor - observadores)
-  {
+  FCT_TEST_BGN(Autor - observadores) {
     const Autor autor(sNombreAutor1, sApellidosAutor1, sDireccionAutor1);
     chk_eq_str(autor.nombre(), sNombreAutor1);
     chk_eq_str(autor.apellidos(), sApellidosAutor1);
@@ -97,32 +83,27 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Articulo - es abstracta)
-  {
+  FCT_TEST_BGN(Articulo - es abstracta) {
     fct_chk(is_abstract<Articulo>::value);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Articulo - tiene destructor virtual)
-  {
+  FCT_TEST_BGN(Articulo - tiene destructor virtual) {
     fct_chk(has_virtual_destructor<Articulo>::value);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(ArticuloAlmacenable - es abstracta)
-  {
+  FCT_TEST_BGN(ArticuloAlmacenable - es abstracta) {
     fct_chk(is_abstract<ArticuloAlmacenable>::value);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(ArticuloAlmacenable - tiene destructor virtual)
-  {
+  FCT_TEST_BGN(ArticuloAlmacenable - tiene destructor virtual) {
     fct_chk(has_virtual_destructor<ArticuloAlmacenable>::value);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Libro - observadores)
-  {
+  FCT_TEST_BGN(Libro - observadores) {
     const Libro libro(autores, sReferenciaLibro, sTituloLibro, fechaLibro,
                       precioLibro, paginasLibro, stockLibro);
     fct_chk_eq_int(autores.size(), 1);
@@ -137,8 +118,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Libro - insercion en flujo)
-  {
+  FCT_TEST_BGN(Libro - insercion en flujo) {
     Autor autor2("María", "Martínez", "Algeciras");
     Articulo::Autores autores2{&autor1, &autor2};
     const Libro libro(autores2, sReferenciaLibro, sTituloLibro, fechaLibro,
@@ -157,8 +137,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(Libro - modificacion)
-  {
+  FCT_TEST_BGN(Libro - modificacion) {
     Libro libro(autores, sReferenciaLibro, sTituloLibro, fechaLibro,
                 precioLibro, paginasLibro, stockLibro);
     const double nuevoPrecio = 10.5;
@@ -170,8 +149,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(CD - observadores)
-  {
+  FCT_TEST_BGN(CD - observadores) {
     const Cederron cdrom(autores, sReferenciaCederron, sTituloCederron,
                          fechaCederron, precioCederron, tamanyoCederron,
                          stockCederron);
@@ -187,8 +165,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(CD - insercion en flujo)
-  {
+  FCT_TEST_BGN(CD - insercion en flujo) {
     const Cederron cdrom(autores, sReferenciaCederron, sTituloCederron,
                          fechaCederron, precioCederron, tamanyoCederron,
                          stockCederron);
@@ -207,11 +184,9 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(CD - modificacion)
-  {
-    Cederron cdrom(autores, sReferenciaCederron, sTituloCederron,
-                   fechaCederron, precioCederron, tamanyoCederron,
-                   stockCederron);
+  FCT_TEST_BGN(CD - modificacion) {
+    Cederron cdrom(autores, sReferenciaCederron, sTituloCederron, fechaCederron,
+                   precioCederron, tamanyoCederron, stockCederron);
     const double nuevoPrecio = 10.5;
     const unsigned nuevoStock = cdrom.stock() + 1;
     cdrom.precio() = nuevoPrecio;
@@ -221,8 +196,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(LibroDigital - observadores)
-  {
+  FCT_TEST_BGN(LibroDigital - observadores) {
     const Fecha fManyana = Fecha() + 1;
     const LibroDigital eBook(autores, sReferencia_eBook, sTitulo_eBook,
                              fecha_eBook, precio_eBook, fManyana);
@@ -237,8 +211,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(LibroDigital - insercion en flujo)
-  {
+  FCT_TEST_BGN(LibroDigital - insercion en flujo) {
     const Fecha fExpiracion = Fecha() + 1;
     const LibroDigital eBook(autores, sReferencia_eBook, sTitulo_eBook,
                              fecha_eBook, precio_eBook, fExpiracion);
@@ -264,18 +237,16 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(LibroDigital - modificacion)
-  {
-    LibroDigital eBook(autores, sReferencia_eBook, sTitulo_eBook,
-                       fecha_eBook, precio_eBook, Fecha() + 1);
+  FCT_TEST_BGN(LibroDigital - modificacion) {
+    LibroDigital eBook(autores, sReferencia_eBook, sTitulo_eBook, fecha_eBook,
+                       precio_eBook, Fecha() + 1);
     const double nuevoPrecio = 10.5;
     eBook.precio() = nuevoPrecio;
     fct_chk_eq_dbl(eBook.precio(), nuevoPrecio);
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(LibroDigital - compra de eBook no expirado)
-  {
+  FCT_TEST_BGN(LibroDigital - compra de eBook no expirado) {
     pUsuarioPedido->compra(cdrom, 1);
     pUsuarioPedido->compra(eBookNoExpirado, 1);
     Pedido p(usuPed, pedArt, *pUsuarioPedido, *pTarjetaPedido);
@@ -288,8 +259,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(LibroDigital - eBook expirado y carrito no queda vacio)
-  {
+  FCT_TEST_BGN(LibroDigital - eBook expirado y carrito no queda vacio) {
     pUsuarioPedido->compra(cdrom, 1);
     pUsuarioPedido->compra(eBookExpirado, 1);
     Pedido p(usuPed, pedArt, *pUsuarioPedido, *pTarjetaPedido);
@@ -298,8 +268,7 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
   }
   FCT_TEST_END();
 
-  FCT_TEST_BGN(LibroDigital - eBook expirado y carrito queda vacio)
-  {
+  FCT_TEST_BGN(LibroDigital - eBook expirado y carrito queda vacio) {
     pUsuarioPedido->compra(eBookExpirado, 1);
     fct_chk_ex(Pedido::Vacio,
                Pedido(usuPed, pedArt, *pUsuarioPedido, *pTarjetaPedido));
@@ -308,4 +277,4 @@ FCTMF_FIXTURE_SUITE_BGN(test_p4)
 }
 FCTMF_FIXTURE_SUITE_END()
 
-#endif // ifdef P4
+#endif  // ifdef P4

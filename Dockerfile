@@ -9,3 +9,4 @@ apt install -y clang-7 lldb-7 lld-7 clang-tools-7 libclang-common-7-dev libclang
 ln -s /usr/bin/llvm-config-7 /usr/bin/llvm-config && \
 ln -s /usr/bin/clang-7 /usr/bin/clang && \
 ln -s /usr/bin/clang++-7 /usr/bin/clang++
+WORKDIR /root/POO

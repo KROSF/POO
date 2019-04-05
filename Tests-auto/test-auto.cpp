@@ -14,11 +14,10 @@
   Incluye también varias funciones de utilidad para las pruebas.
   V. comentarios sobre las funciones en test-auto.hpp .
 */
-using namespace std; // Esto también resulta más cómodo.
+using namespace std;  // Esto también resulta más cómodo.
 
 #ifdef P4
-Articulo::Autores crea_autores(Autor &autor)
-{
+Articulo::Autores crea_autores(Autor &autor) {
   Articulo::Autores autores{&autor};
   return autores;
 }
@@ -28,8 +27,7 @@ Articulo::Autores crea_autores(Autor &autor)
    Convierte un número de coma flotante de doble precisión a una
    cantidad de euros, con dos dígitos decimales.
 */
-string toEuros(double cantidad)
-{
+string toEuros(double cantidad) {
   ostringstream os;
   os.imbue(locale(locale("es_ES.UTF-8"), new sin_separador()));
   os << fixed << setprecision(2) << cantidad << " €";
@@ -37,11 +35,9 @@ string toEuros(double cantidad)
 }
 
 #ifndef CPP11REGEX
-regoff_t find_regex(const char *regex, const char *text) noexcept(false)
-{
+regoff_t find_regex(const char *regex, const char *text) noexcept(false) {
   regex_t reg;
-  if (regcomp(&reg, regex, REG_EXTENDED) != 0)
-    throw BadRegex(regex);
+  if (regcomp(&reg, regex, REG_EXTENDED) != 0) throw BadRegex(regex);
   regmatch_t matches[1] = {{-1, -1}};
   regexec(&reg, text, 1, matches, 0);
   regfree(&reg);
@@ -52,21 +48,16 @@ regoff_t find_regex(const char *regex, const char *text) noexcept(false)
 
 /***** CUERPO PRINCIPAL *****/
 
-FCT_BGN()
-{
-
+FCT_BGN() {
   /**
      Establecemos la localización por omisión a la española de España
      con UTF-8, para asegurarnos de que las pruebas funcionen como
      deben. Si no, se mezclarán los separadores decimales ingleses
      ('.') y españoles (',').
   */
-  try
-  {
+  try {
     locale::global(locale("es_ES.UTF-8"));
-  }
-  catch (const runtime_error &e)
-  {
+  } catch (const runtime_error &e) {
     cerr << "Parece que no tienes la localización española "
             "\"es_ES.UTF-8\". Instálala antes. El mensaje de error es:\n"
          << e.what() << "\nFin del programa" << endl;
@@ -90,11 +81,11 @@ FCT_BGN()
   FCT_SUITE_END();
 #endif
   /**
-     Los tests de Fecha y Cadena ("caso 0", práctica preliminar P0 y P1) se 
+     Los tests de Fecha y Cadena ("caso 0", práctica preliminar P0 y P1) se
      hacen en todas las prácticas, de P0 a P4. Los de P2 (casos 1 y 2) se hacen
-     en P2 a P4. Los de P3 (caso 3: clases e informes) se hacen en P3 y P4, 
+     en P2 a P4. Los de P3 (caso 3: clases e informes) se hacen en P3 y P4,
      y los de P4 (caso 4), obviamente solo en P4, de forma que cada práctica
-     arrastra los tests de las anteriores, teniendo en cuenta las pequeñas 
+     arrastra los tests de las anteriores, teniendo en cuenta las pequeñas
      modificaciones de las partes comunes.
 */
   FCTMF_SUITE_CALL(test_fecha);

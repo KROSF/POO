@@ -1,17 +1,17 @@
-#include "clang/Frontend/FrontendActions.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
+#include "clang/AST/ASTContext.h"
+#include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/ASTMatchers/ASTMatchersInternal.h"
 #include "clang/ASTMatchers/ASTMatchersMacros.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
-#include "clang/AST/ASTContext.h"
 #include "clang/Basic/SourceManager.h"
-#include "llvm/Support/CommandLine.h"
-#include "clang/Rewrite/Frontend/Rewriters.h"
-#include "clang/Rewrite/Core/Rewriter.h"
 #include "clang/Frontend/CompilerInstance.h"
+#include "clang/Frontend/FrontendActions.h"
+#include "clang/Rewrite/Core/Rewriter.h"
+#include "clang/Rewrite/Frontend/Rewriters.h"
+#include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/CompilationDatabase.h"
+#include "clang/Tooling/Tooling.h"
+#include "llvm/Support/CommandLine.h"
 
 #include <iostream>
 
@@ -24,32 +24,26 @@ using namespace std;
 #ifndef MATCHERS_H
 #define MATCHERS_H
 
-namespace clang
-{
-namespace ast_matchers
-{
+namespace clang {
+namespace ast_matchers {
 
-AST_MATCHER(clang::CXXDestructorDecl, isImplicitDestructor)
-{
-	return Node.isImplicit();
+AST_MATCHER(clang::CXXDestructorDecl, isImplicitDestructor) {
+  return Node.isImplicit();
 }
 
-AST_MATCHER(clang::CXXRecordDecl, hasCopyConstructorWithConstParam)
-{
-	return Node.hasCopyConstructorWithConstParam();
+AST_MATCHER(clang::CXXRecordDecl, hasCopyConstructorWithConstParam) {
+  return Node.hasCopyConstructorWithConstParam();
 }
 
-AST_MATCHER(clang::CXXMethodDecl, isImplicitMethod)
-{
-	return Node.isImplicit();
+AST_MATCHER(clang::CXXMethodDecl, isImplicitMethod) {
+  return Node.isImplicit();
 }
 
-AST_MATCHER(clang::FunctionDecl, isImplicitFunction)
-{
-	return Node.isImplicit();
+AST_MATCHER(clang::FunctionDecl, isImplicitFunction) {
+  return Node.isImplicit();
 }
-} // namespace ast_matchers
-} // namespace clang
+}  // namespace ast_matchers
+}  // namespace clang
 
 /*
 **
@@ -79,7 +73,8 @@ DeclarationMatcher moveConstructor_Matcher(string className);
 
 DeclarationMatcher destructor_Matcher(string className);
 
-DeclarationMatcher destructorDeleteMember_Matcher(string className, string memberName);
+DeclarationMatcher destructorDeleteMember_Matcher(string className,
+                                                  string memberName);
 
 DeclarationMatcher listInitializerConstructor_Matcher(string className);
 
@@ -97,7 +92,8 @@ DeclarationMatcher takeException_Matcher(string exceptionClass);
 
 DeclarationMatcher member_Matcher(string className, string memberName);
 
-DeclarationMatcher staticVariable_Matcher(string className, string variableName);
+DeclarationMatcher staticVariable_Matcher(string className,
+                                          string variableName);
 
 DeclarationMatcher variableNew_Matcher();
 
@@ -105,7 +101,8 @@ DeclarationMatcher variableDelete_Matcher();
 
 DeclarationMatcher allPrivateMember_Matcher(string className);
 
-DeclarationMatcher memberVariableAccessLevel_Matcher(string className, string memberName);
+DeclarationMatcher memberVariableAccessLevel_Matcher(string className,
+                                                     string memberName);
 
 /*
 **
@@ -115,9 +112,11 @@ DeclarationMatcher memberVariableAccessLevel_Matcher(string className, string me
 
 DeclarationMatcher notFriendMember_Matcher(string className);
 
-DeclarationMatcher friendFunction_Matcher(string functionName, string className);
+DeclarationMatcher friendFunction_Matcher(string functionName,
+                                          string className);
 
-DeclarationMatcher friendClass_Matcher(string className, string friendClassName);
+DeclarationMatcher friendClass_Matcher(string className,
+                                       string friendClassName);
 
 /*
 **
@@ -127,15 +126,21 @@ DeclarationMatcher friendClass_Matcher(string className, string friendClassName)
 
 DeclarationMatcher method_Matcher(string methodName, string className);
 
-DeclarationMatcher methodWithReferencedVariable_Matcher(string methodName, string className, string usedVariable);
+DeclarationMatcher methodWithReferencedVariable_Matcher(string methodName,
+                                                        string className,
+                                                        string usedVariable);
 
-DeclarationMatcher methodWithReferencedMethod_Matcher(string mainMethodName, string mainClassName, string usedMethodName, string usedClassName);
+DeclarationMatcher methodWithReferencedMethod_Matcher(string mainMethodName,
+                                                      string mainClassName,
+                                                      string usedMethodName,
+                                                      string usedClassName);
 
 DeclarationMatcher noExceptMethod_Matcher(string methodName, string className);
 
 DeclarationMatcher inlineMethod_Matcher(string methodName, string className);
 
-DeclarationMatcher defaultArgumentsInMethod_Matcher(string methodName, string className);
+DeclarationMatcher defaultArgumentsInMethod_Matcher(string methodName,
+                                                    string className);
 
 DeclarationMatcher deletedMethod_Matcher(string methodName, string className);
 
@@ -153,11 +158,16 @@ DeclarationMatcher copyAssignmentOperator_Matcher(string className);
 
 DeclarationMatcher moveAssignmentOperator_Matcher(string className);
 
-DeclarationMatcher functionWithReferencedFuntion_Matcher(string mainFunctionName, string usedFunctionName);
+DeclarationMatcher functionWithReferencedFuntion_Matcher(
+    string mainFunctionName, string usedFunctionName);
 
-DeclarationMatcher methodWithReferencedFuntion_Matcher(string mainMethodName, string mainClassName, string usedFunctionName);
+DeclarationMatcher methodWithReferencedFuntion_Matcher(string mainMethodName,
+                                                       string mainClassName,
+                                                       string usedFunctionName);
 
-DeclarationMatcher functionWithReferencedMethod_Matcher(string mainFunctionName, string usedMethodName, string usedClassName);
+DeclarationMatcher functionWithReferencedMethod_Matcher(string mainFunctionName,
+                                                        string usedMethodName,
+                                                        string usedClassName);
 
 DeclarationMatcher functionName_Matcher(string functionName);
 
@@ -169,4 +179,4 @@ DeclarationMatcher functionName_Matcher(string functionName);
 
 DeclarationMatcher invocationsFromHeader_Matcher(string nameFunction);
 
-#endif //MATCHERS_H
+#endif  // MATCHERS_H
