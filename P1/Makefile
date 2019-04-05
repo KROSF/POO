@@ -5,7 +5,7 @@
 # @copyright 2018 Carlos Rodrigo Sanabria Flores  #
 # # # # # # # # # # # # # # # # # # # # # # # # # #
 CXX = clang++
-STD = c++14
+STD = c++17
 CXXFLAGS = -std=${STD} -g -pedantic -Wall -Wextra -Wfloat-equal -Wundef\
 	-Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls\
 	-Wshadow -Woverloaded-virtual

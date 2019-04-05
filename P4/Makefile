@@ -45,7 +45,7 @@ CXX = clang++
 # c++1y: borrador del est. de 2014. Si su compilador es antiguo pero no mucho.
 # c++14: estándar de 2014 - Recomendado si su compilador lo admite.
 # c++1z o c++17: estándar previsto para 2017. Experimental, no recomendado.
-STD = c++14
+STD = c++17
 
 # Opciones para el compilador. Añada o quite las que prefiera pero deje
 # las primera. Recomendado: no quite ninguna.
