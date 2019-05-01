@@ -1,0 +1,10 @@
+{
+  "branch": "P4",
+  "language": "c++",
+  "build": [
+    "cd P4",
+    "make tests",
+    "make check",
+    "make valgrind"
+    ]
+}
