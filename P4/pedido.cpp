@@ -20,6 +20,8 @@ Pedido::Pedido(Usuario_Pedido &u_p, Pedido_Articulo &p_a, Usuario &u,
   if (t.caducidad() < fecha) throw Tarjeta::Caducada(t.caducidad());
   Usuario::Articulos carro = u.compra();
   bool pedido_vacio = true;
+  // typeof articulo = Articulo*
+  // typeof cantidad = unsigned
   for (auto &[articulo, cantidad] : carro) {
     if (auto *libroDig = dynamic_cast<LibroDigital *>(articulo)) {
       if (libroDig->f_expir() < Fecha())

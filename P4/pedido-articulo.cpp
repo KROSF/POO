@@ -46,27 +46,23 @@ Pedido_Articulo::Pedidos Pedido_Articulo::ventas(Articulo &art) {
 
 std::ostream &Pedido_Articulo::mostrarDetallePedidos(std::ostream &os) {
   double tmp_total = 0.0;
-  // typeof obj = pair(Pedido*,map(Articulo*,LineaPedido))
-  // typeof obj.first = Pedido*
-  // typeof obj.second = map(Articulo*,LineaPedido)
-  for (const auto &obj : pedido_articulo_) {
-    os << "Pedido núm. " << obj.first->numero()
-       << "\nCliente: " << obj.first->tarjeta()->titular()->nombre()
-       << "\tFecha: " << obj.first->fecha() << obj.second;
-    tmp_total += obj.first->total();
+  for (const auto &[pedido, articulos] : pedido_articulo_) {
+    os << "Pedido núm. " << pedido->numero()
+       << "\nCliente: " << pedido->tarjeta()->titular()->nombre()
+       << "\tFecha: " << pedido->fecha() << articulos;
+    tmp_total += pedido->total();
   }
   return os << std::fixed << "\nTOTAL VENTAS:\t" << std::setprecision(2)
             << tmp_total << " €" << std::endl;
 }
 
 std::ostream &Pedido_Articulo::mostrarVentasArticulos(std::ostream &os) {
-  // typeof obj = pair(Articulo*,map(Pedido*,LineaPedido))
-  // typeof obj.first = Articulo*
-  // typeof obj.second = map(Pedido*,LineaPedido)
-  for (const auto &obj : articulo_pedido_) {
-    os << "Ventas de [" << obj.first->referencia() << "] \""
-       << obj.first->titulo() << "\"\n"
-       << obj.second << std::endl;
+  // typeof articulos = Articulo*
+  // typeof pedidos = map(Pedido*,LineaPedido)
+  for (const auto &[articulos, pedidos] : articulo_pedido_) {
+    os << "Ventas de [" << articulos->referencia() << "] \""
+       << articulos->titulo() << "\"\n"
+       << pedidos << std::endl;
   }
   return os;
 }
@@ -85,13 +81,12 @@ std::ostream &operator<<(std::ostream &os,
      << Cadena(80, '=') << std::endl
      << "  PVP\tCantidad\tArtículo\n"
      << Cadena(80, '=') << std::endl;
-  // typeof i = std::pair(Articulo*,LineaPedido)
-  // typeof i.first = Articulo*
-  // typeof i.second = LineaPedido
-  for (const auto &i : items) {
-    os << i.second << "\t\t[" << i.first->referencia() << "] \""
-       << i.first->titulo() << "\"" << std::endl;
-    tmp_total += i.second.precio_venta() * i.second.cantidad();
+  // typeof articulo = Articulo*
+  // typeof linea = LineaPedido
+  for (const auto &[articulo, linea] : items) {
+    os << linea << "\t\t[" << articulo->referencia() << "] \""
+       << articulo->titulo() << "\"" << std::endl;
+    tmp_total += linea.precio_venta() * linea.cantidad();
   }
   os << Cadena(80, '=') << std::endl
      << "Total\t" << std::fixed << std::setprecision(2) << tmp_total << " €\n"
@@ -107,13 +102,12 @@ std::ostream &operator<<(std::ostream &os,
      << Cadena(80, '=') << std::endl
      << "  PVP\tCantidad\tFecha de venta\n"
      << Cadena(80, '=') << std::endl;
-  // typeof p = std::pair(Pedido*,LineaPedido)
-  // typeof p.first = Pedido*
-  // typeof p.second = LineaPedido
-  for (const auto &p : pedidos) {
-    os << p.second << "\t\t" << p.first->fecha() << std::endl;
-    tmp_total += p.second.precio_venta() * p.second.cantidad();
-    tmp_cantidad += p.second.cantidad();
+  // typeof pedido = Pedido*
+  // typeof linea = LineaPedido
+  for (const auto &[pedido, linea] : pedidos) {
+    os << linea << "\t\t" << pedido->fecha() << std::endl;
+    tmp_total += linea.precio_venta() * linea.cantidad();
+    tmp_cantidad += linea.cantidad();
   }
   os << Cadena(80, '=') << std::endl
      << std::fixed << std::setprecision(2) << tmp_total << " €\t"
